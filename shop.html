@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop – MyBrand</title>
+    <meta name="description" content="Browse our premium collection of clothing and accessories. Shop the latest trends with fast shipping and easy returns.">
+    
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/shop.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <a href="index.html" aria-label="MyBrand Home">
+                    <span class="brand-name">MyBrand</span>
+                </a>
+            </div>
+            
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search products..." aria-label="Search products">
+                <button onclick="searchProducts()" aria-label="Search">
+                    🔍
+                </button>
+            </div>
+
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="shop.html" class="active">Shop</a></li>
+				<li><a href="bulktshirts.html">Bulk plain T-shirts</a></li>
+				<li><a href="delivery-charges.html">Delivery Charges</a></li>
+                <li>
+                    <a href="cart.html">
+                        Cart 
+                        <span class="cart-count" id="cartCount">0</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="wishlist.html">
+                        Wishlist 
+                        <span class="wishlist-count" id="wishlistCount">0</span>
+                    </a>
+                </li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="profile.html">Profile</a></li>
+                <li><a href="login.html" id="authLink">Login</a></li>
+            </ul>
+            
+            <div class="menu-icon" id="menuToggle" aria-label="Toggle menu" aria-expanded="false">☰</div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Page Header -->
+        <section class="page-header">
+            <div class="container">
+                <h1>Shop All Products</h1>
+                <p>Discover our premium collection of clothing and accessories</p>
+                
+                <!-- Results Count -->
+                <div class="results-count" id="resultsCount">
+                    Loading products...
+                </div>
+            </div>
+        </section>
+
+        <!-- Filters and Products Section -->
+        <section class="shop-section">
+            <div class="container">
+                <!-- Filters Container -->
+                <div class="filters-container">
+                    <!-- Filter Toggle Button -->
+                    <div class="filter-toggle">
+                        <button class="filter-toggle-btn" onclick="toggleFilters()" aria-expanded="false" aria-controls="filtersPanel">
+                            <span>🔍 Filters</span>
+                            <span class="filter-badge" id="activeFiltersCount">0</span>
+                            <span class="toggle-arrow">▼</span>
+                        </button>
+                    </div>
+
+                    <!-- Filters Panel -->
+                    <div class="filters-panel" id="filtersPanel" role="dialog" aria-label="Product filters">
+                        <div class="filters-header">
+                            <h3>Filter Products</h3>
+                            <button class="close-filters" onclick="toggleFilters()" aria-label="Close filters">×</button>
+                        </div>
+
+                        <div class="filters-content">
+                            <!-- Category Filter -->
+                            <div class="filter-group">
+                                <div class="filter-header" onclick="toggleFilterGroup(this)" role="button" tabindex="0" aria-expanded="false">
+                                    <h4>Category</h4>
+                                    <span class="group-arrow">▼</span>
+                                </div>
+                                <div class="filter-options">
+                                    <label class="filter-option">
+                                        <input type="checkbox" name="category" value="men" onchange="updateFilters()">
+                                        <span class="checkmark"></span>
+                                        <span class="filter-text">Men</span>
+                                        <span class="product-count">(8)</span>
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="checkbox" name="category" value="women" onchange="updateFilters()">
+                                        <span class="checkmark"></span>
+                                        <span class="filter-text">Women</span>
+                                        <span class="product-count">(7)</span>
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="checkbox" name="category" value="kids" onchange="updateFilters()">
+                                        <span class="checkmark"></span>
+                                        <span class="filter-text">Kids</span>
+                                        <span class="product-count">(3)</span>
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="checkbox" name="category" value="footwear" onchange="updateFilters()">
+                                        <span class="checkmark"></span>
+                                        <span class="filter-text">Footwear</span>
+                                        <span class="product-count">(3)</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Price Range Filter -->
+                            <div class="filter-group">
+                                <div class="filter-header" onclick="toggleFilterGroup(this)" role="button" tabindex="0" aria-expanded="false">
+                                    <h4>Price Range</h4>
+                                    <span class="group-arrow">▼</span>
+                                </div>
+                                <div class="filter-options">
+                                    <label class="filter-option">
+                                        <input type="checkbox" name="price" value="0-500" onchange="updateFilters()">
+                                        <span class="checkmark"></span>
+                                        <span class="filter-text">Under ₹500</span>
+                                        <span class="product-count">(2)</span>
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="checkbox" name="price" value="500-1000" onchange="updateFilters()">
+                                        <span class="checkmark"></span>
+                                        <span class="filter-text">₹500 - ₹1000</span>
+                                        <span class="product-count">(8)</span>
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="checkbox" name="price" value="1000-2000" onchange="updateFilters()">
+                                        <span class="checkmark"></span>
+                                        <span class="filter-text">₹1000 - ₹2000</span>
+                                        <span class="product-count">(7)</span>
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="checkbox" name="price" value="2000-5000" onchange="updateFilters()">
+                                        <span class="checkmark"></span>
+                                        <span class="filter-text">₹2000 - ₹5000</span>
+                                        <span class="product-count">(3)</span>
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="checkbox" name="price" value="5000+" onchange="updateFilters()">
+                                        <span class="checkmark"></span>
+                                        <span class="filter-text">Above ₹5000</span>
+                                        <span class="product-count">(1)</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Size Filter -->
+                            <div class="filter-group">
+                                <div class="filter-header" onclick="toggleFilterGroup(this)" role="button" tabindex="0" aria-expanded="false">
+                                    <h4>Size</h4>
+                                    <span class="group-arrow">▼</span>
+                                </div>
+                                <div class="filter-options size-options">
+                                    <label class="size-option">
+                                        <input type="checkbox" name="size" value="S" onchange="updateFilters()">
+                                        <span class="size-box">S</span>
+                                    </label>
+                                    <label class="size-option">
+                                        <input type="checkbox" name="size" value="M" onchange="updateFilters()">
+                                        <span class="size-box">M</span>
+                                    </label>
+                                    <label class="size-option">
+                                        <input type="checkbox" name="size" value="L" onchange="updateFilters()">
+                                        <span class="size-box">L</span>
+                                    </label>
+                                    <label class="size-option">
+                                        <input type="checkbox" name="size" value="XL" onchange="updateFilters()">
+                                        <span class="size-box">XL</span>
+                                    </label>
+                                    <label class="size-option">
+                                        <input type="checkbox" name="size" value="XXL" onchange="updateFilters()">
+                                        <span class="size-box">XXL</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Color Filter -->
+                            <div class="filter-group">
+                                <div class="filter-header" onclick="toggleFilterGroup(this)" role="button" tabindex="0" aria-expanded="false">
+                                    <h4>Color</h4>
+                                    <span class="group-arrow">▼</span>
+                                </div>
+                                <div class="filter-options color-options">
+                                    <label class="color-option">
+                                        <input type="checkbox" name="color" value="black" onchange="updateFilters()">
+                                        <span class="color-box" style="background-color: #000;"></span>
+                                        <span class="color-text">Black</span>
+                                    </label>
+                                    <label class="color-option">
+                                        <input type="checkbox" name="color" value="white" onchange="updateFilters()">
+                                        <span class="color-box" style="background-color: #fff; border: 1px solid #ddd;"></span>
+                                        <span class="color-text">White</span>
+                                    </label>
+                                    <label class="color-option">
+                                        <input type="checkbox" name="color" value="blue" onchange="updateFilters()">
+                                        <span class="color-box" style="background-color: #007bff;"></span>
+                                        <span class="color-text">Blue</span>
+                                    </label>
+                                    <label class="color-option">
+                                        <input type="checkbox" name="color" value="red" onchange="updateFilters()">
+                                        <span class="color-box" style="background-color: #dc3545;"></span>
+                                        <span class="color-text">Red</span>
+                                    </label>
+                                    <label class="color-option">
+                                        <input type="checkbox" name="color" value="green" onchange="updateFilters()">
+                                        <span class="color-box" style="background-color: #28a745;"></span>
+                                        <span class="color-text">Green</span>
+                                    </label>
+                                    <label class="color-option">
+                                        <input type="checkbox" name="color" value="gray" onchange="updateFilters()">
+                                        <span class="color-box" style="background-color: #6c757d;"></span>
+                                        <span class="color-text">Gray</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Active Filters Display -->
+                            <div class="active-filters" id="activeFilters" aria-live="polite">
+                                <!-- Active filters will appear here dynamically -->
+                            </div>
+
+                            <!-- Filter Actions -->
+                            <div class="filter-actions">
+                                <button class="apply-filters-btn" onclick="applyFilters()">Apply Filters</button>
+                                <button class="clear-filters-btn" onclick="clearAllFilters()">Clear All</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Overlay for mobile -->
+                    <div class="filters-overlay" id="filtersOverlay" onclick="toggleFilters()"></div>
+                </div>
+
+                <!-- Products Grid -->
+                <div class="product-grid" id="productGrid">
+                    <!-- Product 1 -->
+                    <div class="product-card" data-category="men" data-price="999" data-size="M" data-color="white">
+                        <button class="wishlist-btn" onclick="addToWishlist(1, 'Classic White Hoodie', 999, 'images/product1.jpg')" aria-label="Add to wishlist">
+                            🤍
+                        </button>
+                        <img src="images/product1.jpg" alt="Classic White Hoodie - Comfortable cotton hoodie for everyday wear" loading="lazy">
+                        <h3>Classic White Hoodie</h3>
+                        <p class="price">₹999</p>
+                        <button class="btn" onclick="addToCart('Classic White Hoodie', 999, 'images/product1.jpg')">Add to Cart</button>
+                        <a class="small-link" href="product.html?id=1">View Details</a>
+                    </div>
+
+                    <!-- Product 2 -->
+                    <div class="product-card" data-category="women" data-price="699" data-size="S" data-color="black">
+                        <button class="wishlist-btn" onclick="addToWishlist(2, 'Black Oversized T-Shirt', 699, 'images/product2.jpg')" aria-label="Add to wishlist">
+                            🤍
+                        </button>
+                        <img src="images/product2.jpg" alt="Black Oversized T-Shirt - Trendy comfortable oversized fit" loading="lazy">
+                        <h3>Black Oversized T-Shirt</h3>
+                        <p class="price">₹699</p>
+                        <button class="btn" onclick="addToCart('Black Oversized T-Shirt', 699, 'images/product2.jpg')">Add to Cart</button>
+                        <a class="small-link" href="product.html?id=2">View Details</a>
+                    </div>
+
+                    <!-- Product 3 -->
+                    <div class="product-card" data-category="men" data-price="1299" data-size="L" data-color="blue">
+                        <button class="wishlist-btn" onclick="addToWishlist(3, 'Premium Cotton Shirt', 1299, 'images/product3.jpg')" aria-label="Add to wishlist">
+                            🤍
+                        </button>
+                        <img src="images/product3.jpg" alt="Premium Cotton Shirt - Formal shirt for professional wear" loading="lazy">
+                        <h3>Premium Cotton Shirt</h3>
+                        <p class="price">₹1299</p>
+                        <button class="btn" onclick="addToCart('Premium Cotton Shirt', 1299, 'images/product3.jpg')">Add to Cart</button>
+                        <a class="small-link" href="product.html?id=3">View Details</a>
+                    </div>
+
+                    <!-- Product 4 -->
+                    <div class="product-card" data-category="men" data-price="1999" data-size="XL" data-color="blue">
+                        <button class="wishlist-btn" onclick="addToWishlist(4, 'Denim Jacket', 1999, 'images/product4.jpg')" aria-label="Add to wishlist">
+                            🤍
+                        </button>
+                        <img src="images/product4.jpg" alt="Denim Jacket - Classic denim jacket for casual style" loading="lazy">
+                        <h3>Denim Jacket</h3>
+                        <p class="price">₹1999</p>
+                        <button class="btn" onclick="addToCart('Denim Jacket', 1999, 'images/product4.jpg')">Add to Cart</button>
+                        <a class="small-link" href="product.html?id=4">View Details</a>
+                    </div>
+
+                    <!-- Product 5 -->
+                    <div class="product-card" data-category="footwear" data-price="2999" data-size="9" data-color="black">
+                        <button class="wishlist-btn" onclick="addToWishlist(5, 'Sports Shoes', 2999, 'images/product5.jpg')" aria-label="Add to wishlist">
+                            🤍
+                        </button>
+                        <img src="images/product5.jpg" alt="Sports Shoes - Comfortable athletic shoes for active lifestyle" loading="lazy">
+                        <h3>Sports Shoes</h3>
+                        <p class="price">₹2999</p>
+                        <button class="btn" onclick="addToCart('Sports Shoes', 2999, 'images/product5.jpg')">Add to Cart</button>
+                        <a class="small-link" href="product.html?id=5">View Details</a>
+                    </div>
+
+                    <!-- Product 6 -->
+                    <div class="product-card" data-category="women" data-price="899" data-size="M" data-color="red">
+                        <button class="wishlist-btn" onclick="addToWishlist(6, 'Red Summer Dress', 899, 'images/product6.jpg')" aria-label="Add to wishlist">
+                            🤍
+                        </button>
+                        <img src="images/product6.jpg" alt="Red Summer Dress - Flowy dress perfect for summer" loading="lazy">
+                        <h3>Red Summer Dress</h3>
+                        <p class="price">₹899</p>
+                        <button class="btn" onclick="addToCart('Red Summer Dress', 899, 'images/product6.jpg')">Add to Cart</button>
+                        <a class="small-link" href="product.html?id=6">View Details</a>
+                    </div>
+
+                    <!-- Product 7 -->
+                    <div class="product-card" data-category="men" data-price="1499" data-size="L" data-color="gray">
+                        <button class="wishlist-btn" onclick="addToWishlist(7, 'Sweatpants', 1499, 'images/product7.jpg')" aria-label="Add to wishlist">
+                            🤍
+                        </button>
+                        <img src="images/product7.jpg" alt="Sweatpants - Comfortable sweatpants for casual wear" loading="lazy">
+                        <h3>Sweatpants</h3>
+                        <p class="price">₹1499</p>
+                        <button class="btn" onclick="addToCart('Sweatpants', 1499, 'images/product7.jpg')">Add to Cart</button>
+                        <a class="small-link" href="product.html?id=7">View Details</a>
+                    </div>
+
+                    <!-- Product 8 -->
+                    <div class="product-card" data-category="women" data-price="799" data-size="S" data-color="white">
+                        <button class="wishlist-btn" onclick="addToWishlist(8, 'White Blouse', 799, 'images/product8.jpg')" aria-label="Add to wishlist">
+                            🤍
+                        </button>
+                        <img src="images/product8.jpg" alt="White Blouse - Elegant blouse for formal occasions" loading="lazy">
+                        <h3>White Blouse</h3>
+                        <p class="price">₹799</p>
+                        <button class="btn" onclick="addToCart('White Blouse', 799, 'images/product8.jpg')">Add to Cart</button>
+                        <a class="small-link" href="product.html?id=8">View Details</a>
+                    </div>
+
+                    <!-- Product 9 -->
+                    <div class="product-card" data-category="kids" data-price="599" data-size="S" data-color="blue">
+                        <button class="wishlist-btn" onclick="addToWishlist(9, 'Kids T-Shirt', 599, 'images/product9.jpg')" aria-label="Add to wishlist">
+                            🤍
+                        </button>
+                        <img src="images/product9.jpg" alt="Kids T-Shirt - Comfortable cotton t-shirt for children" loading="lazy">
+                        <h3>Kids T-Shirt</h3>
+                        <p class="price">₹599</p>
+                        <button class="btn" onclick="addToCart('Kids T-Shirt', 599, 'images/product9.jpg')">Add to Cart</button>
+                        <a class="small-link" href="product.html?id=9">View Details</a>
+                    </div>
+
+                    <!-- Product 10 -->
+                    <div class="product-card" data-category="footwear" data-price="2499" data-size="8" data-color="white">
+                        <button class="wishlist-btn" onclick="addToWishlist(10, 'Casual Sneakers', 2499, 'images/product10.jpg')" aria-label="Add to wishlist">
+                            🤍
+                        </button>
+                        <img src="images/product10.jpg" alt="Casual Sneakers - Stylish sneakers for everyday wear" loading="lazy">
+                        <h3>Casual Sneakers</h3>
+                        <p class="price">₹2499</p>
+                        <button class="btn" onclick="addToCart('Casual Sneakers', 2499, 'images/product10.jpg')">Add to Cart</button>
+                        <a class="small-link" href="product.html?id=10">View Details</a>
+                    </div>
+
+                    <!-- Product 11 -->
+                    <div class="product-card" data-category="women" data-price="1299" data-size="M" data-color="green">
+                        <button class="wishlist-btn" onclick="addToWishlist(11, 'Green Cardigan', 1299, 'images/product11.jpg')" aria-label="Add to wishlist">
+                            🤍
+                        </button>
+                        <img src="images/product11.jpg" alt="Green Cardigan - Warm and stylish cardigan" loading="lazy">
+                        <h3>Green Cardigan</h3>
+                        <p class="price">₹1299</p>
+                        <button class="btn" onclick="addToCart('Green Cardigan', 1299, 'images/product11.jpg')">Add to Cart</button>
+                        <a class="small-link" href="product.html?id=11">View Details</a>
+                    </div>
+
+                    <!-- Product 12 -->
+                    <div class="product-card" data-category="men" data-price="1799" data-size="XL" data-color="black">
+                        <button class="wishlist-btn" onclick="addToWishlist(12, 'Leather Jacket', 1799, 'images/product12.jpg')" aria-label="Add to wishlist">
+                            🤍
+                        </button>
+                        <img src="images/product12.jpg" alt="Leather Jacket - Premium leather jacket for stylish look" loading="lazy">
+                        <h3>Leather Jacket</h3>
+                        <p class="price">₹1799</p>
+                        <button class="btn" onclick="addToCart('Leather Jacket', 1799, 'images/product12.jpg')">Add to Cart</button>
+                        <a class="small-link" href="product.html?id=12">View Details</a>
+                    </div>
+
+                    <!-- Product 13 -->
+                    <div class="product-card" data-category="kids" data-price="499" data-size="M" data-color="red">
+                        <button class="wishlist-btn" onclick="addToWishlist(13, 'Kids Hoodie', 499, 'images/product13.jpg')" aria-label="Add to wishlist">
+                            🤍
+                        </button>
+                        <img src="images/product13.jpg" alt="Kids Hoodie - Comfortable hoodie for children" loading="lazy">
+                        <h3>Kids Hoodie</h3>
+                        <p class="price">₹499</p>
+                        <button class="btn" onclick="addToCart('Kids Hoodie', 499, 'images/product13.jpg')">Add to Cart</button>
+                        <a class="small-link" href="product.html?id=13">View Details</a>
+                    </div>
+
+                    <!-- Product 14 -->
+                    <div class="product-card" data-category="women" data-price="1599" data-size="L" data-color="black">
+                        <button class="wishlist-btn" onclick="addToWishlist(14, 'Evening Gown', 1599, 'images/product14.jpg')" aria-label="Add to wishlist">
+                            🤍
+                        </button>
+                        <img src="images/product14.jpg" alt="Evening Gown - Elegant gown for special occasions" loading="lazy">
+                        <h3>Evening Gown</h3>
+                        <p class="price">₹1599</p>
+                        <button class="btn" onclick="addToCart('Evening Gown', 1599, 'images/product14.jpg')">Add to Cart</button>
+                        <a class="small-link" href="product.html?id=14">View Details</a>
+                    </div>
+
+                    <!-- Product 15 -->
+                    <div class="product-card" data-category="men" data-price="2199" data-size="M" data-color="blue">
+                        <button class="wishlist-btn" onclick="addToWishlist(15, 'Business Suit', 2199, 'images/product15.jpg')" aria-label="Add to wishlist">
+                            🤍
+                        </button>
+                        <img src="images/product15.jpg" alt="Business Suit - Professional suit for formal events" loading="lazy">
+                        <h3>Business Suit</h3>
+                        <p class="price">₹2199</p>
+                        <button class="btn" onclick="addToCart('Business Suit', 2199, 'images/product15.jpg')">Add to Cart</button>
+                        <a class="small-link" href="product.html?id=15">View Details</a>
+                    </div>
+
+                    <!-- Product 16 -->
+                    <div class="product-card" data-category="footwear" data-price="1899" data-size="10" data-color="brown">
+                        <button class="wishlist-btn" onclick="addToWishlist(16, 'Formal Shoes', 1899, 'images/product16.jpg')" aria-label="Add to wishlist">
+                            🤍
+                        </button>
+                        <img src="images/product16.jpg" alt="Formal Shoes - Classic formal shoes for business wear" loading="lazy">
+                        <h3>Formal Shoes</h3>
+                        <p class="price">₹1899</p>
+                        <button class="btn" onclick="addToCart('Formal Shoes', 1899, 'images/product16.jpg')">Add to Cart</button>
+                        <a class="small-link" href="product.html?id=16">View Details</a>
+                    </div>
+
+                    <!-- Product 17 -->
+                    <div class="product-card" data-category="women" data-price="699" data-size="S" data-color="pink">
+                        <button class="wishlist-btn" onclick="addToWishlist(17, 'Pink Top', 699, 'images/product17.jpg')" aria-label="Add to wishlist">
+                            🤍
+                        </button>
+                        <img src="images/product17.jpg" alt="Pink Top - Casual top for everyday wear" loading="lazy">
+                        <h3>Pink Top</h3>
+                        <p class="price">₹699</p>
+                        <button class="btn" onclick="addToCart('Pink Top', 699, 'images/product17.jpg')">Add to Cart</button>
+                        <a class="small-link" href="product.html?id=17">View Details</a>
+                    </div>
+
+                    <!-- Product 18 -->
+                    <div class="product-card" data-category="men" data-price="1399" data-size="L" data-color="green">
+                        <button class="wishlist-btn" onclick="addToWishlist(18, 'Cargo Pants', 1399, 'images/product18.jpg')" aria-label="Add to wishlist">
+                            🤍
+                        </button>
+                        <img src="images/product18.jpg" alt="Cargo Pants - Utility pants with multiple pockets" loading="lazy">
+                        <h3>Cargo Pants</h3>
+                        <p class="price">₹1399</p>
+                        <button class="btn" onclick="addToCart('Cargo Pants', 1399, 'images/product18.jpg')">Add to Cart</button>
+                        <a class="small-link" href="product.html?id=18">View Details</a>
+                    </div>
+
+                    <!-- Product 19 -->
+                    <div class="product-card" data-category="kids" data-price="449" data-size="S" data-color="yellow">
+                        <button class="wishlist-btn" onclick="addToWishlist(19, 'Kids Shorts', 449, 'images/product19.jpg')" aria-label="Add to wishlist">
+                            🤍
+                        </button>
+                        <img src="images/product19.jpg" alt="Kids Shorts - Comfortable shorts for children" loading="lazy">
+                        <h3>Kids Shorts</h3>
+                        <p class="price">₹449</p>
+                        <button class="btn" onclick="addToCart('Kids Shorts', 449, 'images/product19.jpg')">Add to Cart</button>
+                        <a class="small-link" href="product.html?id=19">View Details</a>
+                    </div>
+
+                    <!-- Product 20 -->
+                    <div class="product-card" data-category="women" data-price="1999" data-size="M" data-color="black">
+                        <button class="wishlist-btn" onclick="addToWishlist(20, 'Winter Coat', 1999, 'images/product20.jpg')" aria-label="Add to wishlist">
+                            🤍
+                        </button>
+                        <img src="images/product20.jpg" alt="Winter Coat - Warm coat for cold weather" loading="lazy">
+                        <h3>Winter Coat</h3>
+                        <p class="price">₹1999</p>
+                        <button class="btn" onclick="addToCart('Winter Coat', 1999, 'images/product20.jpg')">Add to Cart</button>
+                        <a class="small-link" href="product.html?id=20">View Details</a>
+                    </div>
+
+                    <!-- Product 21 -->
+                    <div class="product-card" data-category="men" data-price="899" data-size="XL" data-color="white">
+                        <button class="wishlist-btn" onclick="addToWishlist(21, 'Polo Shirt', 899, 'images/product21.jpg')" aria-label="Add to wishlist">
+                            🤍
+                        </button>
+                        <img src="images/product21.jpg" alt="Polo Shirt - Classic polo shirt for casual wear" loading="lazy">
+                        <h3>Polo Shirt</h3>
+                        <p class="price">₹899</p>
+                        <button class="btn" onclick="addToCart('Polo Shirt', 899, 'images/product21.jpg')">Add to Cart</button>
+                        <a class="small-link" href="product.html?id=21">View Details</a>
+                    </div>
+                </div>
+
+                <!-- Load More Button -->
+                <div class="load-more-container">
+                    <button class="btn btn-outline" id="loadMoreBtn" onclick="loadMoreProducts()">Load More Products</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>MyBrand</h3>
+                <p>Premium clothing for everyone. Quality meets style in every stitch.</p>
+                <div class="social-links">
+                    <a href="#" aria-label="Facebook">📘</a>
+                    <a href="#" aria-label="Instagram">📷</a>
+                    <a href="#" aria-label="Twitter">🐦</a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="shop.html">Shop</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Customer Service</h4>
+                <ul>
+                    <li><a href="#">Shipping Info</a></li>
+                    <li><a href="#">Returns</a></li>
+                    <li><a href="#">Size Guide</a></li>
+                    <li><a href="#">FAQs</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Contact Info</h4>
+                <p>📧 support@mybrand.com</p>
+                <p>📞 +1 (555) 123-4567</p>
+                <p>📍 123 Fashion St, Style City</p>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <div class="footer-bottom-container">
+                <p>&copy; 2024 MyBrand. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Are these scripts included in the correct order? -->
+<script src="js/auth.js"></script>
+<script src="js/script.js"></script>
+</body>
+</html>

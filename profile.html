@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My Profile - MyBrand</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    .profile-details {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .profile-section {
+      margin-bottom: 25px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .profile-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+    
+    .profile-section h3 {
+      color: #333;
+      margin-bottom: 15px;
+      font-size: 18px;
+      border-left: 4px solid #007bff;
+      padding-left: 10px;
+    }
+    
+    .profile-info {
+      display: grid;
+      gap: 12px;
+    }
+    
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 8px 0;
+    }
+    
+    .info-label {
+      font-weight: 600;
+      color: #555;
+      min-width: 120px;
+    }
+    
+    .info-value {
+      color: #333;
+      text-align: right;
+      flex: 1;
+      margin-left: 20px;
+    }
+    
+    .profile-actions {
+      display: flex;
+      gap: 15px;
+      margin-top: 25px;
+      flex-wrap: wrap;
+    }
+    
+    .btn-edit {
+      background: #007bff;
+      color: white;
+    }
+    
+    .btn-edit:hover {
+      background: #0056b3;
+    }
+    
+    .btn-logout {
+      background: #dc3545;
+      color: white;
+    }
+    
+    .btn-logout:hover {
+      background: #c82333;
+    }
+    
+    .empty-profile {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+    
+    .empty-profile .btn {
+      margin-top: 15px;
+    }
+
+    /* Edit Profile Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+    }
+    
+    .modal-content {
+      background-color: white;
+      margin: 5% auto;
+      padding: 30px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .modal-header h2 {
+      margin: 0;
+      color: #333;
+    }
+    
+    .close-modal {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #666;
+    }
+    
+    .close-modal:hover {
+      color: #333;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #555;
+    }
+    
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    
+    .modal-actions {
+      display: flex;
+      gap: 15px;
+      justify-content: flex-end;
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px solid #eee;
+    }
+    
+    .btn-cancel {
+      background: #6c757d;
+      color: white;
+    }
+    
+    .btn-cancel:hover {
+      background: #545b62;
+    }
+    
+    .btn-save {
+      background: #28a745;
+      color: white;
+    }
+    
+    .btn-save:hover {
+      background: #218838;
+    }
+    
+    @media (max-width: 600px) {
+      .info-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+      }
+      
+      .info-value {
+        text-align: left;
+        margin-left: 0;
+      }
+      
+      .profile-actions {
+        flex-direction: column;
+      }
+      
+      .profile-actions .btn {
+        text-align: center;
+      }
+      
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      
+      .modal-actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="logo"><a href="index.html">MyBrand</a></div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="shop.html">Shop</a></li>
+		<li><a href="bulktshirts.html">Bulk plain T-shirts</a></li>
+        <li>
+          <a href="cart.html">Cart 
+            <span class="cart-count" id="cartCount">0</span>
+          </a>
+        </li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <!-- FIXED: Added id="profileNavItem" to Profile link -->
+        <li id="profileNavItem"><a href="profile.html" class="active">Profile</a></li>
+        <li><a href="login.html" id="authLink">Login</a></li>
+      </ul>
+      <div class="menu-icon" id="menuToggle">☰</div>
+    </nav>
+  </header>
+
+  <section class="login-section">
+    <div class="login-container">
+      <div class="login-form">
+        <h2>My Profile</h2>
+        <div id="profileInfo">
+          <!-- Profile information will be loaded here by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Edit Profile Modal -->
+  <div id="editProfileModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Edit Profile</h2>
+        <button class="close-modal" onclick="closeEditModal()">&times;</button>
+      </div>
+      <form id="editProfileForm">
+        <div class="form-group">
+          <label for="editName">Full Name *</label>
+          <input type="text" id="editName" name="name" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="editEmail">Email Address *</label>
+          <input type="email" id="editEmail" name="email" required readonly style="background-color: #f8f9fa;">
+        </div>
+        
+        <div class="form-group">
+          <label for="editPhone">Phone Number</label>
+          <input type="tel" id="editPhone" name="phone" placeholder="Enter your phone number">
+        </div>
+        
+        <h3 style="margin: 25px 0 15px 0; padding-bottom: 10px; border-bottom: 2px solid #007bff;">Address Information</h3>
+        
+        <div class="form-group">
+          <label for="editAddress1">Address Line 1 *</label>
+          <input type="text" id="editAddress1" name="address1" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="editAddress2">Address Line 2</label>
+          <input type="text" id="editAddress2" name="address2" placeholder="Apartment, suite, unit, etc.">
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="editCity">City *</label>
+            <input type="text" id="editCity" name="city" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="editState">State *</label>
+            <input type="text" id="editState" name="state" required>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="editPincode">Pincode *</label>
+            <input type="text" id="editPincode" name="pincode" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="editCountry">Country *</label>
+            <input type="text" id="editCountry" name="country" required value="India">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="editLandmark">Landmark</label>
+          <input type="text" id="editLandmark" name="landmark" placeholder="Nearby landmark">
+        </div>
+        
+        <div class="modal-actions">
+          <button type="button" class="btn btn-cancel" onclick="closeEditModal()">Cancel</button>
+          <button type="submit" class="btn btn-save">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 MyBrand. All Rights Reserved.</p>
+  </footer>
+
+  <script src="js/auth.js"></script>
+  <script src="js/script.js"></script>
+  <script>
+    // Profile page specific functionality
+    function loadProfileInfo() {
+      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      const profileInfo = document.getElementById('profileInfo');
+      
+      if (!currentUser) {
+        profileInfo.innerHTML = `
+          <div class="empty-profile">
+            <p>Please login to view your profile</p>
+            <a href="login.html" class="btn">Login Now</a>
+          </div>
+        `;
+        return;
+      }
+      
+      const address = currentUser.address;
+      // FIXED: Added proper null checks for address
+      const addressText = address && address.line1 ? `
+        ${address.line1}${address.line2 ? '<br>' + address.line2 : ''}<br>
+        ${address.city}, ${address.state} - ${address.pincode}<br>
+        ${address.country}${address.landmark ? '<br><strong>Landmark:</strong> ' + address.landmark : ''}
+      ` : 'No address saved';
+      
+      profileInfo.innerHTML = `
+        <div class="profile-details">
+          <div class="profile-section">
+            <h3>Personal Information</h3>
+            <div class="profile-info">
+              <div class="info-item">
+                <span class="info-label">Full Name:</span>
+                <span class="info-value">${currentUser.name}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Email:</span>
+                <span class="info-value">${currentUser.email}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Phone:</span>
+                <span class="info-value">${currentUser.phone || 'Not provided'}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Member Since:</span>
+                <span class="info-value">${new Date(currentUser.createdAt || Date.now()).toLocaleDateString()}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="profile-section">
+            <h3>Delivery Address</h3>
+            <div class="profile-info">
+              <div class="info-item">
+                <span class="info-label">Address:</span>
+                <span class="info-value">${addressText}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="profile-section">
+            <h3>Order Statistics</h3>
+            <div class="profile-info">
+              <div class="info-item">
+                <span class="info-label">Total Orders:</span>
+                <span class="info-value" id="totalOrders">0</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Total Spent:</span>
+                <span class="info-value" id="totalSpent">₹0</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="profile-actions">
+            <button onclick="editProfile()" class="btn btn-edit">Edit Profile</button>
+            <button onclick="viewOrderHistory()" class="btn">Order History</button>
+            <button onclick="logoutFromProfile()" class="btn btn-logout">Logout</button>
+          </div>
+        </div>
+      `;
+      
+      // Load order statistics
+      loadOrderStatistics(currentUser.email);
+    }
+    
+    function loadOrderStatistics(userEmail) {
+      const orders = JSON.parse(localStorage.getItem('orderHistory') || '[]');
+      const userOrders = orders.filter(order => order.userId === userEmail);
+      
+      const totalOrders = userOrders.length;
+      const totalSpent = userOrders.reduce((sum, order) => sum + order.total, 0);
+      
+      const totalOrdersElement = document.getElementById('totalOrders');
+      const totalSpentElement = document.getElementById('totalSpent');
+      
+      if (totalOrdersElement) totalOrdersElement.textContent = totalOrders;
+      if (totalSpentElement) totalSpentElement.textContent = `₹${totalSpent}`;
+    }
+    
+    function editProfile() {
+      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      if (!currentUser) return;
+      
+      // Populate form with current user data
+      document.getElementById('editName').value = currentUser.name || '';
+      document.getElementById('editEmail').value = currentUser.email || '';
+      document.getElementById('editPhone').value = currentUser.phone || '';
+      
+      // Populate address fields
+      const address = currentUser.address || {};
+      document.getElementById('editAddress1').value = address.line1 || '';
+      document.getElementById('editAddress2').value = address.line2 || '';
+      document.getElementById('editCity').value = address.city || '';
+      document.getElementById('editState').value = address.state || '';
+      document.getElementById('editPincode').value = address.pincode || '';
+      document.getElementById('editCountry').value = address.country || 'India';
+      document.getElementById('editLandmark').value = address.landmark || '';
+      
+      // Show modal
+      document.getElementById('editProfileModal').style.display = 'block';
+    }
+    
+    function closeEditModal() {
+      document.getElementById('editProfileModal').style.display = 'none';
+    }
+    
+    // Handle form submission
+    document.getElementById('editProfileForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      saveProfileChanges();
+    });
+    
+    function saveProfileChanges() {
+      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      if (!currentUser) return;
+      
+      // Get form values
+      const updatedUser = {
+        ...currentUser,
+        name: document.getElementById('editName').value.trim(),
+        phone: document.getElementById('editPhone').value.trim(),
+        address: {
+          line1: document.getElementById('editAddress1').value.trim(),
+          line2: document.getElementById('editAddress2').value.trim(),
+          city: document.getElementById('editCity').value.trim(),
+          state: document.getElementById('editState').value.trim(),
+          pincode: document.getElementById('editPincode').value.trim(),
+          country: document.getElementById('editCountry').value.trim(),
+          landmark: document.getElementById('editLandmark').value.trim()
+        },
+        updatedAt: new Date().toISOString()
+      };
+      
+      // Update user in localStorage
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      const userIndex = users.findIndex(user => user.email === currentUser.email);
+      
+      if (userIndex !== -1) {
+        users[userIndex] = { ...users[userIndex], ...updatedUser };
+        localStorage.setItem('users', JSON.stringify(users));
+      }
+      
+      // Update currentUser in localStorage
+      localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+      
+      // Close modal and refresh profile
+      closeEditModal();
+      loadProfileInfo();
+      
+      alert('Profile updated successfully!');
+    }
+    
+    function viewOrderHistory() {
+      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      if (!currentUser) return;
+      
+      const orders = JSON.parse(localStorage.getItem('orderHistory') || '[]');
+      const userOrders = orders.filter(order => order.userId === currentUser.email);
+      
+      if (userOrders.length === 0) {
+        alert('You have no order history yet.');
+        return;
+      }
+      
+      // FIXED: Corrected the escaped newlines
+      const orderList = userOrders.map(order => 
+        `Order #${order.orderId} - ₹${order.total} - ${new Date(order.orderDate).toLocaleDateString()}`
+      ).join('\n');
+      
+      alert(`Your Order History:\n\n${orderList}`);
+    }
+    
+    // FIXED: Renamed to avoid conflict with auth.js logout function
+    function logoutFromProfile() {
+      if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('currentUser');
+        window.location.href = 'index.html';
+      }
+    }
+    
+    // Close modal when clicking outside
+    window.addEventListener('click', function(e) {
+      const modal = document.getElementById('editProfileModal');
+      if (e.target === modal) {
+        closeEditModal();
+      }
+    });
+    
+    // Initialize profile when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      loadProfileInfo();
+    });
+  </script>
+<script src="js/auth.js"></script>
+<script src="js/script.js"></script>
+</body>
+</html>

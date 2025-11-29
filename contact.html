@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Product - MyBrand</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- In shop.html, cart.html, about.html, contact.html -->
+<header>
+    <nav class="navbar">
+        <div class="logo"><a href="index.html">MyBrand</a></div>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="shop.html">Shop</a></li>
+			<li><a href="bulktshirts.html">Bulk plain T-shirts</a></li>
+            <li>
+                <a href="cart.html">Cart 
+                    <span class="cart-count" id="cartCount">0</span>
+                </a>
+            </li>
+			<li>
+          <a href="wishlist.html">Wishlist 
+            <span class="wishlist-count" id="wishlistCount">0</span>
+          </a>
+        </li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="profile.html">Profile</a></li>
+            <li><a href="login.html" id="authLink">Login</a></li>
+        </ul>
+        <div class="menu-icon" id="menuToggle">☰</div>
+    </nav>
+</header>
+<main style="padding:40px;"><h1>Contact</h1><form onsubmit="event.preventDefault(); alert('Form demo - integrate with backend');"><input placeholder="Your name"/><br/><input placeholder="Email"/><br/><textarea placeholder="Message"></textarea><br/><button class="btn">Send</button></form></main>
+<footer>...</footer>
+<script src="js/auth.js"></script>
+<script src="js/script.js"></script>
+</body>
+   </html>

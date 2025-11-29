@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Premium Classic White Hoodie - Comfortable cotton blend hoodie perfect for casual wear. Shop now with free shipping and easy returns.">
+  <title>Classic White Hoodie - MyBrand</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* Product Page Specific Styles */
+    .product-page {
+      padding: 40px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .product-wrap {
+      display: flex;
+      gap: 50px;
+      align-items: flex-start;
+      margin-bottom: 60px;
+    }
+
+    .product-media {
+      flex: 1;
+      max-width: 600px;
+      position: sticky;
+      top: 100px;
+    }
+
+    .product-info {
+      flex: 1;
+      max-width: 500px;
+    }
+
+    .product-info h1 {
+      font-size: 2.2rem;
+      margin-bottom: 15px;
+      color: #333;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .product-info .price {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #111;
+      margin: 20px 0;
+    }
+
+    .product-info p {
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 25px;
+      font-size: 1.1rem;
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333;
+      font-size: 1rem;
+    }
+
+    .form-group select {
+      width: 100%;
+      max-width: 300px;
+      padding: 12px 15px;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      font-size: 16px;
+      background: white;
+      transition: border-color 0.3s;
+    }
+
+    .form-group select:focus {
+      outline: none;
+      border-color: #111;
+    }
+
+    .quantity-selector {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      max-width: 150px;
+    }
+
+    .quantity-btn {
+      width: 40px;
+      height: 40px;
+      border: 2px solid #ddd;
+      background: white;
+      border-radius: 6px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .quantity-btn:hover {
+      border-color: #111;
+      background: #f8f9fa;
+    }
+
+    .quantity-selector input {
+      width: 60px;
+      text-align: center;
+      padding: 8px;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      background: #f8f9fa;
+    }
+
+    .product-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 30px 0;
+    }
+
+    .primary-btn {
+      background: #111;
+      color: white;
+      padding: 16px 30px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .secondary-btn {
+      background: transparent;
+      color: #111;
+      border: 2px solid #111;
+      padding: 16px 30px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .buy-btn {
+      background: #ff6b6b;
+      color: white;
+      padding: 16px 30px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .primary-btn:hover {
+      background: #333;
+    }
+
+    .secondary-btn:hover {
+      background: #111;
+      color: white;
+    }
+
+    .buy-btn:hover {
+      background: #ff5252;
+    }
+
+    .wishlist-icon {
+      font-size: 18px;
+      margin-right: 8px;
+    }
+
+    .product-details,
+    .shipping-info {
+      margin: 30px 0;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+
+    .product-details h3,
+    .shipping-info h3 {
+      margin-bottom: 15px;
+      color: #333;
+      font-size: 1.2rem;
+    }
+
+    .product-details ul,
+    .shipping-info ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .product-details li,
+    .shipping-info li {
+      padding: 8px 0;
+      color: #666;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    .product-details li:last-child,
+    .shipping-info li:last-child {
+      border-bottom: none;
+    }
+
+    .product-details li strong {
+      color: #333;
+    }
+
+    /* Slideshow Styles */
+    .product-slideshow {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .slideshow-container {
+      position: relative;
+      height: 500px;
+      overflow: hidden;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+      pointer-events: none;
+    }
+
+    .product-slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      z-index: 2;
+    }
+
+    .product-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 12px;
+    }
+
+    .slideshow-prev,
+    .slideshow-next {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.9);
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      font-size: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      z-index: 10;
+    }
+
+    .slideshow-prev:hover,
+    .slideshow-next:hover {
+      background: white;
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .slideshow-prev {
+      left: 20px;
+    }
+
+    .slideshow-next {
+      right: 20px;
+    }
+
+    .slideshow-indicators {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+      z-index: 10;
+    }
+
+    .indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+
+    .indicator.active {
+      background: white;
+      transform: scale(1.2);
+      border-color: #111;
+    }
+
+    .indicator:hover {
+      background: white;
+      transform: scale(1.1);
+    }
+
+    .product-thumbnails {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 15px;
+    }
+
+    .thumbnail {
+      width: 80px;
+      height: 80px;
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: all 0.3s ease;
+      opacity: 0.7;
+    }
+
+    .thumbnail.active,
+    .thumbnail:hover {
+      border-color: #111;
+      opacity: 1;
+      transform: scale(1.05);
+    }
+
+    .thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Related Products */
+    .related-products {
+      margin-top: 60px;
+      padding-top: 40px;
+      border-top: 1px solid #eee;
+    }
+
+    .related-products h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 1.8rem;
+      color: #333;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 900px) {
+      .product-wrap {
+        flex-direction: column;
+        gap: 30px;
+      }
+      
+      .product-media,
+      .product-info {
+        max-width: 100%;
+      }
+      
+      .product-media {
+        position: static;
+      }
+      
+      .slideshow-container {
+        height: 400px;
+      }
+      
+      .product-info h1 {
+        font-size: 1.8rem;
+      }
+      
+      .product-info .price {
+        font-size: 1.5rem;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .product-page {
+        padding: 20px 15px;
+      }
+      
+      .slideshow-container {
+        height: 300px;
+      }
+      
+      .slideshow-prev,
+      .slideshow-next {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+      }
+      
+      .thumbnail {
+        width: 60px;
+        height: 60px;
+      }
+      
+      .form-group select {
+        max-width: 100%;
+      }
+      
+      .product-actions .btn {
+        width: 100%;
+      }
+      
+      .quantity-selector {
+        max-width: 100%;
+      }
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      margin-bottom: 20px;
+      font-size: 14px;
+      color: #666;
+    }
+
+    .breadcrumb a {
+      color: #666;
+      text-decoration: none;
+    }
+
+    .breadcrumb a:hover {
+      color: #111;
+      text-decoration: underline;
+    }
+
+    /* Stock Status */
+    .stock-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: #e8f5e8;
+      color: #2e7d32;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .stock-status.out-of-stock {
+      background: #ffebee;
+      color: #c62828;
+    }
+
+    /* Rating */
+    .product-rating {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .rating-stars {
+      color: #ffc107;
+      font-size: 18px;
+    }
+
+    .rating-count {
+      color: #666;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="logo">
+        <a href="index.html" aria-label="MyBrand Home">MyBrand</a>
+      </div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="shop.html">Shop</a></li>
+		<li><a href="delivery-charges.html">Delivery Charges</a></li>
+        <li>
+          <a href="cart.html">
+            Cart 
+            <span class="cart-count" id="cartCount">0</span>
+          </a>
+        </li>
+        <li>
+          <a href="wishlist.html">
+            Wishlist 
+            <span class="wishlist-count" id="wishlistCount">0</span>
+          </a>
+        </li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="profile.html">Profile</a></li>
+        <li><a href="login.html" id="authLink">Login</a></li>
+      </ul>
+      <div class="menu-icon" id="menuToggle" aria-label="Toggle menu">☰</div>
+    </nav>
+  </header>
+
+  <main class="product-page">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+      <a href="index.html">Home</a> / 
+      <a href="shop.html">Shop</a> / 
+      <span>Classic White Hoodie</span>
+    </div>
+
+    <div class="product-wrap">
+      <div class="product-media">
+        <!-- Product Image Slideshow -->
+        <div class="product-slideshow">
+          <div class="slideshow-container">
+            <!-- Slide 1 -->
+            <div class="product-slide active">
+              <img src="images/product1.jpg" alt="Classic White Hoodie Front View" class="main-image" loading="lazy">
+            </div>
+            <!-- Slide 2 -->
+            <div class="product-slide">
+              <img src="images/product1-back.jpg" alt="Classic White Hoodie Back View" class="main-image" loading="lazy" onerror="this.style.display='none'">
+            </div>
+            <!-- Slide 3 -->
+            <div class="product-slide">
+              <img src="images/product1-detail.jpg" alt="Classic White Hoodie Detail View" class="main-image" loading="lazy" onerror="this.style.display='none'">
+            </div>
+            <!-- Slide 4 -->
+            <div class="product-slide">
+              <img src="images/product1-side.jpg" alt="Classic White Hoodie Side View" class="main-image" loading="lazy" onerror="this.style.display='none'">
+            </div>
+          </div>
+          
+          <!-- Navigation Arrows -->
+          <button class="slideshow-prev" aria-label="Previous image">❮</button>
+          <button class="slideshow-next" aria-label="Next image">❯</button>
+          
+          <!-- Slide Indicators -->
+          <div class="slideshow-indicators">
+            <span class="indicator active" data-slide="0" aria-label="Go to slide 1"></span>
+            <span class="indicator" data-slide="1" aria-label="Go to slide 2"></span>
+            <span class="indicator" data-slide="2" aria-label="Go to slide 3"></span>
+            <span class="indicator" data-slide="3" aria-label="Go to slide 4"></span>
+          </div>
+        </div>
+
+        <!-- Thumbnail Gallery -->
+        <div class="product-thumbnails">
+          <div class="thumbnail active" data-slide="0">
+            <img src="images/product1.jpg" alt="Front View Thumbnail" loading="lazy">
+          </div>
+          <div class="thumbnail" data-slide="1">
+            <img src="images/product1-back.jpg" alt="Back View Thumbnail" loading="lazy" onerror="this.style.display='none'">
+          </div>
+          <div class="thumbnail" data-slide="2">
+            <img src="images/product1-detail.jpg" alt="Detail View Thumbnail" loading="lazy" onerror="this.style.display='none'">
+          </div>
+          <div class="thumbnail" data-slide="3">
+            <img src="images/product1-side.jpg" alt="Side View Thumbnail" loading="lazy" onerror="this.style.display='none'">
+          </div>
+        </div>
+      </div>
+      
+      <div class="product-info">
+        <!-- Stock Status -->
+        <div class="stock-status">
+          <span>✓</span> In Stock
+        </div>
+
+        <!-- Product Rating -->
+        <div class="product-rating">
+          <div class="rating-stars">
+            ★★★★★
+          </div>
+          <span class="rating-count">(4.8 • 127 reviews)</span>
+        </div>
+
+        <h1 id="product-title">Classic White Hoodie</h1>
+        <p class="price" id="product-price">₹999</p>
+        <p id="product-desc">Premium cotton blend hoodie with a comfortable fit. Perfect for casual wear and everyday comfort. Features a spacious front pocket and adjustable drawstrings for the perfect fit.</p>
+
+        <!-- Size Selection -->
+        <div class="form-group">
+          <label for="size">Size</label>
+          <select id="size" aria-label="Select size">
+            <option value="S">Small (S)</option>
+            <option value="M" selected>Medium (M)</option>
+            <option value="L">Large (L)</option>
+            <option value="XL">Extra Large (XL)</option>
+          </select>
+        </div>
+
+        <!-- Color Selection -->
+        <div class="form-group">
+          <label for="color">Color</label>
+          <select id="color" aria-label="Select color">
+            <option value="white" selected>White</option>
+            <option value="black">Black</option>
+            <option value="gray">Gray</option>
+            <option value="blue">Blue</option>
+          </select>
+        </div>
+
+        <!-- Quantity -->
+        <div class="form-group">
+          <label for="qty">Quantity</label>
+          <div class="quantity-selector">
+            <button class="quantity-btn" onclick="decreaseQuantity()" aria-label="Decrease quantity">-</button>
+            <input id="qty" type="number" value="1" min="1" max="10" readonly aria-label="Quantity">
+            <button class="quantity-btn" onclick="increaseQuantity()" aria-label="Increase quantity">+</button>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="product-actions">
+          <button class="btn primary-btn" id="addtocart-btn" aria-label="Add to cart">
+            Add to Cart
+          </button>
+          <button class="btn secondary-btn" id="wishlist-btn" onclick="addToWishlistProduct()" aria-label="Add to wishlist">
+            <span class="wishlist-icon">🤍</span> Add to Wishlist
+          </button>
+          <button class="btn buy-btn" id="buy-btn" aria-label="Buy now">
+            Buy Now
+          </button>
+        </div>
+
+        <!-- Product Details -->
+        <div class="product-details">
+          <h3>Product Details</h3>
+          <ul>
+            <li><strong>Material:</strong> 80% Cotton, 20% Polyester</li>
+            <li><strong>Fit:</strong> Regular Fit</li>
+            <li><strong>Care:</strong> Machine Washable</li>
+            <li><strong>Style:</strong> Pullover with Front Pocket</li>
+            <li><strong>Features:</strong> Adjustable Drawstrings, Ribbed Cuffs</li>
+            <li><strong>Weight:</strong> 450 GSM</li>
+            <li><strong>Origin:</strong> Made in India</li>
+          </ul>
+        </div>
+
+        <!-- Shipping Info -->
+        <div class="shipping-info">
+          <h3>Shipping & Returns</h3>
+          <ul>
+            <li>🚚 <strong>Free shipping</strong> on orders above ₹1999</li>
+            <li>⏰ Delivery within <strong>5-7 business days</strong></li>
+            <li>↩️ Easy <strong>30-day return</strong> policy</li>
+            <li>💰 <strong>Cash on delivery</strong> available</li>
+            <li>🔒 <strong>Secure payment</strong> options</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Related Products Section -->
+    <section class="related-products">
+      <h2>You May Also Like</h2>
+      <div class="product-grid">
+        <!-- Related products will be loaded dynamically -->
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-section">
+        <h3>MyBrand</h3>
+        <p>Premium clothing for everyone. Quality meets style in every stitch.</p>
+        <div class="social-links">
+          <a href="#" aria-label="Facebook">📘</a>
+          <a href="#" aria-label="Instagram">📷</a>
+          <a href="#" aria-label="Twitter">🐦</a>
+        </div>
+      </div>
+      
+      <div class="footer-section">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="shop.html">Shop</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h4>Customer Service</h4>
+        <ul>
+          <li><a href="#">Shipping Info</a></li>
+          <li><a href="#">Returns</a></li>
+          <li><a href="#">Size Guide</a></li>
+          <li><a href="#">FAQs</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h4>Contact Info</h4>
+        <p>📧 support@mybrand.com</p>
+        <p>📞 +1 (555) 123-4567</p>
+        <p>📍 123 Fashion St, Style City</p>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <div class="footer-bottom-container">
+        <p>&copy; 2024 MyBrand. All rights reserved.</p>
+        <div class="footer-links">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Cookie Policy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/script.js"></script>
+  <script>
+    // Enhanced Product Page Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Product page initialized');
+      
+      // Initialize slideshow
+      initSlideshow();
+      
+      // Initialize product data
+      initProductData();
+      
+      // Initialize event listeners
+      initEventListeners();
+      
+      // Load related products
+      loadRelatedProducts();
+    });
+
+    // Slideshow functionality
+    function initSlideshow() {
+      const slides = document.querySelectorAll('.product-slide');
+      const indicators = document.querySelectorAll('.indicator');
+      const thumbnails = document.querySelectorAll('.thumbnail');
+      const nextBtn = document.querySelector('.slideshow-next');
+      const prevBtn = document.querySelector('.slideshow-prev');
+      
+      let currentSlide = 0;
+      const totalSlides = slides.length;
+
+      function showSlide(n) {
+        // Hide all slides
+        slides.forEach(slide => {
+          slide.classList.remove('active');
+          slide.setAttribute('aria-hidden', 'true');
+        });
+        
+        // Update indicators
+        indicators.forEach(indicator => indicator.classList.remove('active'));
+        thumbnails.forEach(thumbnail => thumbnail.classList.remove('active'));
+        
+        // Show current slide
+        if (slides[n]) {
+          slides[n].classList.add('active');
+          slides[n].setAttribute('aria-hidden', 'false');
+        }
+        if (indicators[n]) {
+          indicators[n].classList.add('active');
+        }
+        if (thumbnails[n]) {
+          thumbnails[n].classList.add('active');
+        }
+        
+        currentSlide = n;
+      }
+
+      function nextSlide() {
+        let next = currentSlide + 1;
+        if (next >= totalSlides) next = 0;
+        showSlide(next);
+      }
+
+      function prevSlide() {
+        let prev = currentSlide - 1;
+        if (prev < 0) prev = totalSlides - 1;
+        showSlide(prev);
+      }
+
+      function goToSlide(n) {
+        if (n >= 0 && n < totalSlides) {
+          showSlide(n);
+        }
+      }
+
+      // Event listeners
+      if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+      if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+
+      indicators.forEach((indicator, index) => {
+        indicator.addEventListener('click', () => goToSlide(index));
+      });
+
+      thumbnails.forEach((thumbnail, index) => {
+        thumbnail.addEventListener('click', () => goToSlide(index));
+      });
+
+      // Keyboard navigation
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') prevSlide();
+        if (e.key === 'ArrowRight') nextSlide();
+      });
+
+      // Initialize first slide
+      showSlide(0);
+    }
+
+    // Quantity functions
+    window.increaseQuantity = function() {
+      const qtyInput = document.getElementById('qty');
+      if (qtyInput) {
+        let currentQty = parseInt(qtyInput.value) || 1;
+        if (currentQty < 10) {
+          qtyInput.value = currentQty + 1;
+        }
+      }
+    }
+
+    window.decreaseQuantity = function() {
+      const qtyInput = document.getElementById('qty');
+      if (qtyInput) {
+        let currentQty = parseInt(qtyInput.value) || 1;
+        if (currentQty > 1) {
+          qtyInput.value = currentQty - 1;
+        }
+      }
+    }
+
+    // Product data
+    function initProductData() {
+      const products = {
+        '1': {
+          id: 1,
+          title: 'Classic White Hoodie', 
+          price: 999, 
+          images: ['images/product1.jpg', 'images/product1-back.jpg', 'images/product1-detail.jpg', 'images/product1-side.jpg'],
+          desc: 'Premium cotton blend hoodie with a comfortable fit. Perfect for casual wear and everyday comfort. Features a spacious front pocket and adjustable drawstrings for the perfect fit.',
+          category: 'men',
+          sizes: ['S', 'M', 'L', 'XL'],
+          colors: ['white', 'black', 'gray', 'blue'],
+          inStock: true,
+          rating: 4.8,
+          reviewCount: 127
+        },
+        '2': {
+          id: 2,
+          title: 'Black Oversized T-Shirt', 
+          price: 699, 
+          images: ['images/product2.jpg'],
+          desc: 'Trendy oversized black t-shirt with a relaxed fit. Perfect for casual outings and comfortable everyday wear.',
+          category: 'men',
+          sizes: ['S', 'M', 'L', 'XL'],
+          colors: ['black', 'white', 'gray'],
+          inStock: true,
+          rating: 4.5,
+          reviewCount: 89
+        },
+        '3': {
+          id: 3,
+          title: 'Premium Cotton Shirt', 
+          price: 1299, 
+          images: ['images/product3.jpg'],
+          desc: 'High-quality cotton formal shirt with excellent breathability and a professional look.',
+          category: 'men',
+          sizes: ['M', 'L', 'XL'],
+          colors: ['blue', 'white'],
+          inStock: true,
+          rating: 4.7,
+          reviewCount: 156
+        },
+        '4': {
+          id: 4,
+          title: 'Denim Jacket', 
+          price: 1999, 
+          images: ['images/product4.jpg'],
+          desc: 'Classic denim jacket with a modern fit. Perfect for layering and adding style to any outfit.',
+          category: 'men',
+          sizes: ['S', 'M', 'L', 'XL'],
+          colors: ['blue', 'black'],
+          inStock: true,
+          rating: 4.9,
+          reviewCount: 203
+        }
+      };
+
+      // Get product from URL
+      const params = new URLSearchParams(location.search);
+      const productId = params.get('id') || '1';
+      const product = products[productId] || products['1'];
+
+      // Update product info
+      if (product) {
+        const titleElem = document.getElementById('product-title');
+        const priceElem = document.getElementById('product-price');
+        const descElem = document.getElementById('product-desc');
+        
+        if (titleElem) titleElem.textContent = product.title;
+        if (priceElem) priceElem.textContent = '₹' + product.price;
+        if (descElem) descElem.textContent = product.desc;
+        
+        // Update stock status
+        const stockStatus = document.querySelector('.stock-status');
+        if (stockStatus && !product.inStock) {
+          stockStatus.innerHTML = '<span>✗</span> Out of Stock';
+          stockStatus.classList.add('out-of-stock');
+        }
+        
+        // Update rating
+        const ratingElem = document.querySelector('.rating-stars');
+        const ratingCountElem = document.querySelector('.rating-count');
+        if (ratingElem && ratingCountElem) {
+          ratingCountElem.textContent = `(${product.rating} • ${product.reviewCount} reviews)`;
+        }
+        
+        document.title = `${product.title} - MyBrand`;
+        
+        // Store current product for later use
+        window.currentProduct = product;
+      }
+    }
+
+    // Event listeners
+    function initEventListeners() {
+      // Add to Cart
+      const addToCartBtn = document.getElementById('addtocart-btn');
+      if (addToCartBtn) {
+        addToCartBtn.addEventListener('click', function() {
+          const qty = parseInt(document.getElementById('qty').value) || 1;
+          const size = document.getElementById('size').value;
+          const color = document.getElementById('color').value;
+          
+          if (window.currentProduct) {
+            for (let i = 0; i < qty; i++) {
+              addToCart(
+                window.currentProduct.title, 
+                window.currentProduct.price, 
+                window.currentProduct.images[0],
+                size,
+                color
+              );
+            }
+            
+            // Show success notification
+            if (typeof showNotification === 'function') {
+              showNotification(`✅ ${qty} ${window.currentProduct.title} added to cart!`, 'success');
+            } else {
+              alert(`✅ ${qty} ${window.currentProduct.title} added to cart!`);
+            }
+          }
+        });
+      }
+
+      // Buy Now
+      const buyNowBtn = document.getElementById('buy-btn');
+      if (buyNowBtn) {
+        buyNowBtn.addEventListener('click', function() {
+          const qty = parseInt(document.getElementById('qty').value) || 1;
+          const size = document.getElementById('size').value;
+          const color = document.getElementById('color').value;
+          
+          if (window.currentProduct) {
+            for (let i = 0; i < qty; i++) {
+              addToCart(
+                window.currentProduct.title, 
+                window.currentProduct.price, 
+                window.currentProduct.images[0],
+                size,
+                color
+              );
+            }
+            
+            window.location.href = 'cart.html';
+          }
+        });
+      }
+    }
+
+    // Wishlist function
+    window.addToWishlistProduct = function() {
+      if (window.currentProduct) {
+        const added = addToWishlist(
+          window.currentProduct.id, 
+          window.currentProduct.title, 
+          window.currentProduct.price, 
+          window.currentProduct.images[0]
+        );
+        
+        const wishlistBtn = document.getElementById('wishlist-btn');
+        
+        if (added) {
+          wishlistBtn.innerHTML = '<span class="wishlist-icon">❤️</span> In Wishlist';
+          wishlistBtn.style.background = '#ff6b6b';
+          wishlistBtn.style.color = 'white';
+          wishlistBtn.style.border = 'none';
+          
+          if (typeof showNotification === 'function') {
+            showNotification(`❤️ ${window.currentProduct.title} added to wishlist!`, 'success');
+          }
+        } else {
+          wishlistBtn.innerHTML = '<span class="wishlist-icon">🤍</span> Add to Wishlist';
+          wishlistBtn.style.background = 'transparent';
+          wishlistBtn.style.color = '#111';
+          wishlistBtn.style.border = '2px solid #111';
+          
+          if (typeof showNotification === 'function') {
+            showNotification(`💔 ${window.currentProduct.title} removed from wishlist!`, 'info');
+          }
+        }
+      }
+    }
+
+    // Load related products
+    function loadRelatedProducts() {
+      const relatedGrid = document.querySelector('.related-products .product-grid');
+      if (!relatedGrid || !window.currentProduct) return;
+
+      const relatedProducts = [
+        { id: 2, title: 'Black Oversized T-Shirt', price: 699, image: 'images/product2.jpg', category: 'men' },
+        { id: 3, title: 'Premium Cotton Shirt', price: 1299, image: 'images/product3.jpg', category: 'men' },
+        { id: 4, title: 'Denim Jacket', price: 1999, image: 'images/product4.jpg', category: 'men' },
+        { id: 5, title: 'Sports Shoes', price: 2999, image: 'images/product5.jpg', category: 'footwear' }
+      ];
+
+      relatedGrid.innerHTML = relatedProducts.map(product => `
+        <div class="product-card" data-category="${product.category}" data-price="${product.price}">
+          <button class="wishlist-btn" onclick="addToWishlist(${product.id}, '${product.title}', ${product.price}, '${product.image}')" aria-label="Add to wishlist">
+            🤍
+          </button>
+          <img src="${product.image}" alt="${product.title}" loading="lazy">
+          <h3>${product.title}</h3>
+          <p class="price">₹${product.price}</p>
+          <button class="btn" onclick="addToCart('${product.title}', ${product.price}, '${product.image}')">Add to Cart</button>
+          <a class="small-link" href="product.html?id=${product.id}">View Details</a>
+        </div>
+      `).join('');
+    }
+
+    // Check initial wishlist state
+    function checkWishlistState() {
+      const wishlistBtn = document.getElementById('wishlist-btn');
+      if (wishlistBtn && window.currentProduct) {
+        const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+        const isInWishlist = wishlist.some(item => item.id == window.currentProduct.id);
+        
+        if (isInWishlist) {
+          wishlistBtn.innerHTML = '<span class="wishlist-icon">❤️</span> In Wishlist';
+          wishlistBtn.style.background = '#ff6b6b';
+          wishlistBtn.style.color = 'white';
+          wishlistBtn.style.border = 'none';
+        }
+      }
+    }
+
+    // Initialize wishlist state check
+    setTimeout(checkWishlistState, 100);
+  </script>
+<script src="js/auth.js"></script>
+<script src="js/script.js"></script>
+</body>
+</html>

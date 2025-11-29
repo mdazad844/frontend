@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Successful - MyBrand</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Same header as other pages -->
+    
+    <section class="login-section">
+        <div class="container">
+            <div class="success-message" style="text-align: center; padding: 40px;">
+                <h1>🎉 Order Successful!</h1>
+                <p>Thank you for your purchase. Your order has been confirmed.</p>
+                <div id="orderDetails">
+                    <!-- Order details will be loaded here -->
+                </div>
+                <div class="success-actions" style="margin-top: 30px;">
+                    <a href="index.html" class="btn btn-primary">Continue Shopping</a>
+                    <a href="profile.html" class="btn">View Order History</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Get order ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get('orderId');
+        
+        if (orderId) {
+            document.getElementById('orderDetails').innerHTML = `
+                <p><strong>Order ID:</strong> ${orderId}</p>
+                <p>You will receive an email confirmation shortly.</p>
+            `;
+        }
+    </script>
+<script src="js/auth.js"></script>
+<script src="js/script.js"></script>
+</body>
+</html>

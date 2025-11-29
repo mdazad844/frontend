@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - MyBrand</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .payment-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .payment-section {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .payment-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #007bff;
+        }
+        
+        .order-details {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .order-total {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            border-top: 2px solid #333;
+            padding-top: 10px;
+            margin-top: 15px;
+        }
+        
+        .payment-methods {
+            display: grid;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .payment-method {
+            border: 2px solid #e0e0e0;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .payment-method.selected {
+            border-color: #007bff;
+            background-color: #f8f9ff;
+        }
+        
+        .payment-method input {
+            margin-right: 10px;
+        }
+        
+        .razorpay-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.3s ease;
+        }
+        
+        .razorpay-btn:hover {
+            background: #0056b3;
+        }
+        
+        .razorpay-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #007bff;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+            border: 1px solid #c3e6cb;
+        }
+
+        .shipping-info {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            border-left: 4px solid #007bff;
+        }
+
+        .shipping-info h4 {
+            margin: 0 0 8px 0;
+            color: #0056b3;
+        }
+
+        .payment-security {
+            background: #fff3cd;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-size: 14px;
+            color: #856404;
+            text-align: center;
+        }
+
+        .back-to-checkout {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-to-checkout a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .back-to-checkout a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .payment-container {
+                padding: 10px;
+            }
+            
+            .payment-section {
+                padding: 15px;
+            }
+            
+            .razorpay-btn {
+                padding: 12px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo"><a href="index.html">MyBrand</a></div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="shop.html">Shop</a></li>
+                <li><a href="cart.html">Cart <span class="cart-count" id="cartCount">0</span></a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li id="profileNavItem"><a href="profile.html">Profile</a></li>
+                <li><a href="login.html" id="authLink">Login</a></li>
+            </ul>
+            <div class="menu-icon" id="menuToggle">☰</div>
+        </nav>
+    </header>
+
+    <section class="login-section">
+        <div class="container">
+            <div class="payment-container">
+                <!-- Order Summary -->
+                <div class="payment-section">
+                    <h1>Complete Your Payment</h1>
+                    
+                    <!-- Shipping Information -->
+                    <div id="shippingInfo" class="shipping-info" style="display: none;">
+                        <h4>🚚 Shipping Information</h4>
+                        <div id="shippingAddress">
+                            <!-- Shipping address loaded by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div class="order-details">
+                        <h3>Order Summary</h3>
+                        <div id="paymentOrderItems">
+                            <!-- Order items loaded by JavaScript -->
+                        </div>
+                        
+                        <div class="order-item">
+                            <span>Subtotal:</span>
+                            <span id="paymentSubtotal">₹0</span>
+                        </div>
+                        
+                        <div class="order-item">
+                            <span>GST:</span>
+                            <span id="paymentTax">₹0</span>
+                        </div>
+                        
+                        <div class="order-item">
+                            <span>Delivery Charge:</span>
+                            <span id="paymentDelivery">₹0</span>
+                        </div>
+                        
+                        <div class="order-item order-total">
+                            <span>Total Amount:</span>
+                            <span id="paymentTotal">₹0</span>
+                        </div>
+                    </div>
+
+                    <!-- Payment Security Notice -->
+                    <div class="payment-security">
+                        🔒 Your payment is secured with 256-bit SSL encryption
+                    </div>
+                </div>
+
+                <!-- Payment Methods -->
+                <div class="payment-section">
+                    <h2>Select Payment Method</h2>
+                    
+                    <div class="payment-methods">
+                        <div class="payment-method selected" onclick="selectPaymentMethod('razorpay')">
+                            <input type="radio" id="razorpay" name="payment" value="razorpay" checked>
+                            <label for="razorpay">
+                                <strong>Credit/Debit Card, UPI, Net Banking</strong>
+                                <p style="margin: 5px 0 0 0; color: #666; font-size: 14px;">
+                                    Secure payment via Razorpay • All major cards accepted
+                                </p>
+                            </label>
+                        </div>
+                        
+                        <div class="payment-method" onclick="selectPaymentMethod('cod')">
+                            <input type="radio" id="cod" name="payment" value="cod">
+                            <label for="cod">
+                                <strong>Cash on Delivery</strong>
+                                <p style="margin: 5px 0 0 0; color: #666; font-size: 14px;">
+                                    Pay when you receive your order • Available for most locations
+                                </p>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Razorpay Payment Button -->
+                    <button class="razorpay-btn" id="razorpayButton" onclick="initiateRazorpayPayment()">
+                        💳 Pay Securely with Razorpay
+                    </button>
+                    
+                    <!-- COD Button -->
+                    <button class="razorpay-btn" id="codButton" style="display: none; background: #28a745;" onclick="confirmCODOrder()">
+                        📦 Confirm Cash on Delivery Order
+                    </button>
+                    
+                    <!-- Loading State -->
+                    <div id="paymentLoading" class="loading" style="display: none;">
+                        <div class="loading-spinner"></div>
+                        <p>Processing your payment...</p>
+                        <p style="font-size: 14px; color: #666;">Please don't close this window</p>
+                    </div>
+                    
+                    <!-- Error/Success Messages -->
+                    <div id="paymentMessage" style="display: none;"></div>
+
+                    <!-- Back to Checkout -->
+                    <div class="back-to-checkout">
+                        <a href="checkout.html">← Back to Checkout</a>
+                    </div>
+                </div>
+
+                <!-- Payment Security Information -->
+                <div class="payment-section">
+                    <h3>Payment Security</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; text-align: center;">
+                        <div>
+                            <div style="font-size: 24px;">🔒</div>
+                            <strong>SSL Secured</strong>
+                            <p style="font-size: 14px; color: #666;">256-bit encryption</p>
+                        </div>
+                        <div>
+                            <div style="font-size: 24px;">🛡️</div>
+                            <strong>PCI DSS Compliant</strong>
+                            <p style="font-size: 14px; color: #666;">Secure payment processing</p>
+                        </div>
+                        <div>
+                            <div style="font-size: 24px;">💳</div>
+                            <strong>Multiple Options</strong>
+                            <p style="font-size: 14px; color: #666;">Cards, UPI, Net Banking</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2025 MyBrand. All Rights Reserved.</p>
+    </footer>
+	<script>
+    // Enhanced error handling
+    window.addEventListener('error', function(e) {
+        console.error('Global error caught:', e.error);
+    });
+
+    // Check if scripts loaded properly
+    function checkScriptLoaded(scriptName) {
+        if (typeof Razorpay === 'undefined') {
+            console.error('Razorpay script not loaded');
+            return false;
+        }
+        return true;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM loaded, checking scripts...');
+        
+        if (!checkScriptLoaded('Razorpay')) {
+            document.getElementById('paymentMessage').innerHTML = `
+                <div class="error-message">
+                    <strong>Payment Service Unavailable</strong>
+                    <p>Razorpay payment service failed to load. Please check your internet connection and refresh the page.</p>
+                </div>
+            `;
+            document.getElementById('paymentMessage').style.display = 'block';
+        }
+    });
+
+    // Fallback global functions
+    window.selectPaymentMethod = function(method) {
+        if (window.paymentManager) {
+            window.paymentManager.selectPaymentMethod(method);
+        } else {
+            console.error('Payment manager not loaded');
+            showFallbackError();
+        }
+    };
+
+    window.initiateRazorpayPayment = function() {
+        if (window.paymentManager) {
+            window.paymentManager.initiateRazorpayPayment();
+        } else {
+            console.error('Payment manager not loaded');
+            showFallbackError();
+        }
+    };
+
+    window.confirmCODOrder = function() {
+        if (window.paymentManager) {
+            window.paymentManager.confirmCODOrder();
+        } else {
+            console.error('Payment manager not loaded');
+            showFallbackError();
+        }
+    };
+
+    function showFallbackError() {
+        const messageElement = document.getElementById('paymentMessage');
+        if (messageElement) {
+            messageElement.innerHTML = `
+                <div class="error-message">
+                    <strong>System Loading</strong>
+                    <p>Payment system is still initializing. Please wait a moment and try again.</p>
+                    <button onclick="window.location.reload()" style="margin-top: 10px; padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        Retry Now
+                    </button>
+                </div>
+            `;
+            messageElement.style.display = 'block';
+        }
+    }
+
+    // Final check after 5 seconds
+    setTimeout(() => {
+        if (!window.paymentManager) {
+            console.error('Payment manager failed to initialize completely');
+            showFallbackError();
+        }
+    }, 5000);
+</script>
+
+    <!-- Razorpay Checkout Script -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    
+    <!-- Your Scripts -->
+    <script src="js/auth.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/payment.js"></script>
+
+    <script>
+    // Simple error handling
+    window.onerror = function(msg, url, lineNo, columnNo, error) {
+        console.log('Error: ' + msg + ' at ' + url + ':' + lineNo);
+        return false;
+    };
+
+    // Check if scripts loaded properly
+    function checkScriptLoaded() {
+        if (typeof Razorpay === 'undefined') {
+            console.log('Razorpay script not loaded');
+            return false;
+        }
+        return true;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM loaded, checking scripts...');
+        
+        if (!checkScriptLoaded()) {
+            const messageElement = document.getElementById('paymentMessage');
+            if (messageElement) {
+                messageElement.innerHTML = `
+                    <div class="error-message">
+                        <strong>Payment Service Unavailable</strong>
+                        <p>Razorpay payment service failed to load. Please check your internet connection and refresh the page.</p>
+                    </div>
+                `;
+                messageElement.style.display = 'block';
+            }
+        }
+    });
+
+    // Fallback global functions
+    window.selectPaymentMethod = function(method) {
+        if (window.paymentManager) {
+            window.paymentManager.selectPaymentMethod(method);
+        } else {
+            console.log('Payment manager not loaded');
+            showFallbackError();
+        }
+    };
+
+    window.initiateRazorpayPayment = function() {
+        if (window.paymentManager) {
+            window.paymentManager.initiateRazorpayPayment();
+        } else {
+            console.log('Payment manager not loaded');
+            showFallbackError();
+        }
+    };
+
+    window.confirmCODOrder = function() {
+        if (window.paymentManager) {
+            window.paymentManager.confirmCODOrder();
+        } else {
+            console.log('Payment manager not loaded');
+            showFallbackError();
+        }
+    };
+
+    function showFallbackError() {
+        const messageElement = document.getElementById('paymentMessage');
+        if (messageElement) {
+            messageElement.innerHTML = `
+                <div class="error-message">
+                    <strong>System Loading</strong>
+                    <p>Payment system is still initializing. Please wait a moment and try again.</p>
+                    <button onclick="window.location.reload()" style="margin-top: 10px; padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        Retry Now
+                    </button>
+                </div>
+            `;
+            messageElement.style.display = 'block';
+        }
+    }
+
+    // Final check after 5 seconds
+    setTimeout(() => {
+        if (!window.paymentManager) {
+            console.log('Payment manager failed to initialize completely');
+            showFallbackError();
+        }
+    }, 5000);
+</script>
+</body>
+</html>

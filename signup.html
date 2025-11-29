@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign Up - MyBrand</title>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+<header>
+    <nav class="navbar">
+        <div class="logo"><a href="index.html">MyBrand</a></div>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="shop.html">Shop</a></li>
+			<li><a href="bulktshirts.html">Bulk plain T-shirts</a></li>
+            <li>
+                <a href="cart.html">Cart 
+                    <span class="cart-count" id="cartCount">0</span>
+                </a>
+            </li>
+			<li>
+          <a href="wishlist.html">Wishlist 
+            <span class="wishlist-count" id="wishlistCount">0</span>
+          </a>
+        </li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <!-- FIXED: Added id="profileNavItem" to Profile link -->
+            <li id="profileNavItem"><a href="profile.html">Profile</a></li>
+            <li><a href="login.html" id="authLink">Login</a></li>
+        </ul>
+        <div class="menu-icon" id="menuToggle">☰</div>
+    </nav>
+</header>
+
+  <!-- Signup Section -->
+  <section class="login-section">
+    <div class="login-container">
+      <div class="login-form">
+        <h2>Create Account</h2>
+        <form id="signupForm">
+          <div class="form-group">
+            <label for="signupName">Full Name:</label>
+            <input type="text" id="signupName" name="name" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="signupEmail">Email:</label>
+            <input type="email" id="signupEmail" name="email" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="signupPhone">Phone Number:</label>
+            <input type="tel" id="signupPhone" name="phone" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="signupPassword">Password:</label>
+            <input type="password" id="signupPassword" name="password" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="confirmPassword">Confirm Password:</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" required>
+          </div>
+
+          <!-- Address Fields -->
+          <div class="address-section">
+            <h3>Delivery Address</h3>
+            
+            <div class="form-group">
+              <label for="addressLine1">Address Line 1:</label>
+              <input type="text" id="addressLine1" name="addressLine1" required placeholder="Street address, P.O. box, company name">
+            </div>
+            
+            <div class="form-group">
+              <label for="addressLine2">Address Line 2 (Optional):</label>
+              <input type="text" id="addressLine2" name="addressLine2" placeholder="Apartment, suite, unit, building, floor, etc.">
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="city">City:</label>
+                <input type="text" id="city" name="city" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="state">State:</label>
+                <input type="text" id="state" name="state" required>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="pincode">PIN Code:</label>
+                <input type="text" id="pincode" name="pincode" required pattern="[0-9]{6}" title="6-digit PIN code">
+              </div>
+              
+              <div class="form-group">
+                <label for="country">Country:</label>
+                <input type="text" id="country" name="country" value="India" readonly>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="landmark">Landmark (Optional):</label>
+              <input type="text" id="landmark" name="landmark" placeholder="Nearby famous place">
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-login">Sign Up</button>
+        </form>
+        <p class="login-link">Already have an account? <a href="login.html">Login here</a></p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 MyBrand. All Rights Reserved.</p>
+  </footer>
+<script src="js/auth.js"></script>
+<script src="js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Charges - MyBrand</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .delivery-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .delivery-section {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .calculator-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            gap: 15px;
+            align-items: end;
+        }
+        
+        .form-group {
+            margin-bottom: 0;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .calculate-btn {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .calculate-btn:hover {
+            background: #0056b3;
+        }
+        
+        .calculate-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .results-section {
+            display: none;
+        }
+        
+        .delivery-options {
+            display: grid;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .delivery-option {
+            border: 2px solid #e0e0e0;
+            padding: 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .delivery-option.shiprocket {
+            border-left: 4px solid #007bff;
+        }
+        
+        .delivery-option.manual {
+            border-left: 4px solid #28a745;
+        }
+        
+        .delivery-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .delivery-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .delivery-price {
+            font-size: 20px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        
+        .delivery-details {
+            display: flex;
+            justify-content: space-between;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .provider-badge {
+            background: #f8f9fa;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .provider-shiprocket {
+            background: #007bff;
+            color: white;
+        }
+        
+        .provider-manual {
+            background: #28a745;
+            color: white;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #007bff;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+        
+        .weight-info {
+            background: #e7f3ff;
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .calculator-form {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo"><a href="index.html">MyBrand</a></div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="shop.html">Shop</a></li>
+                <li><a href="cart.html">Cart <span class="cart-count" id="cartCount">0</span></a></li>
+                <li><a href="delivery-charges.html" class="active">Delivery Charges</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li id="profileNavItem"><a href="profile.html">Profile</a></li>
+                <li><a href="login.html" id="authLink">Login</a></li>
+            </ul>
+            <div class="menu-icon" id="menuToggle">☰</div>
+        </nav>
+    </header>
+
+    <section class="login-section">
+        <div class="container">
+            <div class="delivery-container">
+                <div class="delivery-section">
+                    <h1 style="text-align: center; margin-bottom: 30px;">Delivery Charges Calculator</h1>
+                    <p style="text-align: center; color: #666; margin-bottom: 30px;">
+                        Check real-time delivery charges from multiple courier partners based on your location and package weight.
+                    </p>
+                    
+                    <form id="deliveryCalculatorForm" class="calculator-form">
+                        <div class="form-group">
+                            <label for="deliveryPincode">Delivery Pincode *</label>
+                            <input type="text" id="deliveryPincode" name="deliveryPincode" 
+                                   placeholder="e.g., 400001" maxlength="6" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="packageWeight">Package Weight (kg) *</label>
+                            <input type="number" id="packageWeight" name="packageWeight" 
+                                   placeholder="e.g., 1.5" step="0.1" min="0.1" max="50" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="orderValue">Order Value (₹)</label>
+                            <input type="number" id="orderValue" name="orderValue" 
+                                   placeholder="e.g., 1500" min="0" value="1000">
+                        </div>
+                        
+                        <button type="submit" class="calculate-btn" id="calculateBtn">
+                            Calculate Charges
+                        </button>
+                    </form>
+                    
+                    <div class="weight-info">
+                        <strong>💡 Weight Reference:</strong>
+                        <div>• 1 T-shirt: 0.3 kg (including packaging)</div>
+                        <div>• Minimum chargeable weight: 0.1 kg</div>
+                    </div>
+                </div>
+
+                <div class="delivery-section results-section" id="resultsSection">
+                    <h2>Delivery Options</h2>
+                    <div id="calculationInfo" class="weight-info"></div>
+                    
+                    <div id="deliveryResults">
+                        <!-- Delivery options will be loaded here -->
+                    </div>
+                    
+                    <div id="loadingSection" class="loading" style="display: none;">
+                        <div class="loading-spinner"></div>
+                        <p>Fetching real-time delivery charges...</p>
+                    </div>
+                    
+                    <div id="errorSection" class="error-message" style="display: none;">
+                        <!-- Error messages will be shown here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2025 MyBrand. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/auth.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/shipping.js"></script>
+    <script src="js/delivery-calculator.js"></script>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cart - MyBrand</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* Cart page specific styles */
+    .cart-page { 
+        padding: 40px; 
+        min-height: 60vh;
+    }
+    
+    .cart-item { 
+        display: flex; 
+        gap: 20px; 
+        padding: 20px; 
+        border-bottom: 1px solid #eee; 
+        align-items: center;
+        background: white;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .cart-item img { 
+        width: 100px; 
+        height: 100px;
+        object-fit: cover;
+        border-radius: 8px; 
+    }
+    
+    .cart-info { 
+        flex: 1;
+    }
+    
+    .cart-info h3 { 
+        margin-bottom: 8px; 
+        color: #333;
+    }
+    
+    .cart-info p { 
+        margin-bottom: 8px;
+        color: #666;
+    }
+    
+    .remove-btn { 
+        background: #ff4d4d; 
+        padding: 8px 16px; 
+        border-radius: 6px; 
+        color: #fff; 
+        border: none; 
+        cursor: pointer;
+        font-size: 14px;
+    }
+    
+    .remove-btn:hover {
+        background: #ff3333;
+    }
+    
+    .checkout-section { 
+        margin-top: 30px; 
+        padding: 20px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .cart-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: flex-end;
+        margin-top: 20px;
+    }
+    
+    .empty-cart {
+        text-align: center;
+        padding: 40px;
+        color: #666;
+    }
+    
+    #cart-total {
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+        <div class="logo"><a href="index.html">MyBrand</a></div>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="shop.html">Shop</a></li>
+			<li><a href="bulktshirts.html">Bulk plain T-shirts</a></li>
+            <li>
+                <a href="cart.html">Cart 
+                    <span class="cart-count" id="cartCount">0</span>
+                </a>
+            </li>
+			<li>
+          <a href="wishlist.html">Wishlist 
+            <span class="wishlist-count" id="wishlistCount">0</span>
+          </a>
+        </li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="profile.html">Profile</a></li>
+            <li><a href="login.html" id="authLink">Login</a></li>
+			<li><a href="delivery-charges.html">Delivery Charges</a></li>
+        </ul>
+        <div class="menu-icon" id="menuToggle">☰</div>
+    </nav>
+</header>
+
+  <main class="cart-page">
+    <h1>Your Shopping Cart</h1>
+    <div id="cart-items" class="empty-cart">
+        <!-- Cart items will be loaded here by JavaScript -->
+    </div>
+
+    <div class="checkout-section">
+        <p id="cart-total">Total: ₹0</p>
+        <div class="cart-actions">
+            <button id="clear-cart-btn" class="btn" style="background: #666;">Clear Cart</button>
+            <button id="checkout-btn" class="btn">Proceed to Checkout</button>
+        </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 MyBrand. All Rights Reserved.</p>
+  </footer>
+<script>
+// Simple cart page initialization
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🛒 Cart page loaded - using AppState system');
+    
+    // Use the SAME system as script.js
+    if (typeof displayCartItems !== 'undefined') {
+        displayCartItems();
+        updateCartCount();
+    }
+    
+    // Add event listeners
+    const checkoutBtn = document.getElementById('checkout-btn');
+    const clearCartBtn = document.getElementById('clear-cart-btn');
+    
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', function() {
+            if (AppState.getCart().length === 0) {
+                showNotification('Your cart is empty!', 'error');
+                return;
+            }
+            window.location.href = 'checkout.html';
+        });
+    }
+    
+    if (clearCartBtn) {
+        clearCartBtn.addEventListener('click', function() {
+            if (confirm('Are you sure you want to clear your cart?')) {
+                AppState.updateCart([]);
+                showNotification('Cart cleared!', 'info');
+                displayCartItems();
+            }
+        });
+    }
+});
+</script>
+  
+ 
+  <!-- IMPORTANT: Load auth.js first for navbar functionality -->
+  <script src="js/auth.js"></script>
+  <script src="js/script.js"></script>
+ 
+</body>
+</html>

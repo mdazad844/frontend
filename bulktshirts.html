@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="css/style.css"/>
+    <title>Bulk Plain T-Shirts - Wholesale Prices</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        .bulk-tshirt-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Styles */
+        .bulk-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+        }
+
+        .bulk-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .bulk-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* Main Content Grid */
+        .bulk-content {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 30px;
+        }
+
+        /* Filter Styles */
+        .filter-sidebar {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .filter-group {
+            margin-bottom: 25px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+        }
+
+        .filter-group:last-child {
+            border-bottom: none;
+        }
+
+        .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px 0;
+        }
+
+        .filter-header h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .group-arrow {
+            transition: transform 0.3s ease;
+        }
+
+        .filter-options {
+            display: none;
+            padding-top: 10px;
+        }
+
+        .filter-group.active .filter-options {
+            display: block;
+        }
+
+        .filter-group.active .group-arrow {
+            transform: rotate(180deg);
+        }
+
+        /* Size Options - 2 per line */
+        .size-options {
+            display: grid !important;
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 8px !important;
+            width: 100% !important;
+        }
+
+        .size-option {
+            display: flex !important;
+            justify-content: center !important;
+            width: 100% !important;
+            margin: 0 !important;
+        }
+
+        .size-box {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 100% !important;
+            padding: 12px 5px !important;
+            border: 2px solid #ddd !important;
+            border-radius: 6px !important;
+            text-align: center !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
+            font-weight: 600 !important;
+            background: white !important;
+        }
+
+        .size-option input:checked + .size-box {
+            background-color: #007bff !important;
+            color: white !important;
+            border-color: #007bff !important;
+        }
+
+        /* Color Options - 2 per line */
+        .color-options {
+            display: grid !important;
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 12px !important;
+            width: 100% !important;
+        }
+
+        .color-option {
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            cursor: pointer !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 5px !important;
+            border-radius: 6px !important;
+            transition: background-color 0.3s ease !important;
+        }
+
+        .color-option:hover {
+            background-color: #f8f9fa !important;
+        }
+
+        .color-box {
+            width: 24px !important;
+            height: 24px !important;
+            border-radius: 6px !important;
+            border: 2px solid #ddd !important;
+            transition: all 0.3s ease !important;
+            flex-shrink: 0 !important;
+        }
+
+        .color-option input:checked + .color-box {
+            border-color: #333 !important;
+            transform: scale(1.1) !important;
+        }
+
+        .color-text {
+            font-size: 14px !important;
+            flex-grow: 1 !important;
+            font-weight: 500 !important;
+        }
+
+        /* Hide original checkboxes */
+        .size-option input[type="checkbox"],
+        .color-option input[type="checkbox"] {
+            display: none !important;
+        }
+
+        /* Filter Option Styles */
+        .filter-option {
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            cursor: pointer !important;
+            padding: 8px 0 !important;
+            transition: background-color 0.3s ease !important;
+            border-radius: 4px !important;
+        }
+
+        .filter-option:hover {
+            background-color: #f8f9fa !important;
+        }
+
+        .checkmark {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #ddd;
+            border-radius: 3px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .filter-option input:checked + .checkmark {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .filter-option input:checked + .checkmark::after {
+            content: '✓';
+            position: absolute;
+            color: white;
+            font-size: 12px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .filter-text {
+            flex-grow: 1;
+            font-size: 14px;
+        }
+
+        .product-count {
+            color: #666;
+            font-size: 12px;
+        }
+
+        /* Products Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            position: relative;
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ff6b6b;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .product-info {
+            padding: 20px;
+        }
+
+        .product-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .product-description {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .product-price {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+
+        .bulk-pricing {
+            background: #e7f3ff;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .bulk-pricing h5 {
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .bulk-pricing ul {
+            list-style: none;
+            font-size: 0.85rem;
+        }
+
+        .bulk-pricing li {
+            margin-bottom: 3px;
+            color: #555;
+        }
+
+        .order-btn {
+            width: 100%;
+            padding: 12px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .order-btn:hover {
+            background: #0056b3;
+        }
+
+        /* Bulk Order CTA */
+        .bulk-cta {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .bulk-cta h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .bulk-cta p {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+
+        .cta-btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: transform 0.3s ease;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .bulk-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-sidebar {
+                position: static;
+                margin-bottom: 30px;
+            }
+            
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .bulk-header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <nav class="navbar">
+        <div class="logo"><a href="index.html">MyBrand</a></div>
+        <!-- Search Bar -->
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search products...">
+            <button onclick="searchProducts()">🔍</button>
+        </div>
+        
+        <ul class="nav-links" id="navLinks">
+            <li><a href="index.html" class="active">Home</a></li>
+            <li><a href="shop.html">Shop</a></li>
+			
+            <li>
+                <a href="cart.html">Cart 
+                    <span class="cart-count" id="cartCount">0</span>
+                </a>
+            </li>
+            <!-- Wishlist Link -->
+            <li>
+                <a href="wishlist.html">Wishlist 
+                    <span class="wishlist-count" id="wishlistCount">0</span>
+                </a>
+            </li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li id="profileNavItem"><a href="profile.html">Profile</a></li>
+            <li><a href="login.html" id="authLink">Login</a></li>
+			<li><a href="delivery-charges.html">Delivery Charges</a></li>
+        </ul>
+        <div class="menu-icon" id="menuToggle">☰</div>
+    </nav>
+</header>
+
+    <div class="bulk-tshirt-container">
+        <!-- Header Section -->
+        <div class="bulk-header">
+            <h1>Bulk Plain T-Shirts</h1>
+            <p>Wholesale Prices • Custom Sizing • Fast Delivery</p>
+        </div>
+
+        <!-- Main Content -->
+        <div class="bulk-content">
+            <!-- Filters Sidebar -->
+            <div class="filter-sidebar">
+                <!-- Price Range Filter -->
+                <div class="filter-group active">
+                    <div class="filter-header" onclick="toggleFilterGroup(this)" role="button" tabindex="0" aria-expanded="true">
+                        <h4>Price Range</h4>
+                        <span class="group-arrow">▼</span>
+                    </div>
+                    <div class="filter-options">
+                        <label class="filter-option">
+                            <input type="checkbox" name="price" value="0-500" onchange="updateFilters()">
+                            <span class="checkmark"></span>
+                            <span class="filter-text">Under ₹500</span>
+                            <span class="product-count">(2)</span>
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" name="price" value="500-1000" onchange="updateFilters()">
+                            <span class="checkmark"></span>
+                            <span class="filter-text">₹500 - ₹1000</span>
+                            <span class="product-count">(8)</span>
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" name="price" value="1000-2000" onchange="updateFilters()">
+                            <span class="checkmark"></span>
+                            <span class="filter-text">₹1000 - ₹2000</span>
+                            <span class="product-count">(7)</span>
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" name="price" value="2000-5000" onchange="updateFilters()">
+                            <span class="checkmark"></span>
+                            <span class="filter-text">₹2000 - ₹5000</span>
+                            <span class="product-count">(3)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Size Filter -->
+                <div class="filter-group active">
+                    <div class="filter-header" onclick="toggleFilterGroup(this)" role="button" tabindex="0" aria-expanded="true">
+                        <h4>Size</h4>
+                        <span class="group-arrow">▼</span>
+                    </div>
+                    <div class="filter-options size-options">
+                        <label class="size-option">
+                            <input type="checkbox" name="size" value="S" onchange="updateFilters()">
+                            <span class="size-box">S</span>
+                        </label>
+                        <label class="size-option">
+                            <input type="checkbox" name="size" value="M" onchange="updateFilters()">
+                            <span class="size-box">M</span>
+                        </label>
+                        <label class="size-option">
+                            <input type="checkbox" name="size" value="L" onchange="updateFilters()">
+                            <span class="size-box">L</span>
+                        </label>
+                        <label class="size-option">
+                            <input type="checkbox" name="size" value="XL" onchange="updateFilters()">
+                            <span class="size-box">XL</span>
+                        </label>
+                        <label class="size-option">
+                            <input type="checkbox" name="size" value="XXL" onchange="updateFilters()">
+                            <span class="size-box">XXL</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Color Filter -->
+                <div class="filter-group active">
+                    <div class="filter-header" onclick="toggleFilterGroup(this)" role="button" tabindex="0" aria-expanded="true">
+                        <h4>Color</h4>
+                        <span class="group-arrow">▼</span>
+                    </div>
+                    <div class="filter-options color-options">
+                        <label class="color-option">
+                            <input type="checkbox" name="color" value="black" onchange="updateFilters()">
+                            <span class="color-box" style="background-color: #000;"></span>
+                            <span class="color-text">Black</span>
+                        </label>
+                        <label class="color-option">
+                            <input type="checkbox" name="color" value="white" onchange="updateFilters()">
+                            <span class="color-box" style="background-color: #fff;"></span>
+                            <span class="color-text">White</span>
+                        </label>
+                        <label class="color-option">
+                            <input type="checkbox" name="color" value="blue" onchange="updateFilters()">
+                            <span class="color-box" style="background-color: #007bff;"></span>
+                            <span class="color-text">Blue</span>
+                        </label>
+                        <label class="color-option">
+                            <input type="checkbox" name="color" value="red" onchange="updateFilters()">
+                            <span class="color-box" style="background-color: #dc3545;"></span>
+                            <span class="color-text">Red</span>
+                        </label>
+                        <label class="color-option">
+                            <input type="checkbox" name="color" value="green" onchange="updateFilters()">
+                            <span class="color-box" style="background-color: #28a745;"></span>
+                            <span class="color-text">Green</span>
+                        </label>
+                        <label class="color-option">
+                            <input type="checkbox" name="color" value="gray" onchange="updateFilters()">
+                            <span class="color-box" style="background-color: #6c757d;"></span>
+                            <span class="color-text">Gray</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="products-section">
+                <div class="products-grid">
+                    <!-- Product 1 -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            <div class="product-badge">BEST SELLER</div>
+                            Plain Cotton T-Shirt
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title">Premium Cotton T-Shirt</h3>
+                            <p class="product-description">100% premium cotton, pre-shrunk, comfortable fit for everyday wear.</p>
+                            <div class="product-price">Starting at ₹199</div>
+                            <div class="bulk-pricing">
+                                <h5>Bulk Pricing:</h5>
+                                <ul>
+                                    <li>50+ pieces: ₹179 each</li>
+                                    <li>100+ pieces: ₹159 each</li>
+                                    <li>500+ pieces: ₹139 each</li>
+                                </ul>
+                            </div>
+                            <button class="order-btn" onclick="viewProductDetail()">View Product & Request Quote</button>
+                        </div>
+                    </div>
+
+                    <!-- Product 2 -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            <div class="product-badge">ECO FRIENDLY</div>
+                            Organic Cotton T-Shirt
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title">Organic Cotton T-Shirt</h3>
+                            <p class="product-description">GOTS certified organic cotton, environmentally friendly production.</p>
+                            <div class="product-price">Starting at ₹299</div>
+                            <div class="bulk-pricing">
+                                <h5>Bulk Pricing:</h5>
+                                <ul>
+                                    <li>50+ pieces: ₹269 each</li>
+                                    <li>100+ pieces: ₹239 each</li>
+                                    <li>500+ pieces: ₹209 each</li>
+                                </ul>
+                            </div>
+                            <button class="order-btn">Request Quote</button>
+                        </div>
+                    </div>
+
+                    <!-- Product 3 -->
+					
+                    <div  class="product-card">
+					<a href="premiumpolotshirt.html" class="order-btn">
+                        <div class="product-image">
+                            Premium Polo T-Shirt
+							</a>
+                        </div>
+						
+						
+                        <div class="product-info">
+                            <h3 class="product-title">Classic Polo T-Shirt</h3>
+                            <p class="product-description">Premium pique cotton, collar style, perfect for corporate events.</p>
+                            <div class="product-price">Starting at ₹349</div>
+                            <div class="bulk-pricing">
+                                <h5>Bulk Pricing:</h5>
+                                <ul>
+                                    <li>50+ pieces: ₹319 each</li>
+                                    <li>100+ pieces: ₹289 each</li>
+                                    <li>500+ pieces: ₹259 each</li>
+                                </ul>
+                            </div>
+                            <button class="order-btn" onclick="viewProductDetail()">
+							<a href="premiumpolotshirt.html" class="order-btn">
+    View Product & Request Quote
+</a>
+</button>
+                        </div>
+                    </div>
+
+                    <!-- Product 4 -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            <div class="product-badge">NEW</div>
+                            Sport Performance T-Shirt
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title">Performance T-Shirt</h3>
+                            <p class="product-description">Moisture-wicking fabric, quick dry, perfect for sports and gym.</p>
+                            <div class="product-price">Starting at ₹249</div>
+                            <div class="bulk-pricing">
+                                <h5>Bulk Pricing:</h5>
+                                <ul>
+                                    <li>50+ pieces: ₹229 each</li>
+                                    <li>100+ pieces: ₹209 each</li>
+                                    <li>500+ pieces: ₹189 each</li>
+                                </ul>
+                            </div>
+                            <button class="order-btn">Request Quote</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bulk Order CTA -->
+                <div class="bulk-cta">
+                    <h2>Need Custom Bulk Order?</h2>
+                    <p>We specialize in large quantity orders with custom sizes, colors, and branding options.</p>
+                    <a href="#contact" class="cta-btn">Get Custom Quote</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Filter toggle functionality
+        function toggleFilterGroup(header) {
+            const filterGroup = header.parentElement;
+            filterGroup.classList.toggle('active');
+            
+            // Update aria-expanded for accessibility
+            const isExpanded = filterGroup.classList.contains('active');
+            header.setAttribute('aria-expanded', isExpanded);
+        }
+
+        // Filter update functionality
+        function updateFilters() {
+            // Your filter logic here
+            console.log('Filters updated');
+            // Add your actual filter implementation
+        }
+
+        // Initialize all filter groups as active
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterGroups = document.querySelectorAll('.filter-group');
+            filterGroups.forEach(group => {
+                group.classList.add('active');
+            });
+        });
+		
+		function viewProductDetail() {
+    window.location.href = 'product-detail.html';
+}
+
+// Also make the entire product card clickable
+document.querySelectorAll('.product-card').forEach(card => {
+    card.style.cursor = 'pointer';
+    card.addEventListener('click', function(e) {
+        if (!e.target.classList.contains('order-btn')) {
+            viewProductDetail();
+        }
+    });
+});
+
+    </script>
+	<!-- Are these scripts included in the correct order? -->
+<script src="js/auth.js"></script>
+<script src="js/script.js"></script>
+</body>
+</html>

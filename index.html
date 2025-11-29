@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MyBrand - Clothing Store</title>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+<header>
+    <nav class="navbar">
+        <div class="logo"><a href="index.html">MyBrand</a></div>
+        <!-- Search Bar -->
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search products...">
+            <button onclick="searchProducts()">🔍</button>
+        </div>
+        
+        <ul class="nav-links" id="navLinks">
+            <li><a href="index.html" class="active">Home</a></li>
+            <li><a href="shop.html">Shop</a></li>
+			<li><a href="bulktshirts.html">Bulk plain T-shirts</a></li>
+            <li>
+                <a href="cart.html">Cart 
+                    <span class="cart-count" id="cartCount">0</span>
+                </a>
+            </li>
+            <!-- Wishlist Link -->
+            <li>
+                <a href="wishlist.html">Wishlist 
+                    <span class="wishlist-count" id="wishlistCount">0</span>
+                </a>
+            </li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li id="profileNavItem"><a href="profile.html">Profile</a></li>
+            <li><a href="login.html" id="authLink">Login</a></li>
+			<li><a href="delivery-charges.html">Delivery Charges</a></li>
+        </ul>
+        <div class="menu-icon" id="menuToggle">☰</div>
+    </nav>
+</header>
+
+  <!-- HERO SECTION -->
+  <section class="hero">
+    <!-- HERO SLIDER -->
+    <div class="hero-slider">
+      <div class="slider-container">
+        <div class="slider">
+          <!-- Slide 1 with clickable link -->
+          <div class="slide active">
+            <a href="shop.html" class="slide-link">
+              <img src="images/slide1.jpg" alt="New Collection">
+              <div class="slide-content">
+                <h1>New Collection</h1>
+                <p>Discover our latest arrivals</p>
+                <span class="btn">Shop Now</span>
+              </div>
+            </a>
+          </div>
+          
+          <!-- Slide 2 with clickable link -->
+          <div class="slide">
+            <a href="shop.html" class="slide-link">
+              <img src="images/slide2.jpg" alt="Summer Sale">
+              <div class="slide-content">
+                <h1>Summer Sale</h1>
+                <p>Up to 50% off on selected items</p>
+                <span class="btn">Shop Now</span>
+              </div>
+            </a>
+          </div>
+          
+          <!-- Slide 3 with clickable link -->
+          <div class="slide">
+            <a href="shop.html" class="slide-link">
+              <img src="images/slide3.jpg" alt="Premium Quality">
+              <div class="slide-content">
+                <h1>Premium Quality</h1>
+                <p>Crafted with the finest materials</p>
+                <span class="btn">Shop Now</span>
+              </div>
+            </a>
+          </div>
+        </div>
+        <div class="slider-nav">
+          <button class="prev-btn">❮</button>
+          <div class="dots">
+            <span class="dot active"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+          <button class="next-btn">❯</button>
+        </div>
+      </div>
+    </div>
+      
+  </section>
+
+  <!-- CATEGORIES SECTION -->
+  <section class="categories">
+    <h2>Shop by Category</h2>
+    <div class="category-grid">
+      <a class="category-card" href="shop.html?cat=men">
+        <img src="images/men.jpg" alt="Men" onerror="this.src='images/placeholder.png'">
+        <h3>Men</h3>
+      </a>
+      <a class="category-card" href="shop.html?cat=women">
+        <img src="images/women.jpg" alt="Women" onerror="this.src='images/placeholder.png'">
+        <h3>Women</h3>
+      </a>
+      <a class="category-card" href="shop.html?cat=kids">
+        <img src="images/kids.jpg" alt="Kids" onerror="this.src='images/placeholder.png'">
+        <h3>Kids</h3>
+      </a>
+    </div>
+  </section>
+
+  <!-- FEATURED PRODUCTS SECTION -->
+  <section class="featured">
+    <h2>Featured Products</h2>
+    <div class="product-grid">
+      
+      <div class="product-card">
+        <button class="wishlist-btn" onclick="addToWishlist(1, 'Classic White Hoodie', 999, 'images/product1.jpg')">
+            🤍
+        </button>
+		
+		
+		
+		
+		
+		
+        <img src="images/product1.jpg" alt="Classic White Hoodie" onerror="this.src='images/placeholder.png'">
+        <h3>Classic White Hoodie</h3>
+        <p class="price">₹999</p>
+        <button class="btn" onclick="addToCart('Classic White Hoodie', 999, 'images/product1.jpg')">Add to Cart</button>
+        <a class="small-link" href="product.html?id=1">View Details</a>
+      </div>
+
+      <div class="product-card">
+        <button class="wishlist-btn" onclick="addToWishlist(2, 'Black Oversized T-Shirt', 699, 'images/product2.jpg')">
+            🤍
+        </button>
+        <img src="images/product2.jpg" alt="Black Oversized T-Shirt" onerror="this.src='images/placeholder.png'">
+        <h3>Black Oversized T-Shirt</h3>
+        <p class="price">₹699</p>
+        <button class="btn" onclick="addToCart('Black Oversized T-Shirt', 699, 'images/product2.jpg')">Add to Cart</button>
+        <a class="small-link" href="product.html?id=2">View Details</a>
+      </div>
+
+      <div class="product-card">
+        <button class="wishlist-btn" onclick="addToWishlist(3, 'Premium Cotton Shirt', 1299, 'images/product3.jpg')">
+            🤍
+        </button>
+        <img src="images/product3.jpg" alt="Premium Cotton Shirt" onerror="this.src='images/placeholder.png'">
+        <h3>Premium Cotton Shirt</h3>
+        <p class="price">₹1299</p>
+        <button class="btn" onclick="addToCart('Premium Cotton Shirt', 1299, 'images/product3.jpg')">Add to Cart</button>
+        <a class="small-link" href="product.html?id=3">View Details</a>
+      </div>
+
+      <!-- Additional featured products -->
+      <div class="product-card">
+        <button class="wishlist-btn" onclick="addToWishlist(4, 'Denim Jacket', 1999, 'images/product4.jpg')">
+            🤍
+        </button>
+		
+		
+        <img src="images/product4.jpg" alt="Denim Jacket" onerror="this.src='images/placeholder.png'">
+        <h3>Denim Jacket</h3>
+        <p class="price">₹1999</p>
+        <button class="btn" onclick="addToCart('Denim Jacket', 1999, 'images/product4.jpg')">Add to Cart</button>
+        <a class="small-link" href="product.html?id=4">View Details</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- NEW FOOTER SECTION -->
+  <footer class="footer">
+    <div class="footer-container">
+      <!-- Company Info -->
+      <div class="footer-section">
+        <h3>MyBrand</h3>
+        <p>Premium clothing for everyone. Quality, style, and comfort in every stitch.</p>
+        <div class="social-links">
+          <a href="#" aria-label="Facebook">📘</a>
+          <a href="#" aria-label="Instagram">📷</a>
+          <a href="#" aria-label="Twitter">🐦</a>
+          <a href="#" aria-label="Pinterest">📌</a>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="footer-section">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="shop.html">Shop</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="cart.html">Shopping Cart</a></li>
+          <li><a href="wishlist.html">Wishlist</a></li>
+        </ul>
+      </div>
+
+      <!-- Customer Service -->
+      <div class="footer-section">
+        <h4>Customer Service</h4>
+        <ul>
+          <li><a href="contact.html">Contact Us</a></li>
+          <li><a href="#">Shipping Information</a></li>
+          <li><a href="#">Returns & Exchanges</a></li>
+          <li><a href="#">Size Guide</a></li>
+          <li><a href="#">FAQs</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms & Conditions</a></li>
+        </ul>
+      </div>
+
+      <!-- Newsletter -->
+      <div class="footer-section">
+        <h4>Newsletter</h4>
+        <p>Subscribe to get updates on new arrivals and special offers.</p>
+        <form class="newsletter-form">
+          <input type="email" placeholder="Enter your email" required>
+          <button type="submit">Subscribe</button>
+        </form>
+        <div class="payment-methods">
+          <p>We Accept:</p>
+          <div class="payment-icons">
+            <span>💳</span>
+            <span>📱</span>
+            <span>🏦</span>
+            <span>🔗</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Copyright -->
+    <div class="footer-bottom">
+      <div class="footer-bottom-container">
+        <p>&copy; 2025 MyBrand. All rights reserved.</p>
+        <div class="footer-links">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Cookie Policy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Are these scripts included in the correct order? -->
+<script src="js/auth.js"></script>
+<script src="js/script.js"></script>
+</body>
+</html>
