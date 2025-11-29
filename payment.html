@@ -333,89 +333,9 @@
     <footer>
         <p>© 2025 MyBrand. All Rights Reserved.</p>
     </footer>
-	<script>
-    // Enhanced error handling
-    window.addEventListener('error', function(e) {
-        console.error('Global error caught:', e.error);
-    });
+	    </footer>
 
-    // Check if scripts loaded properly
-    function checkScriptLoaded(scriptName) {
-        if (typeof Razorpay === 'undefined') {
-            console.error('Razorpay script not loaded');
-            return false;
-        }
-        return true;
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM loaded, checking scripts...');
-        
-        if (!checkScriptLoaded('Razorpay')) {
-            document.getElementById('paymentMessage').innerHTML = `
-                <div class="error-message">
-                    <strong>Payment Service Unavailable</strong>
-                    <p>Razorpay payment service failed to load. Please check your internet connection and refresh the page.</p>
-                </div>
-            `;
-            document.getElementById('paymentMessage').style.display = 'block';
-        }
-    });
-
-    // Fallback global functions
-    window.selectPaymentMethod = function(method) {
-        if (window.paymentManager) {
-            window.paymentManager.selectPaymentMethod(method);
-        } else {
-            console.error('Payment manager not loaded');
-            showFallbackError();
-        }
-    };
-
-    window.initiateRazorpayPayment = function() {
-        if (window.paymentManager) {
-            window.paymentManager.initiateRazorpayPayment();
-        } else {
-            console.error('Payment manager not loaded');
-            showFallbackError();
-        }
-    };
-
-    window.confirmCODOrder = function() {
-        if (window.paymentManager) {
-            window.paymentManager.confirmCODOrder();
-        } else {
-            console.error('Payment manager not loaded');
-            showFallbackError();
-        }
-    };
-
-    function showFallbackError() {
-        const messageElement = document.getElementById('paymentMessage');
-        if (messageElement) {
-            messageElement.innerHTML = `
-                <div class="error-message">
-                    <strong>System Loading</strong>
-                    <p>Payment system is still initializing. Please wait a moment and try again.</p>
-                    <button onclick="window.location.reload()" style="margin-top: 10px; padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                        Retry Now
-                    </button>
-                </div>
-            `;
-            messageElement.style.display = 'block';
-        }
-    }
-
-    // Final check after 5 seconds
-    setTimeout(() => {
-        if (!window.paymentManager) {
-            console.error('Payment manager failed to initialize completely');
-            showFallbackError();
-        }
-    }, 5000);
-</script>
-
-    <!-- Razorpay Checkout Script -->
+    <!-- Razorpay Checkout Script MUST LOAD FIRST -->
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     
     <!-- Your Scripts -->
@@ -424,45 +344,44 @@
     <script src="js/payment.js"></script>
 
     <script>
-    // Simple error handling
-    window.onerror = function(msg, url, lineNo, columnNo, error) {
-        console.log('Error: ' + msg + ' at ' + url + ':' + lineNo);
-        return false;
-    };
-
-    // Check if scripts loaded properly
-    function checkScriptLoaded() {
+    // Single, clean error handling
+    function checkDependencies() {
         if (typeof Razorpay === 'undefined') {
-            console.log('Razorpay script not loaded');
+            console.error('❌ Razorpay script not loaded');
             return false;
         }
         return true;
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM loaded, checking scripts...');
+        console.log('🚀 DOM loaded, checking dependencies...');
         
-        if (!checkScriptLoaded()) {
+        if (!checkDependencies()) {
             const messageElement = document.getElementById('paymentMessage');
             if (messageElement) {
                 messageElement.innerHTML = `
                     <div class="error-message">
                         <strong>Payment Service Unavailable</strong>
-                        <p>Razorpay payment service failed to load. Please check your internet connection and refresh the page.</p>
+                        <p>Razorpay payment service failed to load. Please refresh the page.</p>
+                        <button onclick="window.location.reload()" style="margin-top: 10px; padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            Refresh Page
+                        </button>
                     </div>
                 `;
                 messageElement.style.display = 'block';
             }
+        } else {
+            console.log('✅ All dependencies loaded successfully');
         }
     });
 
-    // Fallback global functions
+    // Global functions for HTML onclick handlers
     window.selectPaymentMethod = function(method) {
         if (window.paymentManager) {
             window.paymentManager.selectPaymentMethod(method);
         } else {
-            console.log('Payment manager not loaded');
-            showFallbackError();
+            console.log('Payment manager not loaded yet');
+            alert('Payment system is loading. Please try again in a moment.');
         }
     };
 
@@ -470,8 +389,8 @@
         if (window.paymentManager) {
             window.paymentManager.initiateRazorpayPayment();
         } else {
-            console.log('Payment manager not loaded');
-            showFallbackError();
+            console.log('Payment manager not loaded yet');
+            alert('Payment system is loading. Please try again in a moment.');
         }
     };
 
@@ -479,34 +398,18 @@
         if (window.paymentManager) {
             window.paymentManager.confirmCODOrder();
         } else {
-            console.log('Payment manager not loaded');
-            showFallbackError();
+            console.log('Payment manager not loaded yet');
+            alert('Payment system is loading. Please try again in a moment.');
         }
     };
 
-    function showFallbackError() {
-        const messageElement = document.getElementById('paymentMessage');
-        if (messageElement) {
-            messageElement.innerHTML = `
-                <div class="error-message">
-                    <strong>System Loading</strong>
-                    <p>Payment system is still initializing. Please wait a moment and try again.</p>
-                    <button onclick="window.location.reload()" style="margin-top: 10px; padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                        Retry Now
-                    </button>
-                </div>
-            `;
-            messageElement.style.display = 'block';
-        }
-    }
-
-    // Final check after 5 seconds
+    // Final check after 3 seconds
     setTimeout(() => {
         if (!window.paymentManager) {
-            console.log('Payment manager failed to initialize completely');
-            showFallbackError();
+            console.log('Payment manager still not initialized');
+            // Don't show error if page just loaded
         }
-    }, 5000);
-</script>
+    }, 3000);
+    </script>
 </body>
 </html>
