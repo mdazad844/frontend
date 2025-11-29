@@ -605,3 +605,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+
+
+
+// At the bottom of payment.js
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('🚀 Payment page loaded, initializing PaymentManager...');
+    
+    // Check if Razorpay is available
+    if (typeof Razorpay === 'undefined') {
+        console.error('❌ Razorpay not available. Payment system disabled.');
+        return;
+    }
+    
+    try {
+        window.paymentManager = new PaymentManager();
+        console.log('✅ PaymentManager initialized successfully');
+    } catch (error) {
+        console.error('❌ PaymentManager initialization failed:', error);
+    }
+});
+
+
+
+
+
