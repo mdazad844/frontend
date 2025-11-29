@@ -83,7 +83,7 @@ class ShippingCalculator {
     }
 }
 
-// CHECKOUT.JS - FIXED VERSION
+// CHECKOUT.JS - FIXED VERSION WITH SHIPROCKET INTEGRATION
 class CheckoutManager {
     constructor() {
         this.selectedAddress = null;
@@ -98,8 +98,170 @@ class CheckoutManager {
         this.shippingCalculator = new ShippingCalculator();
         
         console.log('🛒 CheckoutManager initialized');
-    } // ✅ ADDED - closes constructor
+    }
 
+    // ✅ ADD SHIPROCKET METHODS INSIDE THE CLASS
+    async calculateShiprocketCharges(deliveryPincode) {
+        try {
+            console.log('🚀 Calculating Shiprocket delivery charges for:', deliveryPincode);
+            
+            // First, get authentication token
+            const authResponse = await fetch('https://apiv2.shiprocket.in/v1/external/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: 'your_shiprocket_email', // Replace with actual email
+                    password: 'your_shiprocket_password' // Replace with actual password
+                })
+            });
+
+            if (!authResponse.ok) {
+                throw new Error('Shiprocket authentication failed');
+            }
+
+            const authData = await authResponse.json();
+            const token = authData.token;
+
+            // Calculate shipping rates
+            const rateResponse = await fetch('https://apiv2.shiprocket.in/v1/external/courier/serviceability/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    pickup_postcode: '110030', // Your warehouse pincode - CHANGE THIS
+                    delivery_postcode: deliveryPincode,
+                    weight: this.calculateTotalWeight(),
+                    length: 10,
+                    breadth: 10,
+                    height: 10,
+                    cod: 0 // 0 for prepaid, 1 for COD
+                })
+            });
+
+            if (!rateResponse.ok) {
+                throw new Error('Shiprocket rate calculation failed');
+            }
+
+            const rateData = await rateResponse.json();
+            console.log('📦 Shiprocket API Response:', rateData);
+            
+            return this.formatShiprocketOptions(rateData);
+            
+        } catch (error) {
+            console.error('❌ Shiprocket API Error:', error);
+            // Fallback to fixed charges
+            return this.getFixedDeliveryOptions();
+        }
+    }
+
+    formatShiprocketOptions(rateData) {
+        if (!rateData.data || !rateData.data.available_courier_companies) {
+            console.warn('⚠️ No courier companies available, using fallback');
+            return this.getFixedDeliveryOptions();
+        }
+
+        const shippingOptions = rateData.data.available_courier_companies.map(courier => ({
+            id: courier.courier_company_id,
+            name: courier.courier_name,
+            charge: courier.rate,
+            estimatedDays: courier.estimated_delivery_days,
+            serviceable: courier.is_surface === 1 ? 'Surface' : 'Air'
+        }));
+
+        console.log('🚚 Shiprocket Shipping Options:', shippingOptions);
+        return shippingOptions;
+    }
+
+    calculateTotalWeight() {
+        // Calculate total weight from cart items
+        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        return cart.reduce((total, item) => total + (item.weight || 0.5) * item.quantity, 0);
+    }
+
+    getFixedDeliveryOptions() {
+        const orderValue = this.calculateSubtotal();
+        return this.shippingCalculator.getManualShippingRates(orderValue);
+    }
+
+    getDeliveryPincode() {
+        return this.selectedAddress?.pincode;
+    }
+
+    // ✅ MODIFIED loadDeliveryOptions to use Shiprocket
+    async loadDeliveryOptions() {
+        console.log('📦 Loading delivery options...');
+        
+        const deliveryOptions = document.getElementById('deliveryOptions');
+        if (!deliveryOptions) {
+            console.error('❌ Delivery options element not found');
+            return;
+        }
+
+        // Show loading state
+        deliveryOptions.innerHTML = `
+            <div style="text-align: center; padding: 30px;">
+                <div style="border: 3px solid #f3f3f3; border-top: 3px solid #007bff; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 0 auto 15px;"></div>
+                <p>🔄 Calculating shipping options...</p>
+            </div>
+        `;
+
+        try {
+            const deliveryPincode = this.getDeliveryPincode();
+            
+            if (deliveryPincode) {
+                console.log('🚀 Trying Shiprocket API for pincode:', deliveryPincode);
+                const shiprocketOptions = await this.calculateShiprocketCharges(deliveryPincode);
+                this.displayShippingOptions(shiprocketOptions, false);
+            } else {
+                throw new Error('No delivery pincode available');
+            }
+            
+        } catch (error) {
+            console.error('❌ Shiprocket failed, using fallback:', error);
+            // Fallback to backend or manual rates
+            try {
+                if (this.backendConnected && this.selectedAddress?.pincode) {
+                    const orderValue = this.calculateSubtotal();
+                    const orderWeight = this.calculateOrderWeight();
+                    
+                    const response = await fetch(`${this.backendUrl}/api/shipping/calculate`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            deliveryPincode: this.selectedAddress.pincode,
+                            orderWeight: orderWeight,
+                            orderValue: orderValue
+                        })
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success && data.shippingOptions) {
+                            this.displayShippingOptions(data.shippingOptions, true);
+                            return;
+                        }
+                    }
+                }
+                
+                // Final fallback to manual rates
+                const orderValue = this.calculateSubtotal();
+                const manualRates = this.getFixedDeliveryOptions();
+                this.displayShippingOptions(manualRates, true);
+                
+            } catch (fallbackError) {
+                console.error('All shipping methods failed:', fallbackError);
+                const orderValue = this.calculateSubtotal();
+                const manualRates = this.getFixedDeliveryOptions();
+                this.displayShippingOptions(manualRates, true);
+            }
+        }
+    }
+
+    // KEEP ALL YOUR EXISTING METHODS BELOW - they should work as before
     async init() {
         console.log('🚀 Initializing checkout...');
         
@@ -287,91 +449,6 @@ class CheckoutManager {
         this.loadDeliveryOptions();
     }
 
-    async loadDeliveryOptions() {
-        console.log('📦 Loading delivery options...');
-        
-        const deliveryOptions = document.getElementById('deliveryOptions');
-        if (!deliveryOptions) {
-            console.error('❌ Delivery options element not found');
-            return;
-        }
-
-        // Show loading state
-        deliveryOptions.innerHTML = `
-            <div style="text-align: center; padding: 30px;">
-                <div style="border: 3px solid #f3f3f3; border-top: 3px solid #007bff; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 0 auto 15px;"></div>
-                <p>🔄 Calculating shipping options...</p>
-            </div>
-        `;
-
-        try {
-            // Try backend first
-            if (this.backendConnected && this.selectedAddress?.pincode) {
-                const orderValue = this.calculateSubtotal();
-                const orderWeight = this.calculateOrderWeight();
-                
-                const response = await fetch(`${this.backendUrl}/api/shipping/calculate`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        deliveryPincode: this.selectedAddress.pincode,
-                        orderWeight: orderWeight,
-                        orderValue: orderValue
-                    })
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.success && data.shippingOptions) {
-                        this.displayShippingOptions(data.shippingOptions);
-                        return;
-                    }
-                }
-            }
-            
-            // Fallback to manual rates
-            const orderValue = this.calculateSubtotal();
-            const manualRates = this.getManualShippingRates(orderValue);
-            this.displayShippingOptions(manualRates, true);
-            
-        } catch (error) {
-            console.error('Shipping API failed:', error);
-            const orderValue = this.calculateSubtotal();
-            const manualRates = this.getManualShippingRates(orderValue);
-            this.displayShippingOptions(manualRates, true);
-        }
-    }
-
-    getManualShippingRates(orderValue) {
-        const rates = [];
-        if (orderValue > 999) {
-            rates.push({
-                id: 'free_manual',
-                name: 'Free Shipping',
-                charge: 0,
-                estimatedDays: '4-7 days',
-                provider: 'manual'
-            });
-        }
-        rates.push(
-            {
-                id: 'standard_manual',
-                name: 'Standard Delivery',
-                charge: 50,
-                estimatedDays: '5-8 days',
-                provider: 'manual'
-            },
-            {
-                id: 'express_manual',
-                name: 'Express Delivery',
-                charge: 100,
-                estimatedDays: '2-3 days',
-                provider: 'manual'
-            }
-        );
-        return rates;
-    }
-
     displayShippingOptions(options, isFallback = false) {
         console.log(`📦 Displaying ${options.length} shipping options`);
         
@@ -383,7 +460,11 @@ class CheckoutManager {
                 <div style="text-align: center; margin-bottom: 15px; padding: 10px; background: #fff3cd; border-radius: 6px;">
                     <strong>📦 Standard Shipping Options</strong>
                 </div>
-            ` : ''}
+            ` : `
+                <div style="text-align: center; margin-bottom: 15px; padding: 10px; background: #d4edda; border-radius: 6px;">
+                    <strong>🚀 Real-time Shipping Rates</strong>
+                </div>
+            `}
             ${options.map(option => `
                 <div class="delivery-option" onclick="window.checkoutManager.selectShippingOption(this, ${option.charge})">
                     <h4>${option.name}</h4>
@@ -499,7 +580,7 @@ class CheckoutManager {
             });
         }
     }
-} // ✅ ADDED - closes CheckoutManager class
+}
 
 // ✅ GLOBAL FUNCTIONS - MUST BE DEFINED BEFORE DOM LOADS
 window.showAddAddressForm = function() {
@@ -533,115 +614,3 @@ document.addEventListener('DOMContentLoaded', function() {
     window.checkoutManager = new CheckoutManager();
     window.checkoutManager.init();
 });
-
-
-
-
-
-
-
-
-
-async calculateShiprocketCharges(deliveryPincode) {
-    try {
-        console.log('🚀 Calculating Shiprocket delivery charges for:', deliveryPincode);
-        
-        // First, get authentication token
-        const authResponse = await fetch('https://apiv2.shiprocket.in/v1/external/auth/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                email: 'your_shiprocket_email',
-                password: 'your_shiprocket_password'
-            })
-        });
-
-        if (!authResponse.ok) {
-            throw new Error('Shiprocket authentication failed');
-        }
-
-        const authData = await authResponse.json();
-        const token = authData.token;
-
-        // Calculate shipping rates
-        const rateResponse = await fetch('https://apiv2.shiprocket.in/v1/external/courier/serviceability/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                pickup_postcode: 'YOUR_PICKUP_PINCODE', // Your warehouse pincode
-                delivery_postcode: deliveryPincode,
-                weight: this.calculateTotalWeight(), // Calculate from cart items
-                length: 10,
-                breadth: 10,
-                height: 10,
-                cod: 0 // 0 for prepaid, 1 for COD
-            })
-        });
-
-        if (!rateResponse.ok) {
-            throw new Error('Shiprocket rate calculation failed');
-        }
-
-        const rateData = await rateResponse.json();
-        console.log('📦 Shiprocket API Response:', rateData);
-        
-        return this.formatShiprocketOptions(rateData);
-        
-    } catch (error) {
-        console.error('❌ Shiprocket API Error:', error);
-        // Fallback to fixed charges
-        return this.getFixedDeliveryOptions();
-    }
-}
-
-formatShiprocketOptions(rateData) {
-    if (!rateData.data || !rateData.data.available_courier_companies) {
-        console.warn('⚠️ No courier companies available, using fallback');
-        return this.getFixedDeliveryOptions();
-    }
-
-    const shippingOptions = rateData.data.available_courier_companies.map(courier => ({
-        id: courier.courier_company_id,
-        name: courier.courier_name,
-        charge: courier.rate,
-        estimated_days: courier.estimated_delivery_days,
-        serviceable: courier.is_surface === 1 ? 'Surface' : 'Air'
-    }));
-
-    console.log('🚚 Shiprocket Shipping Options:', shippingOptions);
-    return shippingOptions;
-}
-
-calculateTotalWeight() {
-    // Calculate total weight from cart items
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    return cart.reduce((total, item) => total + (item.weight || 0.5) * item.quantity, 0);
-}
-
-
-// In your loadDeliveryOptions method, replace the fixed options with:
-async loadDeliveryOptions() {
-    console.log('🚚 Loading REAL shipping options from Shiprocket...');
-    
-    const deliveryPincode = this.getDeliveryPincode(); // Get from address form
-    
-    if (deliveryPincode) {
-        const shiprocketOptions = await this.calculateShiprocketCharges(deliveryPincode);
-        this.displayShippingOptions(shiprocketOptions);
-    } else {
-        // Show fixed options as fallback
-        const fixedOptions = this.getFixedDeliveryOptions();
-        this.displayShippingOptions(fixedOptions);
-    }
-}
-
-
-
-
-
-
