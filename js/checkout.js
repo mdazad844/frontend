@@ -112,8 +112,8 @@ class CheckoutManager {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    email: 'your_shiprocket_email', // Replace with actual email
-                    password: 'your_shiprocket_password' // Replace with actual password
+                    email: 'mazad@bt.iitr.ac.in', // Replace with actual email
+                    password: '098123@Mnb' // Replace with actual password
                 })
             });
 
@@ -614,3 +614,4 @@ document.addEventListener('DOMContentLoaded', function() {
     window.checkoutManager = new CheckoutManager();
     window.checkoutManager.init();
 });
+
