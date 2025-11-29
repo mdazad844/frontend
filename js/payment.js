@@ -55,11 +55,9 @@ class PaymentManager {
     }
 
     getRazorpayKey() {
-        // ✅ FIXED: Remove process.env reference that causes errors
-        // For Netlify, you can set this as a build environment variable
-        // or use a direct key for testing
+        // ✅ Use your live Razorpay key
         const possibleKeys = [
-            'rzp_live_RjHl3rUztQ050N' // Replace with your actual test key
+            'rzp_live_RjHl3rUztQ050N' // Your live key
         ];
         
         return possibleKeys[0];
@@ -584,14 +582,31 @@ function confirmCODOrder() {
     }
 }
 
-// Initialize when page loads
+// ✅ SINGLE INITIALIZATION - Remove the duplicate at the bottom
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 Payment page loaded, initializing PaymentManager...');
+    
+    // Check if Razorpay is available
+    if (typeof Razorpay === 'undefined') {
+        console.error('❌ Razorpay not available. Payment system disabled.');
+        const messageElement = document.getElementById('paymentMessage');
+        if (messageElement) {
+            messageElement.innerHTML = `
+                <div class="error-message">
+                    <strong>Payment Service Unavailable</strong>
+                    <p>Razorpay payment service failed to load. Please refresh the page.</p>
+                </div>
+            `;
+            messageElement.style.display = 'block';
+        }
+        return;
+    }
+    
     try {
         window.paymentManager = new PaymentManager();
-        console.log('✅ PaymentManager assigned to window');
+        console.log('✅ PaymentManager initialized successfully');
     } catch (error) {
-        console.log('Failed to create PaymentManager:', error);
+        console.error('❌ PaymentManager initialization failed:', error);
         const messageElement = document.getElementById('paymentMessage');
         if (messageElement) {
             messageElement.innerHTML = `
@@ -605,28 +620,3 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
-
-
-
-// At the bottom of payment.js
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('🚀 Payment page loaded, initializing PaymentManager...');
-    
-    // Check if Razorpay is available
-    if (typeof Razorpay === 'undefined') {
-        console.error('❌ Razorpay not available. Payment system disabled.');
-        return;
-    }
-    
-    try {
-        window.paymentManager = new PaymentManager();
-        console.log('✅ PaymentManager initialized successfully');
-    } catch (error) {
-        console.error('❌ PaymentManager initialization failed:', error);
-    }
-});
-
-
-
-
-
