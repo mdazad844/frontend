@@ -112,66 +112,75 @@ class CheckoutManager {
     }
 
     // ✅ SIMPLIFIED loadDeliveryOptions - Only calls backend
-    async loadDeliveryOptions() {
-        console.log('📦 Loading delivery options...');
-        
-        const deliveryOptions = document.getElementById('deliveryOptions');
-        if (!deliveryOptions) {
-            console.error('❌ Delivery options element not found');
-            return;
-        }
-
-        // Show loading state
-        deliveryOptions.innerHTML = `
-            <div style="text-align: center; padding: 30px;">
-                <div style="border: 3px solid #f3f3f3; border-top: 3px solid #007bff; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 0 auto 15px;"></div>
-                <p>🔄 Calculating shipping options...</p>
-            </div>
-        `;
-
-        try {
-            const deliveryPincode = this.getDeliveryPincode();
-            
-            if (deliveryPincode && this.backendConnected) {
-                console.log('🚀 Fetching real-time shipping rates from backend...');
-                
-                const orderValue = this.calculateSubtotal();
-                const orderWeight = this.calculateOrderWeight();
-                
-                const response = await fetch(`${this.backendUrl}/api/shipping/calculate`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        deliveryPincode: deliveryPincode,
-                        orderWeight: orderWeight,
-                        orderValue: orderValue
-                    })
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.success && data.shippingOptions) {
-                        console.log('✅ Real-time shipping rates received');
-                        this.displayShippingOptions(data.shippingOptions, false);
-                        return;
-                    }
-                }
-            }
-            
-            // Fallback to manual rates
-            console.log('📦 Using standard shipping options');
-            const orderValue = this.calculateSubtotal();
-            const manualRates = this.getFixedDeliveryOptions();
-            this.displayShippingOptions(manualRates, true);
-            
-        } catch (error) {
-            console.error('❌ Shipping calculation failed:', error);
-            // Final fallback to manual rates
-            const orderValue = this.calculateSubtotal();
-            const manualRates = this.getFixedDeliveryOptions();
-            this.displayShippingOptions(manualRates, true);
-        }
+ // Replace your current loadDeliveryOptions method with this:
+async loadDeliveryOptions() {
+    console.log('📦 Loading delivery options...');
+    
+    const deliveryOptions = document.getElementById('deliveryOptions');
+    if (!deliveryOptions) {
+        console.error('❌ Delivery options element not found');
+        return;
     }
+
+    // Show loading state
+    deliveryOptions.innerHTML = `
+        <div style="text-align: center; padding: 30px;">
+            <div style="border: 3px solid #f3f3f3; border-top: 3px solid #007bff; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 0 auto 15px;"></div>
+            <p>🔄 Calculating real-time shipping rates...</p>
+        </div>
+    `;
+
+    try {
+        const deliveryPincode = this.getDeliveryPincode();
+        
+        if (deliveryPincode) {
+            console.log('🚀 Fetching REAL-TIME shipping rates for:', deliveryPincode);
+            
+            const orderValue = this.calculateSubtotal();
+            const orderWeight = this.calculateOrderWeight();
+            
+            const response = await fetch(`${this.backendUrl}/api/shipping/calculate`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    deliveryPincode: deliveryPincode,
+                    orderWeight: orderWeight,
+                    orderValue: orderValue
+                })
+            });
+
+            console.log('📊 Backend response status:', response.status);
+            
+            if (response.ok) {
+                const data = await response.json();
+                console.log('✅ Backend response data:', data);
+                
+                if (data.success && data.shippingOptions && data.shippingOptions.length > 0) {
+                    console.log('🎉 Using REAL Shiprocket rates!');
+                    this.displayShippingOptions(data.shippingOptions, false);
+                    return;
+                } else {
+                    console.log('⚠️ Backend success but no shipping options');
+                }
+            } else {
+                console.log('❌ Backend error status:', response.status);
+            }
+        }
+        
+        // Fallback to manual rates only if backend fails
+        console.log('📦 Using standard shipping options as fallback');
+        const orderValue = this.calculateSubtotal();
+        const manualRates = this.getFixedDeliveryOptions();
+        this.displayShippingOptions(manualRates, true);
+        
+    } catch (error) {
+        console.error('❌ Shipping calculation failed:', error);
+        // Final fallback to manual rates
+        const orderValue = this.calculateSubtotal();
+        const manualRates = this.getFixedDeliveryOptions();
+        this.displayShippingOptions(manualRates, true);
+    }
+}
 
     // KEEP ALL YOUR EXISTING METHODS BELOW - they remain the same
     async init() {
@@ -526,3 +535,4 @@ document.addEventListener('DOMContentLoaded', function() {
     window.checkoutManager = new CheckoutManager();
     window.checkoutManager.init();
 });
+
