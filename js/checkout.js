@@ -83,7 +83,7 @@ class ShippingCalculator {
     }
 }
 
-// CHECKOUT.JS - FIXED VERSION WITH SHIPROCKET INTEGRATION
+// CHECKOUT.JS - CLEANED VERSION (NO SHIPROCKET IN FRONTEND)
 class CheckoutManager {
     constructor() {
         this.selectedAddress = null;
@@ -100,87 +100,7 @@ class CheckoutManager {
         console.log('🛒 CheckoutManager initialized');
     }
 
-    // ✅ ADD SHIPROCKET METHODS INSIDE THE CLASS
-    async calculateShiprocketCharges(deliveryPincode) {
-        try {
-            console.log('🚀 Calculating Shiprocket delivery charges for:', deliveryPincode);
-            
-            // First, get authentication token
-            const authResponse = await fetch('https://apiv2.shiprocket.in/v1/external/auth/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: 'mdazad@nii.ac.in', // Replace with actual email
-                    password: 't9I60ZG#0eSxElSL' // Replace with actual password
-                })
-            });
-
-            if (!authResponse.ok) {
-                throw new Error('Shiprocket authentication failed');
-            }
-
-            const authData = await authResponse.json();
-            const token = authData.token;
-
-            // Calculate shipping rates
-            const rateResponse = await fetch('https://apiv2.shiprocket.in/v1/external/courier/serviceability/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    pickup_postcode: '110030', // Your warehouse pincode - CHANGE THIS
-                    delivery_postcode: deliveryPincode,
-                    weight: this.calculateTotalWeight(),
-                    length: 10,
-                    breadth: 10,
-                    height: 10,
-                    cod: 0 // 0 for prepaid, 1 for COD
-                })
-            });
-
-            if (!rateResponse.ok) {
-                throw new Error('Shiprocket rate calculation failed');
-            }
-
-            const rateData = await rateResponse.json();
-            console.log('📦 Shiprocket API Response:', rateData);
-            
-            return this.formatShiprocketOptions(rateData);
-            
-        } catch (error) {
-            console.error('❌ Shiprocket API Error:', error);
-            // Fallback to fixed charges
-            return this.getFixedDeliveryOptions();
-        }
-    }
-
-    formatShiprocketOptions(rateData) {
-        if (!rateData.data || !rateData.data.available_courier_companies) {
-            console.warn('⚠️ No courier companies available, using fallback');
-            return this.getFixedDeliveryOptions();
-        }
-
-        const shippingOptions = rateData.data.available_courier_companies.map(courier => ({
-            id: courier.courier_company_id,
-            name: courier.courier_name,
-            charge: courier.rate,
-            estimatedDays: courier.estimated_delivery_days,
-            serviceable: courier.is_surface === 1 ? 'Surface' : 'Air'
-        }));
-
-        console.log('🚚 Shiprocket Shipping Options:', shippingOptions);
-        return shippingOptions;
-    }
-
-    calculateTotalWeight() {
-        // Calculate total weight from cart items
-        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-        return cart.reduce((total, item) => total + (item.weight || 0.5) * item.quantity, 0);
-    }
+    // ✅ REMOVED: Shiprocket methods (handled by backend)
 
     getFixedDeliveryOptions() {
         const orderValue = this.calculateSubtotal();
@@ -191,7 +111,7 @@ class CheckoutManager {
         return this.selectedAddress?.pincode;
     }
 
-    // ✅ MODIFIED loadDeliveryOptions to use Shiprocket
+    // ✅ SIMPLIFIED loadDeliveryOptions - Only calls backend
     async loadDeliveryOptions() {
         console.log('📦 Loading delivery options...');
         
@@ -212,56 +132,48 @@ class CheckoutManager {
         try {
             const deliveryPincode = this.getDeliveryPincode();
             
-            if (deliveryPincode) {
-                console.log('🚀 Trying Shiprocket API for pincode:', deliveryPincode);
-                const shiprocketOptions = await this.calculateShiprocketCharges(deliveryPincode);
-                this.displayShippingOptions(shiprocketOptions, false);
-            } else {
-                throw new Error('No delivery pincode available');
-            }
-            
-        } catch (error) {
-            console.error('❌ Shiprocket failed, using fallback:', error);
-            // Fallback to backend or manual rates
-            try {
-                if (this.backendConnected && this.selectedAddress?.pincode) {
-                    const orderValue = this.calculateSubtotal();
-                    const orderWeight = this.calculateOrderWeight();
-                    
-                    const response = await fetch(`${this.backendUrl}/api/shipping/calculate`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            deliveryPincode: this.selectedAddress.pincode,
-                            orderWeight: orderWeight,
-                            orderValue: orderValue
-                        })
-                    });
+            if (deliveryPincode && this.backendConnected) {
+                console.log('🚀 Fetching real-time shipping rates from backend...');
+                
+                const orderValue = this.calculateSubtotal();
+                const orderWeight = this.calculateOrderWeight();
+                
+                const response = await fetch(`${this.backendUrl}/api/shipping/calculate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        deliveryPincode: deliveryPincode,
+                        orderWeight: orderWeight,
+                        orderValue: orderValue
+                    })
+                });
 
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (data.success && data.shippingOptions) {
-                            this.displayShippingOptions(data.shippingOptions, true);
-                            return;
-                        }
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.shippingOptions) {
+                        console.log('✅ Real-time shipping rates received');
+                        this.displayShippingOptions(data.shippingOptions, false);
+                        return;
                     }
                 }
-                
-                // Final fallback to manual rates
-                const orderValue = this.calculateSubtotal();
-                const manualRates = this.getFixedDeliveryOptions();
-                this.displayShippingOptions(manualRates, true);
-                
-            } catch (fallbackError) {
-                console.error('All shipping methods failed:', fallbackError);
-                const orderValue = this.calculateSubtotal();
-                const manualRates = this.getFixedDeliveryOptions();
-                this.displayShippingOptions(manualRates, true);
             }
+            
+            // Fallback to manual rates
+            console.log('📦 Using standard shipping options');
+            const orderValue = this.calculateSubtotal();
+            const manualRates = this.getFixedDeliveryOptions();
+            this.displayShippingOptions(manualRates, true);
+            
+        } catch (error) {
+            console.error('❌ Shipping calculation failed:', error);
+            // Final fallback to manual rates
+            const orderValue = this.calculateSubtotal();
+            const manualRates = this.getFixedDeliveryOptions();
+            this.displayShippingOptions(manualRates, true);
         }
     }
 
-    // KEEP ALL YOUR EXISTING METHODS BELOW - they should work as before
+    // KEEP ALL YOUR EXISTING METHODS BELOW - they remain the same
     async init() {
         console.log('🚀 Initializing checkout...');
         
@@ -582,7 +494,7 @@ class CheckoutManager {
     }
 }
 
-// ✅ GLOBAL FUNCTIONS - MUST BE DEFINED BEFORE DOM LOADS
+// ✅ GLOBAL FUNCTIONS
 window.showAddAddressForm = function() {
     if (window.checkoutManager) {
         window.checkoutManager.showAddAddressForm();
@@ -614,5 +526,3 @@ document.addEventListener('DOMContentLoaded', function() {
     window.checkoutManager = new CheckoutManager();
     window.checkoutManager.init();
 });
-
-
