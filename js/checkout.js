@@ -83,111 +83,6 @@ class ShippingCalculator {
     }
 }
 
-
-
-
-async calculateShiprocketCharges(deliveryPincode) {
-    try {
-        console.log('🚀 Calculating Shiprocket delivery charges for:', deliveryPincode);
-        
-        // First, get authentication token
-        const authResponse = await fetch('https://apiv2.shiprocket.in/v1/external/auth/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                email: 'your_shiprocket_email',
-                password: 'your_shiprocket_password'
-            })
-        });
-
-        if (!authResponse.ok) {
-            throw new Error('Shiprocket authentication failed');
-        }
-
-        const authData = await authResponse.json();
-        const token = authData.token;
-
-        // Calculate shipping rates
-        const rateResponse = await fetch('https://apiv2.shiprocket.in/v1/external/courier/serviceability/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                pickup_postcode: 'YOUR_PICKUP_PINCODE', // Your warehouse pincode
-                delivery_postcode: deliveryPincode,
-                weight: this.calculateTotalWeight(), // Calculate from cart items
-                length: 10,
-                breadth: 10,
-                height: 10,
-                cod: 0 // 0 for prepaid, 1 for COD
-            })
-        });
-
-        if (!rateResponse.ok) {
-            throw new Error('Shiprocket rate calculation failed');
-        }
-
-        const rateData = await rateResponse.json();
-        console.log('📦 Shiprocket API Response:', rateData);
-        
-        return this.formatShiprocketOptions(rateData);
-        
-    } catch (error) {
-        console.error('❌ Shiprocket API Error:', error);
-        // Fallback to fixed charges
-        return this.getFixedDeliveryOptions();
-    }
-}
-
-formatShiprocketOptions(rateData) {
-    if (!rateData.data || !rateData.data.available_courier_companies) {
-        console.warn('⚠️ No courier companies available, using fallback');
-        return this.getFixedDeliveryOptions();
-    }
-
-    const shippingOptions = rateData.data.available_courier_companies.map(courier => ({
-        id: courier.courier_company_id,
-        name: courier.courier_name,
-        charge: courier.rate,
-        estimated_days: courier.estimated_delivery_days,
-        serviceable: courier.is_surface === 1 ? 'Surface' : 'Air'
-    }));
-
-    console.log('🚚 Shiprocket Shipping Options:', shippingOptions);
-    return shippingOptions;
-}
-
-calculateTotalWeight() {
-    // Calculate total weight from cart items
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    return cart.reduce((total, item) => total + (item.weight || 0.5) * item.quantity, 0);
-}
-
-
-// In your loadDeliveryOptions method, replace the fixed options with:
-async loadDeliveryOptions() {
-    console.log('🚚 Loading REAL shipping options from Shiprocket...');
-    
-    const deliveryPincode = this.getDeliveryPincode(); // Get from address form
-    
-    if (deliveryPincode) {
-        const shiprocketOptions = await this.calculateShiprocketCharges(deliveryPincode);
-        this.displayShippingOptions(shiprocketOptions);
-    } else {
-        // Show fixed options as fallback
-        const fixedOptions = this.getFixedDeliveryOptions();
-        this.displayShippingOptions(fixedOptions);
-    }
-}
-
-
-
-
-
 // CHECKOUT.JS - FIXED VERSION
 class CheckoutManager {
     constructor() {
@@ -632,11 +527,118 @@ window.proceedToPayment = function(event) {
     }
 };
 
+
+
+
+async calculateShiprocketCharges(deliveryPincode) {
+    try {
+        console.log('🚀 Calculating Shiprocket delivery charges for:', deliveryPincode);
+        
+        // First, get authentication token
+        const authResponse = await fetch('https://apiv2.shiprocket.in/v1/external/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: 'your_shiprocket_email',
+                password: 'your_shiprocket_password'
+            })
+        });
+
+        if (!authResponse.ok) {
+            throw new Error('Shiprocket authentication failed');
+        }
+
+        const authData = await authResponse.json();
+        const token = authData.token;
+
+        // Calculate shipping rates
+        const rateResponse = await fetch('https://apiv2.shiprocket.in/v1/external/courier/serviceability/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                pickup_postcode: 'YOUR_PICKUP_PINCODE', // Your warehouse pincode
+                delivery_postcode: deliveryPincode,
+                weight: this.calculateTotalWeight(), // Calculate from cart items
+                length: 10,
+                breadth: 10,
+                height: 10,
+                cod: 0 // 0 for prepaid, 1 for COD
+            })
+        });
+
+        if (!rateResponse.ok) {
+            throw new Error('Shiprocket rate calculation failed');
+        }
+
+        const rateData = await rateResponse.json();
+        console.log('📦 Shiprocket API Response:', rateData);
+        
+        return this.formatShiprocketOptions(rateData);
+        
+    } catch (error) {
+        console.error('❌ Shiprocket API Error:', error);
+        // Fallback to fixed charges
+        return this.getFixedDeliveryOptions();
+    }
+}
+
+formatShiprocketOptions(rateData) {
+    if (!rateData.data || !rateData.data.available_courier_companies) {
+        console.warn('⚠️ No courier companies available, using fallback');
+        return this.getFixedDeliveryOptions();
+    }
+
+    const shippingOptions = rateData.data.available_courier_companies.map(courier => ({
+        id: courier.courier_company_id,
+        name: courier.courier_name,
+        charge: courier.rate,
+        estimated_days: courier.estimated_delivery_days,
+        serviceable: courier.is_surface === 1 ? 'Surface' : 'Air'
+    }));
+
+    console.log('🚚 Shiprocket Shipping Options:', shippingOptions);
+    return shippingOptions;
+}
+
+calculateTotalWeight() {
+    // Calculate total weight from cart items
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    return cart.reduce((total, item) => total + (item.weight || 0.5) * item.quantity, 0);
+}
+
+
+// In your loadDeliveryOptions method, replace the fixed options with:
+async loadDeliveryOptions() {
+    console.log('🚚 Loading REAL shipping options from Shiprocket...');
+    
+    const deliveryPincode = this.getDeliveryPincode(); // Get from address form
+    
+    if (deliveryPincode) {
+        const shiprocketOptions = await this.calculateShiprocketCharges(deliveryPincode);
+        this.displayShippingOptions(shiprocketOptions);
+    } else {
+        // Show fixed options as fallback
+        const fixedOptions = this.getFixedDeliveryOptions();
+        this.displayShippingOptions(fixedOptions);
+    }
+}
+
+
+
+
+
+
 // ✅ Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
     console.log('📄 DOM loaded, initializing checkout...');
     window.checkoutManager = new CheckoutManager();
     window.checkoutManager.init();
 });
+
 
 
