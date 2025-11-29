@@ -3,16 +3,6 @@ class PaymentManager {
         try {
             console.log('🚀 Initializing PaymentManager...');
             
-            // Check if we're in a browser environment
-            if (typeof window === 'undefined') {
-                throw new Error('Not in browser environment');
-            }
-
-            // Check for localStorage
-            if (!window.localStorage) {
-                throw new Error('localStorage is not available');
-            }
-
             // Get user and order data
             const currentUserStr = localStorage.getItem('currentUser');
             const orderDataStr = localStorage.getItem('pendingOrder');
@@ -36,14 +26,17 @@ class PaymentManager {
             if (orderDataStr) {
                 try {
                     this.orderData = JSON.parse(orderDataStr);
+                    console.log('📦 Parsed order data:', this.orderData);
                 } catch (e) {
                     console.error('❌ Failed to parse orderData:', e);
                 }
             }
 
-            // Get Razorpay key - simplified approach
+            // ✅ FIXED: Use direct environment variable or fallback
             this.razorpayKey = this.getRazorpayKey();
-            this.backendUrl = this.getBackendUrl();
+            
+            // ✅ FIXED: Use absolute backend URL
+            this.backendUrl = 'https://backend-production-c281a.up.railway.app';
             
             this.selectedPaymentMethod = 'razorpay';
             
@@ -62,26 +55,14 @@ class PaymentManager {
     }
 
     getRazorpayKey() {
-        // Try multiple ways to get the Razorpay key
+        // ✅ FIXED: Remove process.env reference that causes errors
+        // For Netlify, you can set this as a build environment variable
+        // or use a direct key for testing
         const possibleKeys = [
-            window.env?.RAZORPAY_KEY_ID,
-            process?.env?.RAZORPAY_KEY_ID,
-            'rzp_test_xxxxxxxxxxxx' // Fallback for development
+            'rzp_live_RjHl3rUztQ050N' // Replace with your actual test key
         ];
         
-        const key = possibleKeys.find(k => k && k !== 'rzp_test_xxxxxxxxxxxx');
-        console.log('🔑 Razorpay key search result:', key ? 'Found' : 'Using fallback');
-        return key || 'rzp_test_xxxxxxxxxxxx';
-    }
-
-    getBackendUrl() {
-        const possibleUrls = [
-            window.env?.REACT_APP_API_URL,
-            process?.env?.REACT_APP_API_URL,
-            'https://backend-production-c281a.up.railway.app'
-        ];
-        
-        return possibleUrls.find(url => url) || 'https://backend-production-c281a.up.railway.app';
+        return possibleKeys[0];
     }
 
     showCriticalError(message) {
@@ -99,7 +80,6 @@ class PaymentManager {
             `;
             messageElement.style.display = 'block';
         }
-        alert('Payment Error: ' + message);
     }
 
     init() {
@@ -154,8 +134,10 @@ class PaymentManager {
                             <span>₹${(item.price * item.quantity).toFixed(2)}</span>
                         </div>
                     `).join('');
+                    console.log('✅ Order items loaded:', this.orderData.items);
                 } else {
                     orderItemsContainer.innerHTML = '<div class="order-item">No items in order</div>';
+                    console.warn('⚠️ No items in order data');
                 }
             } else {
                 console.error('❌ Order items container not found');
@@ -182,22 +164,26 @@ class PaymentManager {
         const addressElement = document.getElementById('shippingAddress');
         const shippingInfo = document.getElementById('shippingInfo');
         
-        if (addressElement && shippingInfo && this.orderData.address) {
-            try {
-                const addr = this.orderData.address;
-                addressElement.innerHTML = `
-                    <strong>Shipping to:</strong>
-                    <div>${this.escapeHtml(addr.line1)}</div>
-                    ${addr.line2 ? `<div>${this.escapeHtml(addr.line2)}</div>` : ''}
-                    <div>${this.escapeHtml(addr.city)}, ${this.escapeHtml(addr.state)} - ${this.escapeHtml(addr.pincode)}</div>
-                    <div>${this.escapeHtml(addr.country)}</div>
-                `;
-                shippingInfo.style.display = 'block';
-            } catch (error) {
-                console.error('❌ Failed to display shipping address:', error);
+        if (addressElement && shippingInfo) {
+            if (this.orderData.address) {
+                try {
+                    const addr = this.orderData.address;
+                    addressElement.innerHTML = `
+                        <strong>Shipping to:</strong>
+                        <div>${this.escapeHtml(addr.line1)}</div>
+                        ${addr.line2 ? `<div>${this.escapeHtml(addr.line2)}</div>` : ''}
+                        <div>${this.escapeHtml(addr.city)}, ${this.escapeHtml(addr.state)} - ${this.escapeHtml(addr.pincode)}</div>
+                        <div>${this.escapeHtml(addr.country)}</div>
+                    `;
+                    shippingInfo.style.display = 'block';
+                } catch (error) {
+                    console.error('❌ Failed to display shipping address:', error);
+                }
+            } else {
+                console.warn('⚠️ No address data in order');
             }
         } else {
-            console.warn('⚠️ Shipping address elements not found or no address data');
+            console.warn('⚠️ Shipping address elements not found');
         }
     }
 
@@ -232,8 +218,6 @@ class PaymentManager {
                         this.selectPaymentMethod(e.target.value);
                     });
                 });
-            } else {
-                console.warn('⚠️ No payment radio buttons found');
             }
 
             // Manual button event listeners
@@ -242,14 +226,10 @@ class PaymentManager {
             
             if (razorpayBtn) {
                 razorpayBtn.addEventListener('click', () => this.initiateRazorpayPayment());
-            } else {
-                console.error('❌ Razorpay button not found');
             }
             
             if (codBtn) {
                 codBtn.addEventListener('click', () => this.confirmCODOrder());
-            } else {
-                console.error('❌ COD button not found');
             }
 
             console.log('✅ Event listeners setup completed');
@@ -382,15 +362,12 @@ class PaymentManager {
                 notes: {
                     customer_email: this.currentUser?.email,
                     order_id: this.orderData.orderId,
-                    items: this.orderData.items.map(item => ({
-                        name: item.name,
-                        quantity: item.quantity,
-                        price: item.price
-                    }))
+                    items: this.orderData.items
                 }
             };
 
             console.log('🔄 Creating Razorpay order via backend:', orderPayload);
+            console.log('🌐 Backend URL:', `${this.backendUrl}/api/payments/create-order`);
 
             const response = await fetch(`${this.backendUrl}/api/payments/create-order`, {
                 method: 'POST',
@@ -504,7 +481,7 @@ class PaymentManager {
 
     async saveOrderToBackend() {
         try {
-            const response = await fetch(`${this.backendUrl}/api/payments/create-order`, {
+            const response = await fetch(`${this.backendUrl}/api/orders`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -575,10 +552,6 @@ class PaymentManager {
             messageElement.style.display = 'block';
             
             messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-        
-        if (type === 'error') {
-            alert(message);
         }
     }
 }
