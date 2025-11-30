@@ -353,50 +353,60 @@ async initiateRazorpayPayment() {
     }
 }
 
-    async createRazorpayOrder() {
+ // In frontend payment.js - update createRazorpayOrder method
+async createRazorpayOrder() {
   try {
     const orderPayload = {
-      amount: Math.round(this.orderData.total * 100), // ✅ This is CORRECT (paise)
+      amount: Math.round(this.orderData.total * 100),
       currency: "INR",
-      receipt: this.orderData.orderId,
+      receipt: this.orderData.orderId, // This is MB1764523309391
       notes: {
         customer_email: this.currentUser?.email,
         order_id: this.orderData.orderId,
         items: this.orderData.items
+      },
+      // ✅ ADD order data for database
+      order_data: {
+        customer: this.currentUser,
+        items: this.orderData.items,
+        address: this.orderData.address,
+        subtotal: this.orderData.subtotal,
+        taxAmount: this.orderData.taxAmount,
+        deliveryCharge: this.orderData.deliveryCharge,
+        total: this.orderData.total
       }
     };
 
-            console.log('🔄 Creating Razorpay order via backend:', orderPayload);
-            console.log('🌐 Backend URL:', `${this.backendUrl}/api/payments/create-order`);
+    console.log('🔄 Creating Razorpay order via backend:', orderPayload);
 
-            const response = await fetch(`${this.backendUrl}/api/payments/create-order`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(orderPayload)
-            });
+    const response = await fetch(`${this.backendUrl}/api/payments/create-order`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(orderPayload)
+    });
 
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Backend error: ${response.status} - ${errorText}`);
-            }
-
-            const data = await response.json();
-            console.log('✅ Razorpay order created via backend:', data);
-            
-            if (!data.success) {
-                throw new Error(data.error || 'Failed to create order');
-            }
-            
-            return data;
-            
-        } catch (error) {
-            console.error('❌ Order creation failed:', error);
-            this.showMessage('error', `Order creation failed: ${error.message}`);
-            throw error;
-        }
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Backend error: ${response.status} - ${errorText}`);
     }
+
+    const data = await response.json();
+    console.log('✅ Razorpay order created via backend:', data);
+    
+    if (!data.success) {
+      throw new Error(data.error || 'Failed to create order');
+    }
+    
+    return data;
+    
+  } catch (error) {
+    console.error('❌ Order creation failed:', error);
+    this.showMessage('error', `Order creation failed: ${error.message}`);
+    throw error;
+  }
+}
 
     async handlePaymentSuccess(paymentResponse) {
         const loadingElement = document.getElementById('paymentLoading');
@@ -662,6 +672,7 @@ async verifyPayment(paymentResponse) {
     throw error;
   }
 }
+
 
 
 
