@@ -272,80 +272,86 @@ class PaymentManager {
         }
     }
 
-    async initiateRazorpayPayment() {
-        console.log('💳 Initiating Razorpay payment...');
-        
-        const paymentButton = document.getElementById('razorpayButton');
-        const loadingElement = document.getElementById('paymentLoading');
-        const messageElement = document.getElementById('paymentMessage');
-        
-        if (!this.orderData || !this.orderData.total) {
-            this.showMessage('error', 'Invalid order data. Please try again.');
-            return;
-        }
-
-        // Check if Razorpay is available
-        if (typeof Razorpay === 'undefined') {
-            this.showMessage('error', 'Payment service is currently unavailable. Please try again later.');
-            return;
-        }
-
-        // Show loading
-        if (paymentButton) paymentButton.disabled = true;
-        if (loadingElement) loadingElement.style.display = 'block';
-        if (messageElement) messageElement.style.display = 'none';
-
-        try {
-            // Create Razorpay order via backend
-            const orderResponse = await this.createRazorpayOrder();
-            
-            if (!orderResponse.success) {
-                throw new Error(orderResponse.error || 'Failed to create payment order');
-            }
-
-            const options = {
-                key: this.razorpayKey,
-                amount: Math.round(this.orderData.total * 100),
-                currency: "INR",
-                name: "MyBrand",
-                description: `Order #${this.orderData.orderId}`,
-                order_id: orderResponse.razorpayOrderId,
-                handler: (response) => {
-                    console.log('✅ Payment successful:', response);
-                    this.handlePaymentSuccess(response);
-                },
-                prefill: {
-                    name: this.currentUser?.name || '',
-                    email: this.currentUser?.email || '',
-                    contact: this.currentUser?.phone || ""
-                },
-                notes: {
-                    order_id: this.orderData.orderId,
-                    customer_email: this.currentUser?.email
-                },
-                theme: {
-                    color: "#007bff"
-                },
-                modal: {
-                    ondismiss: () => {
-                        console.log('Payment modal closed');
-                        if (paymentButton) paymentButton.disabled = false;
-                        if (loadingElement) loadingElement.style.display = 'none';
-                    }
-                }
-            };
-
-            const razorpay = new Razorpay(options);
-            razorpay.open();
-            
-        } catch (error) {
-            console.error('❌ Payment initiation failed:', error);
-            this.showMessage('error', `Payment failed: ${error.message}`);
-        } finally {
-            if (loadingElement) loadingElement.style.display = 'none';
-            if (paymentButton) paymentButton.disabled = false;
-        }
+async initiateRazorpayPayment() {
+    console.log('💳 Initiating Razorpay payment...');
+    
+    const paymentButton = document.getElementById('razorpayButton');
+    const loadingElement = document.getElementById('paymentLoading');
+    const messageElement = document.getElementById('paymentMessage');
+    
+    if (!this.orderData || !this.orderData.total) {
+        this.showMessage('error', 'Invalid order data. Please try again.');
+        return;
     }
+
+    // Check if Razorpay is available
+    if (typeof Razorpay === 'undefined') {
+        this.showMessage('error', 'Payment service is currently unavailable. Please try again later.');
+        return;
+    }
+
+    // Show loading
+    if (paymentButton) paymentButton.disabled = true;
+    if (loadingElement) loadingElement.style.display = 'block';
+    if (messageElement) messageElement.style.display = 'none';
+
+    try {
+        // ✅ FIXED: Create Razorpay order via backend FIRST
+        const orderResponse = await this.createRazorpayOrder();
+        
+        if (!orderResponse.success) {
+            throw new Error(orderResponse.error || 'Failed to create payment order');
+        }
+
+        console.log('✅ Razorpay order created:', orderResponse.razorpayOrderId);
+
+        const options = {
+            key: this.razorpayKey,
+            // ❌ REMOVED: Don't pass amount directly
+            // amount: Math.round(this.orderData.total * 100),
+            
+            // ✅ ADDED: Use order_id instead of direct amount
+            order_id: orderResponse.razorpayOrderId, // This is the critical fix!
+            
+            currency: "INR",
+            name: "MyBrand",
+            description: `Order #${this.orderData.orderId}`,
+            handler: (response) => {
+                console.log('✅ Payment successful:', response);
+                this.handlePaymentSuccess(response);
+            },
+            prefill: {
+                name: this.currentUser?.name || '',
+                email: this.currentUser?.email || '',
+                contact: this.currentUser?.phone || ""
+            },
+            notes: {
+                order_id: this.orderData.orderId,
+                customer_email: this.currentUser?.email
+            },
+            theme: {
+                color: "#007bff"
+            },
+            modal: {
+                ondismiss: () => {
+                    console.log('Payment modal closed');
+                    if (paymentButton) paymentButton.disabled = false;
+                    if (loadingElement) loadingElement.style.display = 'none';
+                }
+            }
+        };
+
+        const razorpay = new Razorpay(options);
+        razorpay.open();
+        
+    } catch (error) {
+        console.error('❌ Payment initiation failed:', error);
+        this.showMessage('error', `Payment failed: ${error.message}`);
+    } finally {
+        if (loadingElement) loadingElement.style.display = 'none';
+        if (paymentButton) paymentButton.disabled = false;
+    }
+}
 
     async createRazorpayOrder() {
         try {
@@ -620,3 +626,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+
