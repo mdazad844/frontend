@@ -388,104 +388,130 @@ class PaymentManager {
         }
     }
 
-    async handlePaymentSuccess(paymentResponse) {
-        const loadingElement = document.getElementById('paymentLoading');
-        if (loadingElement) loadingElement.style.display = 'block';
-        
-        try {
-            console.log('🔍 Verifying payment with backend:', paymentResponse);
+async handlePaymentSuccess(paymentResponse) {
+    const loadingElement = document.getElementById('paymentLoading');
+    if (loadingElement) loadingElement.style.display = 'block';
+    
+    try {
+        console.log('🎯 PAYMENT VERIFICATION DEBUG START ==========');
+        console.log('✅ Payment successful response:', paymentResponse);
 
-            // ✅ FIX: Send complete order data with all required fields
-            const verificationData = {
-                razorpay_payment_id: paymentResponse.razorpay_payment_id,
-                razorpay_order_id: paymentResponse.razorpay_order_id,
-                razorpay_signature: paymentResponse.razorpay_signature,
-                order_id: this.orderData.orderId,
-                // ✅ ADD THE COMPLETE ORDER DATA THAT YOUR BACKEND EXPECTS
-                order_data: this.getCompleteOrderData()
-            };
-
-            console.log('📦 Sending complete verification data:', verificationData);
-
-            const verificationResponse = await this.verifyPayment(verificationData);
-            
-            if (verificationResponse.success) {
-                await this.finalizeOrder(paymentResponse, 'razorpay');
-                this.showMessage('success', 'Payment successful! Your order has been confirmed.');
-                
-                setTimeout(() => {
-                    window.location.href = `order-success.html?order=${this.orderData.orderId}`;
-                }, 2000);
-                
-            } else {
-                throw new Error(verificationResponse.error || 'Payment verification failed');
-            }
-            
-        } catch (error) {
-            console.error('❌ Payment verification failed:', error);
-            this.showMessage('error', `Payment verification failed: ${error.message}`);
-        } finally {
-            if (loadingElement) loadingElement.style.display = 'none';
-        }
-    }
-
-    // ✅ ADD THE MISSING METHOD - THIS WAS CAUSING THE ERROR
-    getCompleteOrderData() {
-        const address = this.orderData.address || {};
-        
-        return {
-            orderId: this.orderData.orderId,
-            items: this.orderData.items || [],
-            pricing: {
-                subtotal: this.orderData.subtotal || 1,
-                taxAmount: this.orderData.taxAmount || 0,
-                deliveryCharge: this.orderData.deliveryCharge || 0,
-                total: this.orderData.total || 1
-            },
-            paymentMethod: 'razorpay',
-            shippingAddress: {
-                line1: address.line1 || 'Default Address',
-                city: address.city || 'Default City',
-                state: address.state || 'Default State',
-                pincode: address.pincode || '000000',
-                country: address.country || 'India'
-            },
-            customer: {
-                email: this.currentUser?.email || 'customer@example.com',
-                name: this.currentUser?.name || 'Customer'
-            }
+        // ✅ FIX: Send complete order data with all required fields
+        const verificationData = {
+            razorpay_payment_id: paymentResponse.razorpay_payment_id,
+            razorpay_order_id: paymentResponse.razorpay_order_id,
+            razorpay_signature: paymentResponse.razorpay_signature,
+            order_id: this.orderData.orderId,
+            // ✅ ADD THE COMPLETE ORDER DATA THAT YOUR BACKEND EXPECTS
+            order_data: this.getCompleteOrderData()
         };
-    }
 
-    async verifyPayment(verificationData) {
-        try {
-            console.log('🔍 VERIFY PAYMENT DEBUG START');
-            console.log('Verification Data:', verificationData);
-            
-            const response = await fetch(`${this.backendUrl}/api/payments/verify-payment`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(verificationData)
-            });
+        console.log('📦 Sending verification data to backend:', verificationData);
+        console.log('🔍 Order data being sent:', this.getCompleteOrderData());
 
-            console.log('🔍 Verification Response Status:', response.status);
+        const verificationResponse = await this.verifyPayment(verificationData);
+        
+        console.log('🔍 Backend verification response:', verificationResponse);
+        
+        if (verificationResponse.success) {
+            console.log('🎉 PAYMENT VERIFICATION SUCCESSFUL!');
+            await this.finalizeOrder(paymentResponse, 'razorpay');
+            this.showMessage('success', 'Payment successful! Your order has been confirmed.');
             
-            const data = await response.json();
-            console.log('🔍 Verification Response Data:', data);
+            setTimeout(() => {
+                window.location.href = `order-success.html?order=${this.orderData.orderId}`;
+            }, 2000);
             
-            if (!response.ok) {
-                throw new Error(data.error || `HTTP error! status: ${response.status}`);
-            }
-            
-            return data;
-            
-        } catch (error) {
-            console.error('❌ Payment verification failed:', error);
-            throw error;
+        } else {
+            console.error('❌ Backend returned verification failure:', verificationResponse);
+            throw new Error(verificationResponse.error || 'Payment verification failed');
         }
+        
+    } catch (error) {
+        console.error('💥 PAYMENT VERIFICATION FAILED:', error);
+        console.error('💥 Error details:', {
+            message: error.message,
+            stack: error.stack
+        });
+        this.showMessage('error', `Payment verification failed: ${error.message}`);
+    } finally {
+        if (loadingElement) loadingElement.style.display = 'none';
+        console.log('🎯 PAYMENT VERIFICATION DEBUG END ==========');
     }
+}
+
+
+async verifyPayment(verificationData) {
+    try {
+        console.log('🔍 Making verification request to backend...');
+        console.log('🔍 Verification endpoint:', `${this.backendUrl}/api/payments/verify-payment`);
+        
+        const response = await fetch(`${this.backendUrl}/api/payments/verify-payment`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(verificationData)
+        });
+
+        console.log('🔍 Backend response status:', response.status);
+        console.log('🔍 Backend response ok:', response.ok);
+        
+        const responseText = await response.text();
+        console.log('🔍 Backend raw response:', responseText);
+        
+        let data;
+        try {
+            data = JSON.parse(responseText);
+            console.log('🔍 Backend parsed response:', data);
+        } catch (parseError) {
+            console.error('❌ Failed to parse backend response:', parseError);
+            console.error('❌ Raw response that failed to parse:', responseText);
+            throw new Error(`Invalid response from server: ${responseText}`);
+        }
+        
+        if (!response.ok) {
+            console.error('❌ Backend returned HTTP error:', response.status);
+            throw new Error(data.error || `HTTP error! status: ${response.status}`);
+        }
+        
+        return data;
+        
+    } catch (error) {
+        console.error('❌ Payment verification request failed:', error);
+        throw error;
+    }
+}
+
+// Enhanced with better logging
+getCompleteOrderData() {
+    const address = this.orderData.address || {};
+    const orderData = {
+        orderId: this.orderData.orderId,
+        items: this.orderData.items || [],
+        pricing: {
+            subtotal: this.orderData.subtotal || 1,
+            taxAmount: this.orderData.taxAmount || 0,
+            deliveryCharge: this.orderData.deliveryCharge || 0,
+            total: this.orderData.total || 1
+        },
+        paymentMethod: 'razorpay',
+        shippingAddress: {
+            line1: address.line1 || 'Default Address',
+            city: address.city || 'Default City',
+            state: address.state || 'Default State',
+            pincode: address.pincode || '000000',
+            country: address.country || 'India'
+        },
+        customer: {
+            email: this.currentUser?.email || 'customer@example.com',
+            name: this.currentUser?.name || 'Customer'
+        }
+    };
+    
+    console.log('📋 Generated complete order data:', orderData);
+    return orderData;
+}
 
     async finalizeOrder(paymentResponse, method) {
         try {
@@ -650,3 +676,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+
