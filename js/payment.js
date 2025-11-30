@@ -353,28 +353,19 @@ async initiateRazorpayPayment() {
     }
 }
 
- // In frontend payment.js - update createRazorpayOrder method
+ // REVERT TO ORIGINAL WORKING VERSION
 async createRazorpayOrder() {
   try {
     const orderPayload = {
       amount: Math.round(this.orderData.total * 100),
       currency: "INR",
-      receipt: this.orderData.orderId, // This is MB1764523309391
+      receipt: this.orderData.orderId,
       notes: {
         customer_email: this.currentUser?.email,
         order_id: this.orderData.orderId,
         items: this.orderData.items
-      },
-      // ✅ ADD order data for database
-      order_data: {
-        customer: this.currentUser,
-        items: this.orderData.items,
-        address: this.orderData.address,
-        subtotal: this.orderData.subtotal,
-        taxAmount: this.orderData.taxAmount,
-        deliveryCharge: this.orderData.deliveryCharge,
-        total: this.orderData.total
       }
+      // ✅ REMOVE order_data parameter
     };
 
     console.log('🔄 Creating Razorpay order via backend:', orderPayload);
@@ -672,6 +663,7 @@ async verifyPayment(paymentResponse) {
     throw error;
   }
 }
+
 
 
 
