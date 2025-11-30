@@ -485,10 +485,21 @@ async verifyPayment(verificationData) {
 
 // Enhanced with better logging
 getCompleteOrderData() {
+    // Transform items to match backend requirements
+    const transformedItems = (this.orderData.items || []).map((item, index) => ({
+        _id: `item_${Date.now()}_${index}`, // Use string instead of number
+        productId: item.id || item.productId || `prod_${Date.now()}_${index}`, // Ensure productId exists
+        name: item.name || 'Product',
+        price: item.price || 0,
+        quantity: item.quantity || 1,
+        image: item.image || ''
+    }));
+
     const address = this.orderData.address || {};
-    const orderData = {
+    
+    return {
         orderId: this.orderData.orderId,
-        items: this.orderData.items || [],
+        items: transformedItems,
         pricing: {
             subtotal: this.orderData.subtotal || 1,
             taxAmount: this.orderData.taxAmount || 0,
@@ -497,7 +508,7 @@ getCompleteOrderData() {
         },
         paymentMethod: 'razorpay',
         shippingAddress: {
-            line1: address.line1 || 'Default Address',
+            line1: address.line1 || 'Default Address Line 1',
             city: address.city || 'Default City',
             state: address.state || 'Default State',
             pincode: address.pincode || '000000',
@@ -508,9 +519,6 @@ getCompleteOrderData() {
             name: this.currentUser?.name || 'Customer'
         }
     };
-    
-    console.log('📋 Generated complete order data:', orderData);
-    return orderData;
 }
 
     async finalizeOrder(paymentResponse, method) {
@@ -676,4 +684,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+
 
