@@ -354,21 +354,17 @@ async initiateRazorpayPayment() {
 }
 
     async createRazorpayOrder() {
-        try {
-            if (!this.orderData || !this.orderData.total) {
-                throw new Error('Invalid order data');
-            }
-
-            const orderPayload = {
-                amount: Math.round(this.orderData.total * 100),
-                currency: "INR",
-                receipt: this.orderData.orderId,
-                notes: {
-                    customer_email: this.currentUser?.email,
-                    order_id: this.orderData.orderId,
-                    items: this.orderData.items
-                }
-            };
+  try {
+    const orderPayload = {
+      amount: Math.round(this.orderData.total * 100), // ✅ This is CORRECT (paise)
+      currency: "INR",
+      receipt: this.orderData.orderId,
+      notes: {
+        customer_email: this.currentUser?.email,
+        order_id: this.orderData.orderId,
+        items: this.orderData.items
+      }
+    };
 
             console.log('🔄 Creating Razorpay order via backend:', orderPayload);
             console.log('🌐 Backend URL:', `${this.backendUrl}/api/payments/create-order`);
@@ -626,4 +622,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+
 
