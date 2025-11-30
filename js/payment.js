@@ -389,34 +389,71 @@ class PaymentManager {
     }
 
     async handlePaymentSuccess(paymentResponse) {
-        const loadingElement = document.getElementById('paymentLoading');
-        if (loadingElement) loadingElement.style.display = 'block';
+    const loadingElement = document.getElementById('paymentLoading');
+    if (loadingElement) loadingElement.style.display = 'block';
+    
+    try {
+        console.log('🔍 Verifying payment with backend:', paymentResponse);
+
+        // ✅ FIX: Send complete order data with all required fields
+        const verificationData = {
+            razorpay_payment_id: paymentResponse.razorpay_payment_id,
+            razorpay_order_id: paymentResponse.razorpay_order_id,
+            razorpay_signature: paymentResponse.razorpay_signature,
+            order_id: this.orderData.orderId,
+            // ✅ ADD THE COMPLETE ORDER DATA THAT YOUR BACKEND EXPECTS
+            order_data: this.getCompleteOrderData()
+        };
+
+        console.log('📦 Sending complete verification data:', verificationData);
+
+        const verificationResponse = await this.verifyPayment(verificationData);
         
-        try {
-            console.log('🔍 Verifying payment with backend:', paymentResponse);
-
-            const verificationResponse = await this.verifyPayment(paymentResponse);
+        if (verificationResponse.success) {
+            await this.finalizeOrder(paymentResponse, 'razorpay');
+            this.showMessage('success', 'Payment successful! Your order has been confirmed.');
             
-            if (verificationResponse.success) {
-                await this.finalizeOrder(paymentResponse, 'razorpay');
-                this.showMessage('success', 'Payment successful! Your order has been confirmed.');
-                
-                setTimeout(() => {
-                    window.location.href = `order-success.html?order=${this.orderData.orderId}`;
-                }, 2000);
-                
-            } else {
-                throw new Error(verificationResponse.error || 'Payment verification failed');
-            }
+            setTimeout(() => {
+                window.location.href = `order-success.html?order=${this.orderData.orderId}`;
+            }, 2000);
             
-        } catch (error) {
-            console.error('❌ Payment verification failed:', error);
-            this.showMessage('error', 'Payment verification failed. Please contact support.');
-        } finally {
-            if (loadingElement) loadingElement.style.display = 'none';
+        } else {
+            throw new Error(verificationResponse.error || 'Payment verification failed');
         }
+        
+    } catch (error) {
+        console.error('❌ Payment verification failed:', error);
+        this.showMessage('error', `Payment verification failed: ${error.message}`);
+    } finally {
+        if (loadingElement) loadingElement.style.display = 'none';
     }
+}
 
+// ✅ ADD THIS HELPER METHOD TO GET COMPLETE ORDER DATA
+getCompleteOrderData() {
+    return {
+        orderId: this.orderData.orderId,
+        items: this.orderData.items || [],
+        pricing: {
+            subtotal: this.orderData.subtotal || 0,
+            taxAmount: this.orderData.taxAmount || 0,
+            deliveryCharge: this.orderData.deliveryCharge || 0,
+            total: this.orderData.total || 0
+        },
+        paymentMethod: 'razorpay',
+        shippingAddress: this.orderData.address || {
+            line1: '',
+            city: '', 
+            state: '',
+            pincode: '',
+            country: 'India'
+        },
+        customer: {
+            email: this.currentUser?.email || '',
+            name: this.currentUser?.name || 'Customer'
+        }
+    };
+}
     async verifyPayment(paymentResponse) {
         try {
             console.log('🔍 VERIFY PAYMENT DEBUG START');
@@ -612,3 +649,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+
