@@ -396,18 +396,19 @@ async handlePaymentSuccess(paymentResponse) {
         console.log('🎯 PAYMENT VERIFICATION DEBUG START ==========');
         console.log('✅ Payment successful response:', paymentResponse);
 
+        // Get the transformed order data
+        const orderData = this.getCompleteOrderData();
+        
         // ✅ FIX: Send complete order data with all required fields
         const verificationData = {
             razorpay_payment_id: paymentResponse.razorpay_payment_id,
             razorpay_order_id: paymentResponse.razorpay_order_id,
             razorpay_signature: paymentResponse.razorpay_signature,
             order_id: this.orderData.orderId,
-            // ✅ ADD THE COMPLETE ORDER DATA THAT YOUR BACKEND EXPECTS
-            order_data: this.getCompleteOrderData()
+            order_data: orderData
         };
 
-        console.log('📦 Sending verification data to backend:', verificationData);
-        console.log('🔍 Order data being sent:', this.getCompleteOrderData());
+        console.log('📦 FINAL VERIFICATION DATA BEING SENT:', verificationData);
 
         const verificationResponse = await this.verifyPayment(verificationData);
         
@@ -700,6 +701,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+
 
 
 
