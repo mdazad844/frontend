@@ -431,31 +431,15 @@ class PaymentManager {
         }
     }
 
-    // ✅ ADD THIS HELPER METHOD TO GET COMPLETE ORDER DATA
-    getCompleteOrderData() {
-        return {
-            orderId: this.orderData.orderId,
-            items: this.orderData.items || [],
-            pricing: {
-                subtotal: this.orderData.subtotal || 0,
-                taxAmount: this.orderData.taxAmount || 0,
-                deliveryCharge: this.orderData.deliveryCharge || 0,
-                total: this.orderData.total || 0
-            },
-            paymentMethod: 'razorpay',
-            shippingAddress: this.orderData.address || {
-                line1: this.orderData.address?.line1 || 'Not provided',
-                city: this.orderData.address?.city || 'Not provided',
-                state: this.orderData.address?.state || 'Not provided',
-                pincode: this.orderData.address?.pincode || '000000',
-                country: this.orderData.address?.country || 'India'
-            },
-            customer: {
-                email: this.currentUser?.email || '',
-                name: this.currentUser?.name || 'Customer'
-            }
-        };
-    }
+
+
+
+
+
+
+
+
+    
 
     async verifyPayment(verificationData) {
         try {
@@ -650,3 +634,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+
