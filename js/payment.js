@@ -624,3 +624,46 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
+
+
+
+
+
+
+// Add to your frontend payment.js in the verifyPayment method
+async verifyPayment(paymentResponse) {
+  try {
+    console.log('🔍 VERIFY PAYMENT DEBUG START');
+    console.log('Payment Response:', paymentResponse);
+    console.log('Order Data:', this.orderData);
+    
+    const response = await fetch(`${this.backendUrl}/api/payments/verify-payment`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        razorpay_payment_id: paymentResponse.razorpay_payment_id,
+        razorpay_order_id: paymentResponse.razorpay_order_id,
+        razorpay_signature: paymentResponse.razorpay_signature,
+        order_id: this.orderData.orderId // Make sure this is sent
+      })
+    });
+
+    console.log('🔍 Verification Response Status:', response.status);
+    
+    const data = await response.json();
+    console.log('🔍 Verification Response Data:', data);
+    
+    return data;
+    
+  } catch (error) {
+    console.error('❌ Payment verification failed:', error);
+    throw error;
+  }
+}
+
+
+
+
+
