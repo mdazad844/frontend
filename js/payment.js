@@ -485,19 +485,38 @@ async verifyPayment(verificationData) {
 
 // Enhanced with better logging
 getCompleteOrderData() {
+    console.log('🔄 TRANSFORMING ORDER DATA FOR BACKEND...');
+    
+    // Log original items
+    console.log('📦 Original items:', this.orderData.items);
+    
     // Transform items to match backend requirements
-    const transformedItems = (this.orderData.items || []).map((item, index) => ({
-        _id: `item_${Date.now()}_${index}`, // Use string instead of number
-        productId: item.id || item.productId || `prod_${Date.now()}_${index}`, // Ensure productId exists
-        name: item.name || 'Product',
-        price: item.price || 0,
-        quantity: item.quantity || 1,
-        image: item.image || ''
-    }));
+    const transformedItems = (this.orderData.items || []).map((item, index) => {
+        const transformedItem = {
+            _id: `item_${Date.now()}_${index}`, // Use string instead of number
+            productId: item.id || item.productId || `prod_${Date.now()}_${index}`, // Ensure productId exists
+            name: item.name || 'Product',
+            price: item.price || 0,
+            quantity: item.quantity || 1,
+            image: item.image || ''
+        };
+        console.log(`🔄 Transformed item ${index}:`, transformedItem);
+        return transformedItem;
+    });
 
     const address = this.orderData.address || {};
+    console.log('🏠 Original address:', address);
     
-    return {
+    const transformedAddress = {
+        line1: address.line1 || 'Default Address Line 1',
+        city: address.city || 'Default City',
+        state: address.state || 'Default State',
+        pincode: address.pincode || '000000',
+        country: address.country || 'India'
+    };
+    console.log('🏠 Transformed address:', transformedAddress);
+    
+    const completeOrderData = {
         orderId: this.orderData.orderId,
         items: transformedItems,
         pricing: {
@@ -507,18 +526,15 @@ getCompleteOrderData() {
             total: this.orderData.total || 1
         },
         paymentMethod: 'razorpay',
-        shippingAddress: {
-            line1: address.line1 || 'Default Address Line 1',
-            city: address.city || 'Default City',
-            state: address.state || 'Default State',
-            pincode: address.pincode || '000000',
-            country: address.country || 'India'
-        },
+        shippingAddress: transformedAddress,
         customer: {
             email: this.currentUser?.email || 'customer@example.com',
             name: this.currentUser?.name || 'Customer'
         }
     };
+    
+    console.log('✅ FINAL TRANSFORMED ORDER DATA:', completeOrderData);
+    return completeOrderData;
 }
 
     async finalizeOrder(paymentResponse, method) {
@@ -684,5 +700,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+
 
 
