@@ -219,9 +219,7 @@ class PaymentManager {
             const codBtn = document.getElementById('codButton');
             
             if (razorpayBtn) {
-                // ✅ FIX: Remove any existing listeners and add new one to prevent double initiation
-                razorpayBtn.replaceWith(razorpayBtn.cloneNode(true));
-                document.getElementById('razorpayButton').addEventListener('click', () => this.initiateRazorpayPayment());
+                razorpayBtn.addEventListener('click', () => this.initiateRazorpayPayment());
             }
             
             if (codBtn) {
@@ -431,15 +429,33 @@ class PaymentManager {
         }
     }
 
-
-
-
-
-
-
-
-
-    
+    // ✅ ADD THE MISSING METHOD - THIS WAS CAUSING THE ERROR
+    getCompleteOrderData() {
+        const address = this.orderData.address || {};
+        
+        return {
+            orderId: this.orderData.orderId,
+            items: this.orderData.items || [],
+            pricing: {
+                subtotal: this.orderData.subtotal || 1,
+                taxAmount: this.orderData.taxAmount || 0,
+                deliveryCharge: this.orderData.deliveryCharge || 0,
+                total: this.orderData.total || 1
+            },
+            paymentMethod: 'razorpay',
+            shippingAddress: {
+                line1: address.line1 || 'Default Address',
+                city: address.city || 'Default City',
+                state: address.state || 'Default State',
+                pincode: address.pincode || '000000',
+                country: address.country || 'India'
+            },
+            customer: {
+                email: this.currentUser?.email || 'customer@example.com',
+                name: this.currentUser?.name || 'Customer'
+            }
+        };
+    }
 
     async verifyPayment(verificationData) {
         try {
@@ -451,7 +467,7 @@ class PaymentManager {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(verificationData) // ✅ FIX: Use the complete verificationData
+                body: JSON.stringify(verificationData)
             });
 
             console.log('🔍 Verification Response Status:', response.status);
@@ -634,4 +650,3 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
-
