@@ -1029,6 +1029,161 @@ function checkout() {
     }
 }
 
+
+
+
+
+/* HERO SLIDER FUNCTIONALITY */
+function initSlider() {
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.dot');
+    const prevBtn = document.querySelector('.prev-btn');
+    const nextBtn = document.querySelector('.next-btn');
+    
+    if (slides.length === 0) {
+        console.log('No slides found');
+        return;
+    }
+    
+    let currentSlide = 0;
+    let slideInterval;
+    
+    function showSlide(n) {
+        // Wrap around if out of bounds
+        if (n >= slides.length) {
+            currentSlide = 0;
+        } else if (n < 0) {
+            currentSlide = slides.length - 1;
+        } else {
+            currentSlide = n;
+        }
+        
+        // Hide all slides
+        slides.forEach(slide => {
+            slide.classList.remove('active');
+        });
+        
+        // Remove active from all dots
+        dots.forEach(dot => {
+            dot.classList.remove('active');
+        });
+        
+        // Show current slide and dot
+        slides[currentSlide].classList.add('active');
+        if (dots[currentSlide]) {
+            dots[currentSlide].classList.add('active');
+        }
+    }
+    
+    function nextSlide() {
+        showSlide(currentSlide + 1);
+    }
+    
+    function prevSlide() {
+        showSlide(currentSlide - 1);
+    }
+    
+    function goToSlide(n) {
+        showSlide(n);
+        resetInterval();
+    }
+    
+    function startInterval() {
+        clearInterval(slideInterval);
+        slideInterval = setInterval(nextSlide, 5000); // Change slide every 5 seconds
+    }
+    
+    function resetInterval() {
+        clearInterval(slideInterval);
+        startInterval();
+    }
+    
+    // Event Listeners
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            nextSlide();
+            resetInterval();
+        });
+    }
+    
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            prevSlide();
+            resetInterval();
+        });
+    }
+    
+    // Dot click events
+    dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+            goToSlide(index);
+        });
+    });
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') {
+            nextSlide();
+            resetInterval();
+        } else if (e.key === 'ArrowLeft') {
+            prevSlide();
+            resetInterval();
+        }
+    });
+    
+    // Pause on hover
+    const slider = document.querySelector('.slider');
+    if (slider) {
+        slider.addEventListener('mouseenter', () => {
+            clearInterval(slideInterval);
+        });
+        
+        slider.addEventListener('mouseleave', () => {
+            startInterval();
+        });
+    }
+    
+    // Initialize
+    startInterval();
+    console.log('Slider initialized with', slides.length, 'slides');
+}
+
+/* INITIALIZE SLIDER WHEN PAGE LOADS */
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, initializing slider...');
+    
+    // Check if we're on the homepage
+    if (window.location.pathname.endsWith('index.html') || 
+        window.location.pathname === '/' || 
+        window.location.pathname.endsWith('/')) {
+        
+        // Initialize slider after a short delay to ensure DOM is ready
+        setTimeout(() => {
+            initSlider();
+        }, 100);
+    }
+});
+
+// Also initialize when page is fully loaded
+window.addEventListener('load', function() {
+    console.log('Page fully loaded');
+    if (window.location.pathname.endsWith('index.html') || 
+        window.location.pathname === '/' || 
+        window.location.pathname.endsWith('/')) {
+        
+        initSlider();
+    }
+});
+
+// Add a function to reinitialize slider if needed
+window.reinitializeSlider = initSlider;
+
+
+
+
+
+
+
 /* INITIALIZE APP */
 async function initializeApp() {
     console.log('🚀 Initializing MyBrand...');
@@ -1100,4 +1255,5 @@ window.debugWishlist = function() {
 
 // INITIALIZE IMMEDIATELY
 console.log('📦 MyBrand System Loading...');
+
 initializeApp();
