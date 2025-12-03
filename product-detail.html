@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	
     <title>Premium Cotton T-Shirt - Bulk Order</title>
-	<link rel="stylesheet" href="css/style.css"/>
+    <link rel="stylesheet" href="css/style.css"/>
     <style>
         * {
             margin: 0;
@@ -568,8 +567,6 @@
         </div>
     </div>
 
-   // Load scripts FIRST to avoid conflicts
-
 <script>
     // Product data - compatible with your existing system
     const productData = {
@@ -632,8 +629,7 @@
                     "images/tshirt-green-4.jpg"
                 ]
             },
-
-			{
+            {
                 name: "orange",
                 displayName: "Orange",
                 code: "#FFA500",
@@ -644,8 +640,7 @@
                     "images/tshirt-orange-4.jpg"
                 ]
             },
-
-			{
+            {
                 name: "beige",
                 displayName: "Beige",
                 code: "#D9BB9B",
@@ -656,8 +651,7 @@
                     "images/tshirt-beige-4.jpg"
                 ]
             },
-
-			{
+            {
                 name: "marron",
                 displayName: "Marron",
                 code: "#800000",
@@ -668,7 +662,6 @@
                     "images/tshirt-marron-4.jpg"
                 ]
             },
-			
             {
                 name: "gray",
                 displayName: "Gray",
@@ -740,7 +733,7 @@
         });
     }
 
-    // Select color - SINGLE VERSION (remove the duplicate below)
+    // Select color - SINGLE VERSION
     function selectColor(colorName) {
         selectedColor = colorName;
         
@@ -791,7 +784,7 @@
         });
     }
 
-    // Select size - SINGLE VERSION (remove the duplicate below)
+    // Select size - SINGLE VERSION
     function selectSize(size) {
         selectedSize = size;
         
@@ -887,82 +880,131 @@
         const totalPrice = unitPrice * quantity;
         
         currentPriceElement.textContent = `₹${totalPrice}`;
-	
     }
 
-// Enhanced add to cart for product detail page - COMPATIBLE VERSION
-function addToCartWithDetails() {
-    try {
-        console.log('=== ADD TO CART CALLED ===');
-        
-        // Get the actual unit price based on quantity
-        const unitPrice = getUnitPrice();
-        const totalPrice = unitPrice * quantity;
-        
-        // Create product name with color and size
-        const colorName = selectedColor.charAt(0).toUpperCase() + selectedColor.slice(1);
-        const productName = `Premium Cotton T-Shirt (${colorName}, ${selectedSize})`;
-        
-        // Get product image
-        const currentColor = productData.colors.find(color => color.name === selectedColor);
-        const productImage = currentColor?.images[0] || 'images/placeholder.png';
-        
-        console.log('Product Details for Cart:', {
-            name: productName,
-            price: unitPrice, // Use unit price, not total price
-            image: productImage,
-            size: selectedSize,
-            color: colorName,
-            quantity: quantity,
-            totalPrice: totalPrice
-        });
-        
-        // Validate the data
-        if (!productName || unitPrice <= 0 || isNaN(unitPrice)) {
-            console.error('Invalid product data:', { productName, unitPrice });
-            showNotification('Error: Invalid product information. Please check product details.', 'error');
-            return;
-        }
-        
-        // Check if your main addToCart function exists
-        if (typeof window.addToCart === 'function') {
-            console.log('Calling main addToCart function...');
-            
-            // Call your main function - IMPORTANT: Use unit price, not total price
-            // Your main function handles quantity internally
-            window.addToCart(productName, unitPrice, productImage, selectedSize, colorName);
-            
-        } else {
-            console.log('Main addToCart not found, using fallback');
-            // Use fallback if main function isn't available
-            addToCartFallback(productName, unitPrice, productImage, selectedSize, colorName);
-        }
-        
-    } catch (error) {
-        console.error('Error in addToCartWithDetails:', error);
-        showNotification('Error adding product to cart. Please try again.', 'error');
-    }
-}
-
-    // Fallback cart count update
-    function updateCartCountFallback() {
+    // FIXED: Add to cart with details - CORRECT QUANTITY HANDLING
+    function addToCartWithDetails() {
         try {
-            const cart = JSON.parse(localStorage.getItem('cart')) || [];
-            const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+            console.log('=== ADD TO CART WITH DETAILS CALLED ===');
             
-            // Update cart count in navbar
-            const cartCountElements = document.querySelectorAll('#cartCount, .cart-count');
-            cartCountElements.forEach(element => {
-                element.textContent = totalItems;
-                if (totalItems > 0) {
-                    element.style.display = 'inline-flex';
-                } else {
-                    element.style.display = 'none';
-                }
+            // Get current quantity from input
+            const quantityInput = document.getElementById('quantity');
+            if (!quantityInput) {
+                showNotification('Error: Quantity input not found', 'error');
+                return;
+            }
+            
+            const selectedQuantity = parseInt(quantityInput.value) || 1;
+            console.log('Selected quantity:', selectedQuantity);
+            
+            // Get unit price based on quantity
+            const unitPrice = getUnitPrice();
+            
+            // Create product name with color and size
+            const colorName = selectedColor.charAt(0).toUpperCase() + selectedColor.slice(1);
+            const productName = `Premium Cotton T-Shirt (${colorName}, ${selectedSize})`;
+            
+            // Get product image
+            const currentColor = productData.colors.find(color => color.name === selectedColor);
+            const productImage = currentColor?.images[0] || 'images/placeholder.png';
+            
+            console.log('Product details for cart:', {
+                name: productName,
+                unitPrice: unitPrice,
+                image: productImage,
+                size: selectedSize,
+                color: colorName,
+                quantity: selectedQuantity,
+                totalPrice: unitPrice * selectedQuantity
             });
+            
+            // Validate data
+            if (!productName || unitPrice <= 0 || isNaN(unitPrice)) {
+                console.error('Invalid product data');
+                showNotification('Error: Invalid product information', 'error');
+                return;
+            }
+            
+            // Get current cart from localStorage to check for existing items
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            
+            // Create unique identifier for this product with size and color
+            const productIdentifier = `${productName}-${selectedSize}-${colorName}`.toLowerCase().replace(/\s+/g, '-');
+            
+            console.log('Product identifier:', productIdentifier);
+            console.log('Current cart before update:', cart);
+            
+            // Check if item already exists in cart with same size and color
+            let itemExists = false;
+            let updatedCart = cart.map(item => {
+                const itemIdentifier = `${item.name}-${item.size || ''}-${item.color || ''}`.toLowerCase().replace(/\s+/g, '-');
+                if (itemIdentifier === productIdentifier) {
+                    itemExists = true;
+                    // Update quantity of existing item
+                    const updatedQuantity = (item.quantity || 1) + selectedQuantity;
+                    return {
+                        ...item,
+                        quantity: updatedQuantity,
+                        totalPrice: unitPrice * updatedQuantity
+                    };
+                }
+                return item;
+            });
+            
+            if (!itemExists) {
+                // Add new item to cart
+                updatedCart.push({
+                    id: Date.now() + Math.random(),
+                    name: productName,
+                    price: unitPrice, // Unit price
+                    image: productImage,
+                    quantity: selectedQuantity, // The selected quantity
+                    size: selectedSize,
+                    color: colorName,
+                    totalPrice: unitPrice * selectedQuantity,
+                    addedAt: new Date().toISOString()
+                });
+            }
+            
+            // Update cart in localStorage
+            localStorage.setItem('cart', JSON.stringify(updatedCart));
+            
+            // Trigger cart update events
+            if (typeof window.AppState !== 'undefined') {
+                window.AppState.loadCart();
+            }
+            
+            if (typeof window.updateCartCount === 'function') {
+                window.updateCartCount();
+            }
+            
+            // Show success notification
+            showNotification(`✅ ${selectedQuantity} x "${productName}" added to cart!`, 'success');
+            
+            // Animate cart icon
+            if (typeof window.animateCartIcon === 'function') {
+                window.animateCartIcon();
+            } else {
+                animateCartIconFallback();
+            }
+            
+            console.log('Cart after update:', updatedCart);
+            
         } catch (error) {
-            console.error('Error updating cart count:', error);
+            console.error('Error in addToCartWithDetails:', error);
+            showNotification('Error adding product to cart. Please try again.', 'error');
         }
+    }
+
+    // Fallback for cart icon animation
+    function animateCartIconFallback() {
+        const cartIcons = document.querySelectorAll('#cartCount, .cart-count');
+        cartIcons.forEach(icon => {
+            icon.style.transform = 'scale(1.3)';
+            setTimeout(() => {
+                icon.style.transform = 'scale(1)';
+            }, 300);
+        });
     }
 
     // ADD TO WISHLIST - COMPATIBLE WITH YOUR EXISTING SYSTEM
@@ -971,7 +1013,7 @@ function addToCartWithDetails() {
         const productName = `Premium Cotton T-Shirt (${selectedColor.charAt(0).toUpperCase() + selectedColor.slice(1)}, ${selectedSize})`;
         const productImage = productData.colors.find(color => color.name === selectedColor)?.images[0] || 'images/placeholder.png';
         
-        console.log('Calling your addToWishlist function with:', {
+        console.log('Adding to wishlist:', {
             productId: productData.id,
             productName: productName,
             productPrice: unitPrice,
@@ -1075,33 +1117,31 @@ function addToCartWithDetails() {
                 quantity = value;
                 updatePrice();
             });
+            
+            // Also listen for input event for real-time updates
+            quantityInput.addEventListener('input', function() {
+                let value = parseInt(this.value);
+                if (!isNaN(value) && value >= 1 && value <= 1000) {
+                    quantity = value;
+                    updatePrice();
+                }
+            });
         }
 
         // Initialize price on load
         updatePrice();
     }
 
-    // Debug function to check if your functions are available
-    function checkCompatibility() {
-        console.log('=== CHECKING COMPATIBILITY WITH SCRIPT.JS ===');
-        console.log('addToCart function available:', typeof window.addToCart === 'function');
-        console.log('addToWishlist function available:', typeof window.addToWishlist === 'function');
-        console.log('updateCartCount function available:', typeof window.updateCartCount === 'function');
-        console.log('updateWishlistCount function available:', typeof window.updateWishlistCount === 'function');
-        
-        // Check current cart state
+    // Debug function to check cart
+    function checkCart() {
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
         console.log('Current cart items:', cart);
-        console.log('Current wishlist items:', JSON.parse(localStorage.getItem('wishlist') || '[]'));
-        console.log('=== END COMPATIBILITY CHECK ===');
+        return cart;
     }
 
     // Initialize page when loaded
     document.addEventListener('DOMContentLoaded', function() {
         console.log('=== PRODUCT DETAIL PAGE INITIALIZED ===');
-        
-        // Check compatibility with your existing system
-        checkCompatibility();
         
         // Initialize page components
         initializePage();
@@ -1115,6 +1155,8 @@ function addToCartWithDetails() {
             window.updateWishlistCount();
         }
         
+        // Check initial cart state
+        console.log('Initial cart state:', checkCart());
         console.log('=== PRODUCT DETAIL PAGE READY ===');
     });
 </script>
@@ -1123,8 +1165,4 @@ function addToCartWithDetails() {
 <script src="js/script.js"></script>
 	
 </body>
-
 </html>
-
-
-
