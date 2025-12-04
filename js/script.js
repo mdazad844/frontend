@@ -1026,6 +1026,12 @@ function checkout() {
     } catch (error) {
         console.error('Error during checkout:', error);
         showNotification('Error during checkout process', 'error');
+
+
+
+
+		window.sliderInitialized = false;
+window.menuInitialized = false;
     }
 }
 
@@ -1176,7 +1182,41 @@ window.addEventListener('load', function() {
 });
 
 // Add a function to reinitialize slider if needed
-window.reinitializeSlider = initSlider;
+window.reinitializeSlider = initSlider
+
+
+
+
+
+setTimeout(function() {
+    console.log('🔧 Ensuring mobile menu works...');
+    
+    const menuToggle = document.getElementById('menuToggle');
+    if (menuToggle) {
+        // Remove any existing click handlers from slider
+        menuToggle.onclick = null;
+        
+        // Add fresh click handler
+        menuToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation(); // Stop slider from intercepting
+            
+            console.log('📱 Menu clicked (protected from slider)');
+            
+            const navLinks = document.getElementById('navLinks');
+            if (navLinks.classList.contains('active')) {
+                navLinks.classList.remove('active');
+                this.innerHTML = '☰';
+                document.body.style.overflow = '';
+            } else {
+                navLinks.classList.add('active');
+                this.innerHTML = '✕';
+                document.body.style.overflow = 'hidden';
+            }
+        }, true); // Use capture phase to get first
+    }
+}, 1000); // Wait for slider to initialize
 
 
 
@@ -1265,6 +1305,7 @@ window.debugWishlist = function() {
 console.log('📦 MyBrand System Loading...');
 
 initializeApp();
+
 
 
 
