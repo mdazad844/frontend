@@ -323,66 +323,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         
-        // Ensure all buttons work on mobile
-        setupMobileButtons();
-    }
 
-    // Setup mobile button functionality
-    // Setup mobile button functionality - SIMPLIFIED
-function setupMobileButtons() {
-    console.log('📱 Setting up mobile buttons...');
-    
-    // For mobile, we need to ensure clicks work properly
-    // But the buttons already have onclick attributes, so we should leave them alone
-    
-    // Instead, let's fix the issue where products get stuck
-    // This happens when the ID parsing fails
-    
-    // Add a global error handler for wishlist buttons
-    document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('wishlist-btn')) {
-            const btn = e.target;
-            const onclick = btn.getAttribute('onclick');
-            
-            if (onclick) {
-                // Extract product ID safely
-                try {
-                    const match = onclick.match(/addToWishlist\((\d+),/);
-                    if (match) {
-                        const productId = parseInt(match[1]);
-                        console.log(`🔍 Wishlist button clicked: Product ID ${productId}`);
-                        
-                        // Check if this is a "stuck" product
-                        if (productId === 6 || productId === 3 || productId === 4 || productId === 25) {
-                            console.log(`⚠️ Attempting to fix stuck product ${productId}`);
-                            
-                            // Force remove from wishlist
-                            const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
-                            const newWishlist = wishlist.filter(item => item.id !== productId);
-                            
-                            if (newWishlist.length < wishlist.length) {
-                                localStorage.setItem('wishlist', JSON.stringify(newWishlist));
-                                console.log(`✅ Forcibly removed stuck product ${productId}`);
-                                
-                                // Update UI
-                                if (window.updateWishlistCount) window.updateWishlistCount();
-                                if (window.updateWishlistHearts) window.updateWishlistHearts();
-                                
-                                // Show feedback
-                                btn.innerHTML = '🤍';
-                                btn.classList.remove('active');
-                                
-                                alert(`Removed stuck product ${productId} from wishlist`);
-                            }
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error handling wishlist button:', error);
-                }
-            }
-        }
-    });
-}
         
         // Fix for add to cart buttons
         document.querySelectorAll('.product-card .btn').forEach(btn => {
@@ -406,6 +347,7 @@ function setupMobileButtons() {
     // Initialize when DOM is loaded
     initializeShopPage();
 });
+
 
 
 
