@@ -228,6 +228,59 @@
         flex-direction: column;
       }
     }
+
+ /* Add to existing styles */
+    
+    .order-item {
+        border: 1px solid #eee;
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+    }
+    
+    .order-item:hover {
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+    
+    .empty-orders {
+        text-align: center;
+        padding: 20px;
+        color: #666;
+    }
+    
+    .empty-orders p {
+        margin-bottom: 15px;
+    }
+    
+    .order-status {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+    
+    .status-completed {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    
+    .status-pending {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+    
+    .status-processing {
+        background-color: #cce5ff;
+        color: #004085;
+    }
+    
+    .status-cancelled {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+	  
   </style>
 </head>
 <body>
@@ -347,10 +400,9 @@
   <footer>
     <p>© 2025 MyBrand. All Rights Reserved.</p>
   </footer>
+	
 
-  <script src="js/auth.js"></script>
-  <script src="js/script.js"></script>
-  <script>
+ <script>
     // Profile page specific functionality
     function loadProfileInfo() {
       const currentUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -422,30 +474,91 @@
             </div>
           </div>
           
+          <div class="profile-section">
+            <h3>Recent Orders</h3>
+            <div class="profile-info" id="recentOrders">
+              <div class="empty-orders">Loading orders...</div>
+            </div>
+          </div>
+          
           <div class="profile-actions">
             <button onclick="editProfile()" class="btn btn-edit">Edit Profile</button>
-            <button onclick="viewOrderHistory()" class="btn">Order History</button>
+            <button onclick="viewAllOrders()" class="btn">View All Orders</button>
             <button onclick="logoutFromProfile()" class="btn btn-logout">Logout</button>
           </div>
         </div>
       `;
       
-      // Load order statistics
+      // Load order statistics and recent orders
       loadOrderStatistics(currentUser.email);
     }
     
     function loadOrderStatistics(userEmail) {
-      const orders = JSON.parse(localStorage.getItem('orderHistory') || '[]');
-      const userOrders = orders.filter(order => order.userId === userEmail);
+      // FIXED: Get orders from the correct localStorage key 'orders'
+      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+      const userOrders = orders.filter(order => order.userEmail === userEmail || order.userId === userEmail);
       
       const totalOrders = userOrders.length;
-      const totalSpent = userOrders.reduce((sum, order) => sum + order.total, 0);
+      const totalSpent = userOrders.reduce((sum, order) => sum + (order.total || 0), 0);
       
       const totalOrdersElement = document.getElementById('totalOrders');
       const totalSpentElement = document.getElementById('totalSpent');
       
       if (totalOrdersElement) totalOrdersElement.textContent = totalOrders;
-      if (totalSpentElement) totalSpentElement.textContent = `₹${totalSpent}`;
+      if (totalSpentElement) totalSpentElement.textContent = `₹${totalSpent.toFixed(2)}`;
+      
+      // Display recent orders (last 3)
+      displayRecentOrders(userOrders);
+    }
+    
+    function displayRecentOrders(userOrders) {
+      const recentOrdersContainer = document.getElementById('recentOrders');
+      if (!recentOrdersContainer) return;
+      
+      if (userOrders.length === 0) {
+        recentOrdersContainer.innerHTML = `
+          <div class="empty-orders">
+            <p>You have no orders yet.</p>
+            <a href="shop.html" class="btn">Start Shopping</a>
+          </div>
+        `;
+        return;
+      }
+      
+      // Sort by date (newest first) and take last 3
+      const sortedOrders = userOrders.sort((a, b) => 
+        new Date(b.orderDate || b.date) - new Date(a.orderDate || a.date)
+      ).slice(0, 3);
+      
+      recentOrdersContainer.innerHTML = sortedOrders.map(order => `
+        <div class="order-item" style="border: 1px solid #eee; padding: 15px; margin-bottom: 10px; border-radius: 6px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <strong>Order #${order.orderId || order.id || 'N/A'}</strong>
+            <span style="color: #28a745; font-weight: bold;">₹${order.total || order.amount || 0}</span>
+          </div>
+          <div style="color: #666; font-size: 14px;">
+            <div>Date: ${new Date(order.orderDate || order.date || Date.now()).toLocaleDateString()}</div>
+            <div>Status: <span style="color: #007bff; font-weight: bold;">${order.status || 'Completed'}</span></div>
+            <div>Items: ${order.items ? order.items.length : order.quantity || 1}</div>
+          </div>
+          <button onclick="viewOrderDetails('${order.orderId || order.id}')" 
+                  class="btn" 
+                  style="margin-top: 10px; padding: 6px 12px; font-size: 13px;">
+            View Details
+          </button>
+        </div>
+      `).join('');
+      
+      // Add "View All" button if there are more than 3 orders
+      if (userOrders.length > 3) {
+        recentOrdersContainer.innerHTML += `
+          <div style="text-align: center; margin-top: 15px;">
+            <button onclick="viewAllOrders()" class="btn" style="padding: 8px 20px;">
+              View All Orders (${userOrders.length})
+            </button>
+          </div>
+        `;
+      }
     }
     
     function editProfile() {
@@ -514,6 +627,11 @@
       // Update currentUser in localStorage
       localStorage.setItem('currentUser', JSON.stringify(updatedUser));
       
+      // Also update in AppState if it exists
+      if (typeof window.AppState !== 'undefined') {
+        window.AppState.setUser(updatedUser);
+      }
+      
       // Close modal and refresh profile
       closeEditModal();
       loadProfileInfo();
@@ -521,30 +639,70 @@
       alert('Profile updated successfully!');
     }
     
-    function viewOrderHistory() {
+    function viewAllOrders() {
       const currentUser = JSON.parse(localStorage.getItem('currentUser'));
       if (!currentUser) return;
       
-      const orders = JSON.parse(localStorage.getItem('orderHistory') || '[]');
-      const userOrders = orders.filter(order => order.userId === currentUser.email);
+      // FIXED: Get orders from 'orders' key
+      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+      const userOrders = orders.filter(order => order.userEmail === currentUser.email || order.userId === currentUser.email);
       
       if (userOrders.length === 0) {
-        alert('You have no order history yet.');
+        alert('You have no order history yet.\n\nStart shopping to place your first order!');
         return;
       }
       
-      // FIXED: Corrected the escaped newlines
-      const orderList = userOrders.map(order => 
-        `Order #${order.orderId} - ₹${order.total} - ${new Date(order.orderDate).toLocaleDateString()}`
-      ).join('\n');
+      // Sort by date (newest first)
+      const sortedOrders = userOrders.sort((a, b) => 
+        new Date(b.orderDate || b.date) - new Date(a.orderDate || a.date)
+      );
       
-      alert(`Your Order History:\n\n${orderList}`);
+      const orderList = sortedOrders.map((order, index) => 
+        `${index + 1}. Order #${order.orderId || order.id || 'N/A'} - ₹${order.total || order.amount || 0} - ${new Date(order.orderDate || order.date || Date.now()).toLocaleDateString()} - ${order.status || 'Completed'}`
+      ).join('\n\n');
+      
+      alert(`📦 YOUR ORDER HISTORY (${userOrders.length} orders)\n\n${orderList}\n\nTotal Amount Spent: ₹${userOrders.reduce((sum, order) => sum + (order.total || 0), 0).toFixed(2)}`);
+    }
+    
+    function viewOrderDetails(orderId) {
+      // FIXED: Get orders from 'orders' key
+      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+      const order = orders.find(o => o.orderId === orderId || o.id === orderId);
+      
+      if (!order) {
+        alert('Order details not found.');
+        return;
+      }
+      
+      const itemsList = order.items ? 
+        order.items.map(item => 
+          `• ${item.name} (Qty: ${item.quantity || 1}) - ₹${item.price || 0}`
+        ).join('\n') : 
+        'Single item purchase';
+      
+      alert(`📋 ORDER DETAILS\n\n` +
+            `Order ID: ${order.orderId || order.id}\n` +
+            `Date: ${new Date(order.orderDate || order.date || Date.now()).toLocaleString()}\n` +
+            `Status: ${order.status || 'Completed'}\n` +
+            `Total: ₹${order.total || order.amount || 0}\n\n` +
+            `ITEMS:\n${itemsList}\n\n` +
+            `Shipping Address:\n${order.shippingAddress || 'Not specified'}`);
     }
     
     // FIXED: Renamed to avoid conflict with auth.js logout function
     function logoutFromProfile() {
       if (confirm('Are you sure you want to logout?')) {
         localStorage.removeItem('currentUser');
+        
+        // Clear cart and wishlist if you want a fresh start on logout
+        // localStorage.removeItem('cart');
+        // localStorage.removeItem('wishlist');
+        
+        // Update AppState if exists
+        if (typeof window.AppState !== 'undefined') {
+          window.AppState.setUser(null);
+        }
+        
         window.location.href = 'index.html';
       }
     }
@@ -560,10 +718,27 @@
     // Initialize profile when page loads
     document.addEventListener('DOMContentLoaded', function() {
       loadProfileInfo();
+      
+      // Also update cart and wishlist counts
+      if (typeof window.updateCartCount === 'function') {
+        window.updateCartCount();
+      }
+      if (typeof window.updateWishlistCount === 'function') {
+        window.updateWishlistCount();
+      }
     });
-  </script>
+    
+    // Make functions available globally
+    window.editProfile = editProfile;
+    window.closeEditModal = closeEditModal;
+    window.saveProfileChanges = saveProfileChanges;
+    window.viewAllOrders = viewAllOrders;
+    window.viewOrderDetails = viewOrderDetails;
+    window.logoutFromProfile = logoutFromProfile;
+</script>
 <script src="js/auth.js"></script>
 <script src="js/script.js"></script>
 </body>
 
 </html>
+
