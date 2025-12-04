@@ -190,54 +190,7 @@
             display: none !important;
         }
 
-        /* Filter Option Styles */
-        .filter-option {
-            display: flex !important;
-            align-items: center !important;
-            gap: 10px !important;
-            cursor: pointer !important;
-            padding: 8px 0 !important;
-            transition: background-color 0.3s ease !important;
-            border-radius: 4px !important;
-        }
-
-        .filter-option:hover {
-            background-color: #f8f9fa !important;
-        }
-
-        .checkmark {
-            width: 18px;
-            height: 18px;
-            border: 2px solid #ddd;
-            border-radius: 3px;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        .filter-option input:checked + .checkmark {
-            background-color: #007bff;
-            border-color: #007bff;
-        }
-
-        .filter-option input:checked + .checkmark::after {
-            content: '✓';
-            position: absolute;
-            color: white;
-            font-size: 12px;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        .filter-text {
-            flex-grow: 1;
-            font-size: 14px;
-        }
-
-        .product-count {
-            color: #666;
-            font-size: 12px;
-        }
+       
 
         /* Products Grid */
         .products-grid {
@@ -723,6 +676,7 @@ document.querySelectorAll('.product-card').forEach(card => {
 </body>
 
 </html>
+
 
 
 
