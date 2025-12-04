@@ -325,5 +325,44 @@
       document.body.appendChild(testBtn);
     }, 1000);
   </script>
+
+
+
+
+	<!-- DIAGNOSTIC SCRIPT - Add before </body> -->
+<script>
+console.log('🔍 DEBUGGING MENU ISSUE ON INDEX.HTML');
+
+// Check if elements exist
+const menuToggle = document.getElementById('menuToggle');
+const navLinks = document.getElementById('navLinks');
+
+console.log('menuToggle found:', !!menuToggle);
+console.log('navLinks found:', !!navLinks);
+
+if (menuToggle) {
+    console.log('menuToggle styles:', window.getComputedStyle(menuToggle).display);
+    console.log('menuToggle onclick:', menuToggle.onclick);
+    console.log('menuToggle event listeners:', 
+        getEventListeners ? getEventListeners(menuToggle) : 'getEventListeners not available');
+}
+
+// Test if mobile-menu.js loaded
+console.log('Is mobileMenuFunction available?', typeof initMobileMenu === 'function' ? 'Yes' : 'No');
+
+// Manually trigger mobile-menu.js if it exists
+if (typeof initMobileMenu === 'function') {
+    console.log('Calling initMobileMenu...');
+    initMobileMenu();
+}
+
+// Add a simple test click
+if (menuToggle) {
+    menuToggle.addEventListener('click', function() {
+        console.log('✅ DIRECT CLICK EVENT WORKED!');
+    });
+}
+</script>
 </body>
 </html>
+
