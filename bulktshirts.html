@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="css/style.css"/>
+    <link rel="stylesheet" href="css/style.css"/>
     <title>Bulk Plain T-Shirts - Wholesale Prices</title>
     <style>
         * {
@@ -45,119 +45,17 @@
             opacity: 0.9;
         }
 
-        /* Main Content Grid */
+        /* Main Content */
         .bulk-content {
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            gap: 30px;
+            display: block; /* Changed from grid to block since filters removed */
         }
 
-
-
-
-
-
-
-		
-        /* Size Options - 2 per line */
-        .size-options {
-            display: grid !important;
-            grid-template-columns: repeat(2, 1fr) !important;
-            gap: 8px !important;
-            width: 100% !important;
-        }
-
-        .size-option {
-            display: flex !important;
-            justify-content: center !important;
-            width: 100% !important;
-            margin: 0 !important;
-        }
-
-        .size-box {
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            width: 100% !important;
-            padding: 12px 5px !important;
-            border: 2px solid #ddd !important;
-            border-radius: 6px !important;
-            text-align: center !important;
-            cursor: pointer !important;
-            transition: all 0.3s ease !important;
-            font-weight: 600 !important;
-            background: white !important;
-        }
-
-        .size-option input:checked + .size-box {
-            background-color: #007bff !important;
-            color: white !important;
-            border-color: #007bff !important;
-        }
-
-        /* Color Options - 2 per line */
-        .color-options {
-            display: grid !important;
-            grid-template-columns: repeat(2, 1fr) !important;
-            gap: 12px !important;
-            width: 100% !important;
-        }
-
-        .color-option {
-            display: flex !important;
-            align-items: center !important;
-            gap: 10px !important;
-            cursor: pointer !important;
-            width: 100% !important;
-            margin: 0 !important;
-            padding: 5px !important;
-            border-radius: 6px !important;
-            transition: background-color 0.3s ease !important;
-        }
-
-        .color-option:hover {
-            background-color: #f8f9fa !important;
-        }
-
-        .color-box {
-            width: 24px !important;
-            height: 24px !important;
-            border-radius: 6px !important;
-            border: 2px solid #ddd !important;
-            transition: all 0.3s ease !important;
-            flex-shrink: 0 !important;
-        }
-
-        .color-option input:checked + .color-box {
-            border-color: #333 !important;
-            transform: scale(1.1) !important;
-        }
-
-        .color-text {
-            font-size: 14px !important;
-            flex-grow: 1 !important;
-            font-weight: 500 !important;
-        }
-
-        /* Hide original checkboxes */
-        .size-option input[type="checkbox"],
-        .color-option input[type="checkbox"] {
-            display: none !important;
-        }
-
-       
-
-
-
-
-
-
-		
         /* Products Grid */
         .products-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 25px;
+            margin-top: 20px;
         }
 
         .product-card {
@@ -300,15 +198,6 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
-            .bulk-content {
-                grid-template-columns: 1fr;
-            }
-            
-            .filter-sidebar {
-                position: static;
-                margin-bottom: 30px;
-            }
-            
             .products-grid {
                 grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             }
@@ -326,40 +215,37 @@
     </style>
 </head>
 <body>
-
-<header>
-    <nav class="navbar">
-        <div class="logo"><a href="index.html">MyBrand</a></div>
-        <!-- Search Bar -->
-        <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="Search products...">
-            <button onclick="searchProducts()">🔍</button>
-        </div>
-        
-        <ul class="nav-links" id="navLinks">
-            <li><a href="index.html" class="active">Home</a></li>
-            <li><a href="shop.html">Shop</a></li>
-			
-            <li>
-                <a href="cart.html">Cart 
-                    <span class="cart-count" id="cartCount">0</span>
-                </a>
-            </li>
-            <!-- Wishlist Link -->
-            <li>
-                <a href="wishlist.html">Wishlist 
-                    <span class="wishlist-count" id="wishlistCount">0</span>
-                </a>
-            </li>
-            <li><a href="about.html">About</a></li>
-            <li><a href="contact.html">Contact</a></li>
-            <li id="profileNavItem"><a href="profile.html">Profile</a></li>
-            <li><a href="login.html" id="authLink">Login</a></li>
-			
-        </ul>
-        <div class="menu-icon" id="menuToggle">☰</div>
-    </nav>
-</header>
+    <header>
+        <nav class="navbar">
+            <div class="logo"><a href="index.html">MyBrand</a></div>
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search products...">
+                <button onclick="searchProducts()">🔍</button>
+            </div>
+            
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="shop.html">Shop</a></li>
+                <li>
+                    <a href="cart.html">Cart 
+                        <span class="cart-count" id="cartCount">0</span>
+                    </a>
+                </li>
+                <!-- Wishlist Link -->
+                <li>
+                    <a href="wishlist.html">Wishlist 
+                        <span class="wishlist-count" id="wishlistCount">0</span>
+                    </a>
+                </li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li id="profileNavItem"><a href="profile.html">Profile</a></li>
+                <li><a href="login.html" id="authLink">Login</a></li>
+            </ul>
+            <div class="menu-icon" id="menuToggle">☰</div>
+        </nav>
+    </header>
 
     <div class="bulk-tshirt-container">
         <!-- Header Section -->
@@ -370,18 +256,7 @@
 
         <!-- Main Content -->
         <div class="bulk-content">
-            <!-- Filters Sidebar -->
-
-
-
-
-
-
-
-
-			
-
-            <!-- Products Grid -->
+            <!-- Products Section -->
             <div class="products-section">
                 <div class="products-grid">
                     <!-- Product 1 -->
@@ -403,8 +278,8 @@
                                 </ul>
                             </div>
                             <button class="order-btn" onclick="viewProductDetail(1001)">
-    View Product & Request Quote
-</button>
+                                View Product & Request Quote
+                            </button>
                         </div>
                     </div>
 
@@ -427,20 +302,17 @@
                                 </ul>
                             </div>
                             <button class="order-btn" onclick="viewProductDetail(1002)">
-    View Product & Request Quote
-</button>
+                                View Product & Request Quote
+                            </button>
                         </div>
                     </div>
 
                     <!-- Product 3 -->
-					
-                    <div  class="product-card">
+                    <div class="product-card">
                         <div class="product-image">
-							<div class="product-badge">ECO FRIENDLY</div>
+                            <div class="product-badge">ECO FRIENDLY</div>
                             Premium Polo T-Shirt
                         </div>
-						
-						
                         <div class="product-info">
                             <h3 class="product-title">Classic Polo T-Shirt</h3>
                             <p class="product-description">Premium pique cotton, collar style, perfect for corporate events.</p>
@@ -453,9 +325,9 @@
                                     <li>500+ pieces: ₹259 each</li>
                                 </ul>
                             </div>
-                           <button class="order-btn" onclick="viewProductDetail(1003)">
-    View Product & Request Quote
-</button>
+                            <button class="order-btn" onclick="viewProductDetail(1003)">
+                                View Product & Request Quote
+                            </button>
                         </div>
                     </div>
 
@@ -478,8 +350,8 @@
                                 </ul>
                             </div>
                             <button class="order-btn" onclick="viewProductDetail(1004)">
-    View Product & Request Quote
-</button>
+                                View Product & Request Quote
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -495,45 +367,32 @@
     </div>
 
     <script>
-
-
-
-
-
-		
-		
-function viewProductDetail(productId) {
-    window.location.href = `product-detail.html?id=${productId}`;
-}
-
-// Also make the entire product card clickable
-document.querySelectorAll('.product-card').forEach(card => {
-    card.style.cursor = 'pointer';
-    card.addEventListener('click', function(e) {
-        if (!e.target.classList.contains('order-btn')) {
-            viewProductDetail();
+        function viewProductDetail(productId) {
+            window.location.href = `product-detail.html?id=${productId}`;
         }
-    });
-});
 
+        // Make entire product card clickable (optional)
+        document.querySelectorAll('.product-card').forEach(card => {
+            card.style.cursor = 'pointer';
+            card.addEventListener('click', function(e) {
+                if (!e.target.classList.contains('order-btn') && 
+                    !e.target.closest('.order-btn')) {
+                    // Get product ID from the button inside this card
+                    const button = this.querySelector('.order-btn');
+                    if (button) {
+                        const onclickAttr = button.getAttribute('onclick');
+                        const match = onclickAttr?.match(/viewProductDetail\((\d+)\)/);
+                        if (match && match[1]) {
+                            viewProductDetail(match[1]);
+                        }
+                    }
+                }
+            });
+        });
     </script>
-	<!-- Are these scripts included in the correct order? -->
-<script src="js/auth.js"></script>
-<script src="js/script.js"></script>
+    
+    <!-- Load scripts in correct order -->
+    <script src="js/auth.js"></script>
+    <script src="js/script.js"></script>
 </body>
-
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
