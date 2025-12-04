@@ -824,7 +824,7 @@ function updateWishlistHearts() {
 }
 
 /* ENHANCED ADD TO WISHLIST FUNCTION */
-function addToWishlist(productId, productName, productPrice, productImage) {
+/*function addToWishlist(productId, productName, productPrice, productImage) {
     console.log('❤️ addToWishlist called for product:', productId);
     
     try {
@@ -864,7 +864,7 @@ function addToWishlist(productId, productName, productPrice, productImage) {
         showNotification('Error updating wishlist', 'error');
         return false;
     }
-}
+} */
 
 /* UPDATE SINGLE WISHLIST BUTTON STATE */
 function updateWishlistButtonState(productId, isInWishlist) {
@@ -1258,5 +1258,6 @@ window.debugWishlist = function() {
 console.log('📦 MyBrand System Loading...');
 
 initializeApp();
+
 
 
