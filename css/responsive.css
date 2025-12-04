@@ -465,3 +465,27 @@ img {
         grid-template-columns: 1fr !important;
     }
 }
+
+
+
+@media (max-width: 768px) {
+    /* Move menu button ABOVE the slider */
+    .menu-icon {
+        z-index: 10000 !important;
+        position: relative !important;
+    }
+    
+    /* Prevent slider from blocking clicks on menu area */
+    .slider-container {
+        pointer-events: none !important;
+    }
+    
+    /* But allow clicks on slider buttons */
+    .slider-nav,
+    .prev-btn,
+    .next-btn,
+    .dots,
+    .slide-link {
+        pointer-events: auto !important;
+    }
+}
