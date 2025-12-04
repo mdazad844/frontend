@@ -1217,26 +1217,186 @@ async function initializeApp() {
     console.log('✅ MyBrand initialized');
 }
 
-/* MAKE FUNCTIONS GLOBALLY AVAILABLE */
-window.addToCart = addToCart;
-window.addToWishlist = addToWishlist;
-window.removeFromWishlist = removeFromWishlist;
-window.updateCartCount = updateCartCount;
-window.updateWishlistCount = updateWishlistCount;
-window.displayCartItems = displayCartItems;
-window.displayWishlistItems = displayWishlistItems;
-window.increaseQuantity = increaseQuantity;
-window.decreaseQuantity = decreaseQuantity;
-window.removeItem = removeItem;
-window.moveToCartFromWishlist = moveToCartFromWishlist;
-window.checkout = checkout;
+/* MAKE FUNCTIONS GLOBALLY AVAILABLE - MOBILE COMPATIBLE */
+// Ensure functions exist in global scope
+if (typeof window !== 'undefined') {
+    window.addToCart = addToCart;
+    window.addToWishlist = addToWishlist;
+    window.removeFromWishlist = removeFromWishlist;
+    window.updateCartCount = updateCartCount;
+    window.updateWishlistCount = updateWishlistCount;
+    window.displayCartItems = displayCartItems;
+    window.displayWishlistItems = displayWishlistItems;
+    window.increaseQuantity = increaseQuantity;
+    window.decreaseQuantity = decreaseQuantity;
+    window.removeItem = removeItem;
+    window.moveToCartFromWishlist = moveToCartFromWishlist;
+    window.checkout = checkout;
+    window.updateWishlistHearts = updateWishlistHearts;
+    window.initializeWishlistButtons = initializeWishlistButtons;
+    window.updateWishlistButtonState = updateWishlistButtonState;
+    
+    // Add mobile-specific functions
+    window.mobileAddToCart = function(name, price, image) {
+        console.log('📱 Mobile addToCart called:', name);
+        return addToCart(name, price, image);
+    };
+    
+    window.mobileAddToWishlist = function(id, name, price, image) {
+        console.log('📱 Mobile addToWishlist called:', id, name);
+        return addToWishlist(id, name, price, image);
+    };
+}
 
+/* MOBILE TOUCH SUPPORT */
+function setupMobileTouchSupport() {
+    if (!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        return; // Not mobile
+    }
+    
+    console.log('📱 Setting up mobile touch support...');
+    
+    // Fix wishlist buttons for mobile
+    document.querySelectorAll('.wishlist-btn').forEach(btn => {
+        const onclick = btn.getAttribute('onclick');
+        if (onclick) {
+            // Remove inline onclick to prevent conflicts
+            btn.removeAttribute('onclick');
+            
+            // Add touch events
+            btn.addEventListener('touchstart', function(e) {
+                e.stopPropagation();
+                e.preventDefault();
+            }, { passive: false });
+            
+            btn.addEventListener('touchend', function(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                
+                // Extract arguments from original onclick
+                const match = onclick.match(/addToWishlist\(([^)]+)\)/);
+                if (match) {
+                    const args = match[1].split(',').map(arg => 
+                        arg.trim().replace(/'/g, '').replace(/"/g, '')
+                    );
+                    
+                    // Convert id to number
+                    const productId = parseInt(args[0]) || args[0];
+                    const productName = args[1];
+                    const productPrice = parseFloat(args[2]) || 0;
+                    const productImage = args[3];
+                    
+                    // Call the function
+                    if (window.addToWishlist) {
+                        addToWishlist(productId, productName, productPrice, productImage);
+                    }
+                }
+            }, { passive: false });
+        }
+    });
+    
+    // Fix add to cart buttons for mobile
+    document.querySelectorAll('.btn').forEach(btn => {
+        const onclick = btn.getAttribute('onclick');
+        if (onclick && onclick.includes('addToCart')) {
+            // Remove inline onclick to prevent conflicts
+            btn.removeAttribute('onclick');
+            
+            // Add touch events
+            btn.addEventListener('touchstart', function(e) {
+                e.stopPropagation();
+                e.preventDefault();
+            }, { passive: false });
+            
+            btn.addEventListener('touchend', function(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                
+                // Extract arguments from original onclick
+                const match = onclick.match(/addToCart\(([^)]+)\)/);
+                if (match) {
+                    const args = match[1].split(',').map(arg => 
+                        arg.trim().replace(/'/g, '').replace(/"/g, '')
+                    );
+                    
+                    const productName = args[0];
+                    const productPrice = parseFloat(args[1]) || 0;
+                    const productImage = args[2] || 'images/placeholder.png';
+                    
+                    // Call the function
+                    if (window.addToCart) {
+                        addToCart(productName, productPrice, productImage);
+                    }
+                }
+            }, { passive: false });
+        }
+    });
+    
+    // Fix view details links
+    document.querySelectorAll('.small-link').forEach(link => {
+        link.addEventListener('touchend', function(e) {
+            e.stopPropagation();
+            // Let the default link behavior happen
+        }, { passive: true });
+    });
+}
 
-window.updateWishlistHearts = updateWishlistHearts;
-window.initializeWishlistButtons = initializeWishlistButtons;
-window.updateWishlistButtonState = updateWishlistButtonState;
+/* ENHANCED INITIALIZE APP WITH MOBILE SUPPORT */
+async function initializeApp() {
+    console.log('🚀 Initializing MyBrand...');
+    
+    try {
+        // Load all data
+        AppState.loadCart();
+        AppState.loadWishlist();
+        AppState.loadUser();
+        AppState.loadOrders();
+        
+        // Update UI
+        updateCartCount();
+        updateWishlistCount();
+        
+        // Check if functions are available
+        console.log('✅ Core functions check:');
+        console.log('  addToCart available:', typeof window.addToCart === 'function');
+        console.log('  addToWishlist available:', typeof window.addToWishlist === 'function');
+        console.log('  updateCartCount available:', typeof window.updateCartCount === 'function');
+        
+        // Initialize page-specific features
+        if (window.location.pathname.includes('cart.html')) {
+            displayCartItems();
+            
+            // Add checkout button event listener
+            const checkoutBtn = document.getElementById('checkout-btn');
+            if (checkoutBtn) {
+                checkoutBtn.addEventListener('click', checkout);
+                checkoutBtn.addEventListener('touchend', checkout);
+            }
+        }
+        
+        if (window.location.pathname.includes('wishlist.html')) {
+            displayWishlistItems();
+        }
+        
+        // Initialize wishlist buttons
+        initializeWishlistButtons();
+        
+        // Setup mobile touch support if on mobile
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            console.log('📱 Mobile device detected');
+            setTimeout(() => {
+                setupMobileTouchSupport();
+            }, 500); // Delay to ensure DOM is ready
+        }
+        
+        console.log('✅ MyBrand initialized successfully');
+        
+    } catch (error) {
+        console.error('❌ Error initializing app:', error);
+    }
+}
 
-// Debug functions
+/* DEBUG FUNCTIONS */
 window.debugCart = function() {
     const cart = AppState.getCart();
     console.log('=== 🛒 CART DEBUG ===');
@@ -1253,7 +1413,40 @@ window.debugWishlist = function() {
     updateWishlistCount();
 };
 
-// INITIALIZE IMMEDIATELY
+window.checkGlobalFunctions = function() {
+    console.log('=== 🌍 GLOBAL FUNCTIONS CHECK ===');
+    console.log('addToCart:', typeof window.addToCart);
+    console.log('addToWishlist:', typeof window.addToWishlist);
+    console.log('updateCartCount:', typeof window.updateCartCount);
+    console.log('updateWishlistCount:', typeof window.updateWishlistCount);
+};
+
+/* INITIALIZE IMMEDIATELY WITH FALLBACK */
 console.log('📦 MyBrand System Loading...');
 
+// Different initialization strategies for different browsers
+if (document.readyState === 'loading') {
+    // Document is still loading
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('📄 DOMContentLoaded - Initializing app');
+        setTimeout(initializeApp, 100);
+    });
+} else {
+    // Document is already loaded
+    console.log('⚡ Document already loaded - Initializing immediately');
+    setTimeout(initializeApp, 100);
+}
+
+// Also try on window load
+window.addEventListener('load', function() {
+    console.log('🔄 Window load event - Ensuring app is initialized');
+    if (!window.appInitialized) {
+        setTimeout(initializeApp, 200);
+    }
+});
+
+// Set a flag to avoid double initialization
+window.appInitialized = false;
+
 initializeApp();
+
