@@ -17,38 +17,63 @@
 </head>
 <body>
 <header>
-    <nav class="navbar">
-        <div class="logo"><a href="index.html">MyBrand</a></div>
-        
-        <!-- Search Bar - MOVED AFTER NAV-LINKS FOR MOBILE -->
-        <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="Search products...">
-            <button onclick="searchProducts()">🔍</button>
-        </div>
-        
-        <ul class="nav-links" id="navLinks">
-            <li><a href="index.html" class="active">Home</a></li>
-            <li><a href="shop.html">Shop</a></li>
-			<li><a href="bulktshirts.html">Bulk plain T-shirts</a></li>
-            <li>
-                <a href="cart.html">Cart 
-                    <span class="cart-count" id="cartCount">0</span>
-                </a>
-            </li>
-            <li>
-                <a href="wishlist.html">Wishlist 
-                    <span class="wishlist-count" id="wishlistCount">0</span>
-                </a>
-            </li>
-            <li><a href="about.html">About</a></li>
-            <li><a href="contact.html">Contact</a></li>
-            <li id="profileNavItem"><a href="profile.html">Profile</a></li>
-            <li><a href="login.html" id="authLink">Login</a></li>
-        </ul>
-        
-        <!-- MOBILE MENU BUTTON - MUST BE VISIBLE -->
-        <div class="menu-icon" id="menuToggle">☰</div>
-    </nav>
+    <!-- GUARANTEED WORKING NAV FOR INDEX.HTML -->
+<nav class="navbar">
+    <div class="logo"><a href="index.html">MyBrand</a></div>
+    
+    <!-- Search Bar -->
+    <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search products...">
+        <button onclick="searchProducts()">🔍</button>
+    </div>
+    
+    <!-- Mobile Menu Button - SIMPLIFIED -->
+    <button class="mobile-menu-btn" id="mobileMenuBtn" style="
+        display: none;
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        padding: 10px;
+    ">☰</button>
+    
+    <!-- Navigation Links - SIMPLIFIED -->
+    <div class="mobile-nav-links" id="mobileNav" style="
+        display: none;
+        position: fixed;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background: white;
+        padding: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        z-index: 1000;
+    ">
+        <a href="index.html" style="display: block; padding: 15px;">Home</a>
+        <a href="shop.html" style="display: block; padding: 15px;">Shop</a>
+        <a href="bulktshirts.html" style="display: block; padding: 15px;">Bulk T-shirts</a>
+        <a href="cart.html" style="display: block; padding: 15px;">Cart</a>
+        <a href="wishlist.html" style="display: block; padding: 15px;">Wishlist</a>
+        <a href="about.html" style="display: block; padding: 15px;">About</a>
+        <a href="contact.html" style="display: block; padding: 15px;">Contact</a>
+        <a href="profile.html" style="display: block; padding: 15px;">Profile</a>
+        <a href="login.html" style="display: block; padding: 15px;">Login</a>
+    </div>
+    
+    <!-- Desktop Navigation (hidden on mobile) -->
+    <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="shop.html">Shop</a></li>
+        <li><a href="bulktshirts.html">Bulk plain T-shirts</a></li>
+        <li><a href="cart.html">Cart <span class="cart-count" id="cartCount">0</span></a></li>
+        <li><a href="wishlist.html">Wishlist <span class="wishlist-count" id="wishlistCount">0</span></a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="profile.html">Profile</a></li>
+        <li><a href="login.html">Login</a></li>
+    </ul>
+</nav>
+
 </header>
 
   <!-- HERO SECTION -->
@@ -340,6 +365,7 @@ if (menuToggle) {
 </script>
 </body>
 </html>
+
 
 
 
