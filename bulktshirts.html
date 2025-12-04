@@ -495,30 +495,12 @@
     </div>
 
     <script>
-        // Filter toggle functionality
-        function toggleFilterGroup(header) {
-            const filterGroup = header.parentElement;
-            filterGroup.classList.toggle('active');
-            
-            // Update aria-expanded for accessibility
-            const isExpanded = filterGroup.classList.contains('active');
-            header.setAttribute('aria-expanded', isExpanded);
-        }
 
-        // Filter update functionality
-        function updateFilters() {
-            // Your filter logic here
-            console.log('Filters updated');
-            // Add your actual filter implementation
-        }
 
-        // Initialize all filter groups as active
-        document.addEventListener('DOMContentLoaded', function() {
-            const filterGroups = document.querySelectorAll('.filter-group');
-            filterGroups.forEach(group => {
-                group.classList.add('active');
-            });
-        });
+
+
+
+		
 		
 function viewProductDetail(productId) {
     window.location.href = `product-detail.html?id=${productId}`;
@@ -541,6 +523,7 @@ document.querySelectorAll('.product-card').forEach(card => {
 </body>
 
 </html>
+
 
 
 
