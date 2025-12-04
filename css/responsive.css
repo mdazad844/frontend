@@ -56,9 +56,7 @@
     margin: 0 !important;
   }
   
-  .nav-links.active {
-    display: flex !important !important;
-  }
+
   
   .nav-links li {
     width: 100% !important;
