@@ -16,11 +16,14 @@
     padding: 10px 15px !important;
     position: relative !important;
     width: 100% !important;
+    z-index: 9999 !important;
   }
   
   .logo {
     order: 1 !important;
     flex: 1 !important;
+    z-index: 10001 !important;
+    position: relative !important;
   }
   
   .logo a {
@@ -38,6 +41,8 @@
     background: #f5f5f5 !important;
     border-radius: 4px !important;
     margin-left: 10px !important;
+    z-index: 10002 !important;
+    position: relative !important;
   }
   
   /* HIDE DESKTOP NAVIGATION */
@@ -51,12 +56,14 @@
     flex-direction: column !important;
     padding: 20px !important;
     box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
-    z-index: 1000 !important;
+    z-index: 9998 !important;
     border-top: 1px solid #eee !important;
     margin: 0 !important;
   }
   
-
+  .nav-links.active {
+    display: flex !important;
+  }
   
   .nav-links li {
     width: 100% !important;
@@ -82,6 +89,8 @@
     width: 100% !important;
     margin: 10px 0 0 0 !important;
     display: flex !important;
+    z-index: 9997 !important;
+    position: relative !important;
   }
   
   .search-bar input {
@@ -97,16 +106,45 @@
     border-radius: 0 8px 8px 0 !important;
   }
   
-  /* 3. FIX HERO SECTION */
+  /* 3. FIX HERO SECTION - PREVENT CLICK BLOCKING */
   .hero {
     height: 40vh !important;
     min-height: 250px !important;
     margin: 0 !important;
     padding: 0 !important;
+    position: relative !important;
+    z-index: 1 !important;
   }
   
   .hero-slider {
     height: 100% !important;
+    position: relative !important;
+    z-index: 1 !important;
+  }
+  
+  .slider-container {
+    pointer-events: none !important;
+    position: relative !important;
+    z-index: 1 !important;
+  }
+  
+  /* Allow clicks ONLY on slider navigation */
+  .slider-nav,
+  .prev-btn,
+  .next-btn,
+  .dots,
+  .slide-link {
+    pointer-events: auto !important;
+    position: relative !important;
+    z-index: 2 !important;
+  }
+  
+  .slide {
+    pointer-events: none !important;
+  }
+  
+  .slide-link {
+    pointer-events: auto !important;
   }
   
   .slide-content {
@@ -116,6 +154,11 @@
     padding: 20px !important;
     background: rgba(0,0,0,0.5) !important;
     border-radius: 10px !important;
+    pointer-events: none !important;
+  }
+  
+  .slide-content .btn {
+    pointer-events: auto !important;
   }
   
   .slide-content h1 {
@@ -136,6 +179,7 @@
   
   .slider-nav {
     bottom: 15px !important;
+    z-index: 3 !important;
   }
   
   .dot {
@@ -404,88 +448,79 @@ img {
   }
 }
 
-
-
 /* SHOP-SPECIFIC RESPONSIVE STYLES */
-
-/* Mobile styles */
 @media (max-width: 768px) {
-    .shop-section .container {
-        padding: 0 15px !important;
-    }
-    
-    .product-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 15px !important;
-    }
-    
-    .product-card {
-        padding: 15px !important;
-    }
-    
-    .product-card img {
-        height: 150px !important;
-    }
-    
-    .load-more-container {
-        padding: 20px 0 !important;
-    }
-    
-    #loadMoreBtn {
-        width: 100% !important;
-        max-width: 300px !important;
-        margin: 0 auto !important;
-    }
-    
-    .filters-panel {
-        position: fixed !important;
-        top: 0 !important;
-        left: -100% !important;
-        width: 85% !important;
-        height: 100vh !important;
-        transition: left 0.3s ease !important;
-    }
-    
-    .filters-panel.active {
-        left: 0 !important;
-    }
-    
-    .filters-overlay.active {
-        display: block !important;
-    }
-    
-    .filters-content {
-        max-height: calc(100vh - 60px) !important;
-        overflow-y: auto !important;
-    }
+  .shop-section .container {
+    padding: 0 15px !important;
+  }
+  
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 15px !important;
+  }
+  
+  .product-card {
+    padding: 15px !important;
+  }
+  
+  .product-card img {
+    height: 150px !important;
+  }
+  
+  .load-more-container {
+    padding: 20px 0 !important;
+  }
+  
+  #loadMoreBtn {
+    width: 100% !important;
+    max-width: 300px !important;
+    margin: 0 auto !important;
+  }
+  
+  .filters-panel {
+    position: fixed !important;
+    top: 0 !important;
+    left: -100% !important;
+    width: 85% !important;
+    height: 100vh !important;
+    transition: left 0.3s ease !important;
+    z-index: 10003 !important;
+  }
+  
+  .filters-panel.active {
+    left: 0 !important;
+  }
+  
+  .filters-overlay.active {
+    display: block !important;
+  }
+  
+  .filters-content {
+    max-height: calc(100vh - 60px) !important;
+    overflow-y: auto !important;
+  }
 }
 
 @media (max-width: 480px) {
-    .product-grid {
-        grid-template-columns: 1fr !important;
-    }
+  .product-grid {
+    grid-template-columns: 1fr !important;
+  }
 }
 
-
-
+/* CRITICAL FIXES FOR ALL PAGES */
+/* Ensure navbar is always clickable on mobile */
 @media (max-width: 768px) {
-    /* Move menu button ABOVE the slider */
-    .menu-icon {
-        z-index: 10000 !important;
-        position: relative !important;
-    }
-    
-    /* Prevent slider from blocking clicks on menu area */
-    .slider-container {
-        pointer-events: none !important;
-    }
-    
-    /* But allow clicks on slider buttons */
-    .slider-nav,
-    .prev-btn,
-    .next-btn,
-    .dots,
-    .slide-link {
-        pointer-events: auto !important;
-    }
+  .navbar > * {
+    pointer-events: auto !important;
+  }
+  
+  /* Fix for any element that might overlay the menu */
+  .hero-slider *:not(.slider-nav):not(.prev-btn):not(.next-btn):not(.dots):not(.slide-link .btn) {
+    pointer-events: none !important;
+  }
+  
+  /* Ensure menu button is always on top */
+  .menu-icon {
+    z-index: 10004 !important;
+  }
 }
