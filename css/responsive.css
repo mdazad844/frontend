@@ -1,0 +1,345 @@
+/* RESPONSIVE DESIGN FOR ALL DEVICES */
+
+/* Mobile First Approach - Base styles for mobile */
+:root {
+    --mobile-padding: 15px;
+    --tablet-padding: 20px;
+    --desktop-padding: 40px;
+}
+
+/* General Mobile Styles */
+@media (max-width: 767px) {
+    /* Base layout */
+    body {
+        font-size: 14px;
+        overflow-x: hidden;
+    }
+    
+    .container, .wishlist-container, .cart-container {
+        padding: 0 var(--mobile-padding);
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    /* Navigation */
+    .navbar {
+        flex-wrap: wrap;
+        padding: 10px var(--mobile-padding);
+    }
+    
+    .logo {
+        font-size: 18px;
+    }
+    
+    .search-bar {
+        order: 3;
+        width: 100%;
+        margin-top: 10px;
+        display: flex;
+    }
+    
+    .search-bar input {
+        flex: 1;
+        padding: 10px;
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+    
+    .menu-icon {
+        display: block;
+        font-size: 24px;
+    }
+    
+    .nav-links {
+        position: fixed;
+        top: 60px;
+        left: -100%;
+        width: 100%;
+        height: calc(100vh - 60px);
+        background: white;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 20px;
+        transition: 0.3s;
+        z-index: 1000;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    
+    .nav-links.active {
+        left: 0;
+    }
+    
+    .nav-links li {
+        width: 100%;
+        text-align: center;
+        margin: 10px 0;
+    }
+    
+    .nav-links a {
+        display: block;
+        padding: 15px;
+        font-size: 16px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    /* Hero Section */
+    .hero-slider {
+        height: 300px;
+    }
+    
+    .slide-content h1 {
+        font-size: 24px;
+    }
+    
+    .slide-content p {
+        font-size: 14px;
+    }
+    
+    /* Product Grid */
+    .product-grid, .category-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px;
+    }
+    
+    .product-card, .category-card {
+        padding: 10px;
+    }
+    
+    .product-card img, .category-card img {
+        height: 150px;
+    }
+    
+    .product-card h3 {
+        font-size: 14px;
+        margin: 8px 0;
+    }
+    
+    .product-card .price {
+        font-size: 16px;
+    }
+    
+    .product-card .btn {
+        padding: 8px 12px;
+        font-size: 14px;
+        min-height: 40px;
+    }
+    
+    /* Categories */
+    .categories h2, .featured h2 {
+        font-size: 22px;
+        margin-bottom: 20px;
+    }
+    
+    /* Footer */
+    .footer-container {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    
+    .footer-section {
+        text-align: center;
+    }
+    
+    .footer-bottom-container {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+    
+    /* Shop Page Specific */
+    .page-header h1 {
+        font-size: 22px;
+        line-height: 1.3;
+    }
+    
+    .filters-container {
+        position: relative;
+    }
+    
+    .filter-toggle-btn {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+    }
+    
+    .filters-panel {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 85%;
+        height: 100vh;
+        z-index: 1001;
+        transition: 0.3s;
+        box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+    }
+    
+    .filters-panel.active {
+        left: 0;
+    }
+    
+    .close-filters {
+        display: block;
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-size: 24px;
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
+    
+    /* Wishlist & Cart Pages */
+    .wishlist-item, .cart-item {
+        flex-direction: column;
+        text-align: center;
+        padding: 15px;
+    }
+    
+    .wishlist-item img, .cart-item img {
+        width: 100%;
+        max-width: 200px;
+        height: auto;
+        margin: 0 auto 15px;
+    }
+    
+    .wishlist-actions, .cart-actions {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .wishlist-actions .btn, .cart-actions .btn {
+        min-width: 120px;
+    }
+    
+    .quantity-controls {
+        justify-content: center;
+        margin: 15px 0;
+    }
+    
+    /* Ensure all buttons are touch-friendly */
+    button, .btn, a.btn {
+        min-height: 44px;
+        min-width: 44px;
+        font-size: 16px;
+        padding: 12px 20px;
+    }
+    
+    /* Prevent text from being too small */
+    h1 { font-size: 24px; }
+    h2 { font-size: 20px; }
+    h3 { font-size: 18px; }
+    p, li, a { font-size: 16px; }
+}
+
+/* Tablet Styles */
+@media (min-width: 768px) and (max-width: 1023px) {
+    body {
+        font-size: 15px;
+    }
+    
+    .container, .wishlist-container, .cart-container {
+        padding: 0 var(--tablet-padding);
+    }
+    
+    .product-grid, .category-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+    }
+    
+    .navbar {
+        padding: 15px var(--tablet-padding);
+    }
+    
+    .search-bar {
+        width: 300px;
+    }
+    
+    .hero-slider {
+        height: 400px;
+    }
+    
+    .footer-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
+    }
+    
+    /* Shop Page for Tablet */
+    .filters-panel {
+        position: absolute;
+        width: 300px;
+    }
+}
+
+/* Desktop Styles */
+@media (min-width: 1024px) {
+    .product-grid, .category-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+    }
+    
+    .nav-links {
+        display: flex !important;
+    }
+    
+    .menu-icon {
+        display: none;
+    }
+}
+
+/* Special fix for iPhone/iPad */
+@supports (-webkit-touch-callout: none) {
+    /* Safari specific fixes */
+    input, select, textarea {
+        font-size: 16px !important; /* Prevents zoom */
+    }
+    
+    button, .btn {
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+}
+
+/* Fix for Android Chrome */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    select,
+    textarea,
+    input {
+        font-size: 16px;
+    }
+}
+
+/* Touch device improvements */
+@media (hover: none) and (pointer: coarse) {
+    button:hover, .btn:hover, a:hover {
+        opacity: 1; /* Remove hover effects on touch devices */
+    }
+    
+    .product-card, .category-card {
+        cursor: pointer;
+    }
+    
+    /* Increase tap targets */
+    .wishlist-btn, .cart-count, .wishlist-count {
+        min-width: 44px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+/* Landscape mode fixes */
+@media (max-width: 767px) and (orientation: landscape) {
+    .nav-links {
+        height: calc(100vh - 50px);
+        overflow-y: auto;
+    }
+    
+    .hero-slider {
+        height: 250px;
+    }
+    
+    .product-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+}
