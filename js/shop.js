@@ -323,7 +323,26 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         
+        // Ensure all buttons work on mobile
+        setupMobileButtons();
+    }
 
+    // Setup mobile button functionality
+    function setupMobileButtons() {
+        // Fix for wishlist buttons
+        document.querySelectorAll('.wishlist-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation(); // Prevent event bubbling
+                const id = this.getAttribute('data-id') || this.getAttribute('onclick').match(/\d+/)[0];
+                const name = this.getAttribute('data-name') || 'Product';
+                const price = this.getAttribute('data-price') || 0;
+                const image = this.getAttribute('data-image') || 'images/placeholder.png';
+                
+                if (window.addToWishlist) {
+                    window.addToWishlist(id, name, price, image);
+                }
+            });
+        });
         
         // Fix for add to cart buttons
         document.querySelectorAll('.product-card .btn').forEach(btn => {
@@ -347,8 +366,3 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize when DOM is loaded
     initializeShopPage();
 });
-
-
-
-
-
