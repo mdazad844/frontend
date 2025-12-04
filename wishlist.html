@@ -1,38 +1,224 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Test Wishlist</title>
-    <script>
-    // Simple test functions
-    function testAddToWishlist(id, name, price, image) {
-        console.log('Test: Adding', id, name);
-        let wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
-        wishlist.push({id: id, name: name, price: price, image: image});
-        localStorage.setItem('wishlist', JSON.stringify(wishlist));
-        alert('Added ' + name);
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My Wishlist - MyBrand</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    .wishlist-page {
+        padding: 40px;
+        min-height: 70vh;
     }
     
-    function testRemoveFromWishlist(id) {
-        console.log('Test: Removing', id);
-        let wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
-        wishlist = wishlist.filter(item => item.id != id);
-        localStorage.setItem('wishlist', JSON.stringify(wishlist));
-        alert('Removed item ' + id);
+    .wishlist-header {
+        text-align: center;
+        margin-bottom: 30px;
     }
     
-    function testViewWishlist() {
-        let wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
-        console.log('Current wishlist:', wishlist);
-        alert(wishlist.length + ' items in wishlist');
+    .wishlist-container {
+        max-width: 1000px;
+        margin: 0 auto;
     }
-    </script>
+    
+    /* Wishlist items styled like cart */
+    .wishlist-item {
+        display: flex;
+        gap: 20px;
+        padding: 20px;
+        border-bottom: 1px solid #eee;
+        align-items: center;
+        background: white;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        transition: transform 0.2s;
+    }
+    
+    .wishlist-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+    
+    .wishlist-item img {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+    
+    .wishlist-info {
+        flex: 1;
+    }
+    
+    .wishlist-info h3 {
+        margin-bottom: 8px;
+        color: #333;
+        font-size: 18px;
+    }
+    
+    .wishlist-price {
+        font-weight: bold;
+        color: #111;
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+    
+    .wishlist-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    
+    .btn-move-cart {
+        background: #111;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+    }
+    
+    .btn-move-cart:hover {
+        background: #333;
+    }
+    
+    .btn-remove-wishlist {
+        background: #ff4d4d;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+    }
+    
+    .btn-remove-wishlist:hover {
+        background: #ff3333;
+    }
+    
+    .empty-wishlist {
+        text-align: center;
+        padding: 60px 20px;
+        color: #666;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .empty-wishlist h3 {
+        margin-bottom: 15px;
+        color: #333;
+    }
+    
+    .empty-wishlist .btn {
+        margin-top: 20px;
+    }
+    
+    .wishlist-summary {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        margin-top: 20px;
+        text-align: center;
+    }
+    
+    
+    
+    @media (max-width: 768px) {
+        .wishlist-item {
+            flex-direction: column;
+            text-align: center;
+            gap: 15px;
+        }
+        
+        .wishlist-item img {
+            width: 100%;
+            max-width: 200px;
+            height: auto;
+        }
+        
+        .wishlist-actions {
+            justify-content: center;
+        }
+        
+        .wishlist-actions .btn {
+            flex: 1;
+            min-width: 120px;
+        }
+    }
+  </style>
 </head>
 <body>
-    <h1>Test Wishlist</h1>
-    <button onclick="testAddToWishlist(1, 'Test Product', 100, 'test.jpg')">Add Test 1</button>
-    <button onclick="testAddToWishlist(6, 'Test Product 6', 200, 'test6.jpg')">Add Test 6</button>
-    <button onclick="testRemoveFromWishlist(6)">Remove Test 6</button>
-    <button onclick="testViewWishlist()">View Wishlist</button>
-    <button onclick="localStorage.removeItem('wishlist'); alert('Cleared');">Clear All</button>
+  <header>
+    <nav class="navbar">
+      <div class="logo"><a href="index.html">MyBrand</a></div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="shop.html">Shop</a></li>
+		<li><a href="bulktshirts.html">Bulk plain T-shirts</a></li>
+        <li>
+          <a href="cart.html">Cart 
+            <span class="cart-count" id="cartCount">0</span>
+          </a>
+        </li>
+        <li>
+          <a href="wishlist.html" class="active">Wishlist 
+            <span class="wishlist-count" id="wishlistCount">0</span>
+          </a>
+        </li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li id="profileNavItem"><a href="profile.html">Profile</a></li>
+        <li><a href="login.html" id="authLink">Login</a></li>
+		
+      </ul>
+      <div class="menu-icon" id="menuToggle">☰</div>
+    </nav>
+  </header>
+
+  <main class="wishlist-page">
+    <div class="wishlist-container">
+      <div class="wishlist-header">
+        <h1>My Wishlist</h1>
+        <p>Your saved favorite items</p>
+      </div>
+      
+      <div id="wishlist-items">
+        <!-- Wishlist items will be loaded here by JavaScript -->
+      </div>
+      
+      
+      
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 MyBrand. All Rights Reserved.</p>
+  </footer>
+
+  
+  <script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('❤️ Wishlist page loaded - using AppState system');
+    
+    if (typeof displayWishlistItems !== 'undefined') {
+        displayWishlistItems();
+        updateWishlistCount();
+    }
+});
+</script>
+<script src="js/auth.js"></script>
+<script src="js/script.js"></script>
 </body>
+
 </html>
+
+
+
+
+
+
+
