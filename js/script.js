@@ -1217,6 +1217,141 @@ async function initializeApp() {
     console.log('✅ MyBrand initialized');
 }
 
+
+
+
+
+/* CLEAN UP STUCK WISHLIST ITEMS */
+function cleanStuckWishlistItems() {
+    try {
+        console.log('🧹 Checking for stuck wishlist items...');
+        
+        const wishlist = AppState.getWishlist();
+        const originalCount = wishlist.length;
+        
+        if (originalCount === 0) {
+            console.log('✅ Wishlist is already empty');
+            return;
+        }
+        
+        // Check for invalid items
+        const validWishlist = wishlist.filter(item => {
+            // Check if item has required properties
+            if (!item || typeof item !== 'object') return false;
+            if (!item.id && item.id !== 0) return false;
+            if (!item.name || typeof item.name !== 'string') return false;
+            
+            // Check for NaN or invalid prices
+            const price = Number(item.price);
+            if (isNaN(price) || price < 0) return false;
+            
+            return true;
+        });
+        
+        // Also check for duplicate IDs
+        const uniqueItems = [];
+        const seenIds = new Set();
+        
+        validWishlist.forEach(item => {
+            if (!seenIds.has(item.id)) {
+                seenIds.add(item.id);
+                uniqueItems.push(item);
+            }
+        });
+        
+        // Update if items were removed
+        if (uniqueItems.length < originalCount) {
+            console.log(`🧹 Removed ${originalCount - uniqueItems.length} stuck/invalid items`);
+            AppState.updateWishlist(uniqueItems);
+            updateWishlistCount();
+            updateWishlistHearts();
+            
+            if (window.location.pathname.includes('wishlist.html')) {
+                displayWishlistItems();
+            }
+        }
+        
+        console.log(`✅ Wishlist cleaned: ${uniqueItems.length} valid items`);
+        
+        // Debug: Show what's in the wishlist
+        console.log('📋 Current wishlist items:', uniqueItems);
+        
+    } catch (error) {
+        console.error('❌ Error cleaning wishlist:', error);
+    }
+}
+
+// Add a function to manually remove specific stuck items
+window.removeStuckWishlistItem = function(productId) {
+    try {
+        console.log(`🗑️ Attempting to remove stuck item ID: ${productId}`);
+        
+        // Try multiple methods to remove
+        
+        // Method 1: Use AppState
+        const wishlist = AppState.getWishlist();
+        const newWishlist = wishlist.filter(item => item.id != productId); // Use loose comparison
+        
+        if (newWishlist.length < wishlist.length) {
+            AppState.updateWishlist(newWishlist);
+            console.log(`✅ Removed item ${productId} via AppState`);
+        }
+        
+        // Method 2: Direct localStorage manipulation
+        let localStorageWishlist = [];
+        try {
+            const saved = localStorage.getItem('wishlist');
+            localStorageWishlist = saved ? JSON.parse(saved) : [];
+            localStorageWishlist = localStorageWishlist.filter(item => item.id != productId);
+            localStorage.setItem('wishlist', JSON.stringify(localStorageWishlist));
+            console.log(`✅ Removed item ${productId} from localStorage`);
+        } catch (e) {
+            console.log('⚠️ Could not access localStorage:', e);
+        }
+        
+        // Update UI
+        updateWishlistCount();
+        updateWishlistHearts();
+        
+        if (window.location.pathname.includes('wishlist.html')) {
+            displayWishlistItems();
+        }
+        
+        showNotification(`Removed stuck item ${productId} from wishlist`, 'success');
+        
+    } catch (error) {
+        console.error('❌ Error removing stuck item:', error);
+        showNotification('Error removing stuck item', 'error');
+    }
+};
+
+// Add a function to view stuck items
+window.viewStuckWishlistItems = function() {
+    const wishlist = AppState.getWishlist();
+    console.log('🔍 Stuck wishlist items analysis:');
+    console.log('Total items:', wishlist.length);
+    
+    wishlist.forEach((item, index) => {
+        console.log(`Item ${index}:`, {
+            id: item.id,
+            type: typeof item.id,
+            name: item.name,
+            price: item.price,
+            isValid: item.id && item.name && !isNaN(Number(item.price))
+        });
+    });
+    
+    // Show in alert for easy debugging
+    const stuckItems = wishlist.filter(item => !item.id || !item.name || isNaN(Number(item.price)));
+    if (stuckItems.length > 0) {
+        alert(`Found ${stuckItems.length} potentially stuck items. Check console for details.`);
+    } else {
+        alert('No stuck items found. All items appear valid.');
+    }
+};
+
+
+
 /* MAKE FUNCTIONS GLOBALLY AVAILABLE - MOBILE COMPATIBLE */
 /* MAKE FUNCTIONS GLOBALLY AVAILABLE */
 window.addToCart = addToCart;
@@ -1258,6 +1393,7 @@ window.debugWishlist = function() {
 console.log('📦 MyBrand System Loading...');
 
 initializeApp();
+
 
 
 
