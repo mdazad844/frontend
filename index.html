@@ -2,18 +2,50 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <!-- CRITICAL FIX: Use correct viewport tag -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
   <title>MyBrand - Clothing Store</title>
-  <link rel="stylesheet" href="css/style.css"/>
-	
-<link rel="stylesheet" href="css/responsive.css">
- 
+  
+  <!-- CSS MUST BE IN THIS ORDER -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  
+  <!-- Add this for immediate testing -->
+  <style>
+    /* Emergency responsive test - REMOVE AFTER TESTING */
+    body::before {
+      content: "Mobile: " attr(data-mobile);
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      background: red;
+      color: white;
+      padding: 5px 10px;
+      z-index: 99999;
+      font-size: 12px;
+    }
+    
+    @media (max-width: 768px) {
+      body::before {
+        content: "MOBILE VIEW (≤768px)";
+        background: green;
+      }
+    }
+    
+    @media (min-width: 769px) {
+      body::before {
+        content: "DESKTOP VIEW (≥769px)";
+        background: blue;
+      }
+    }
+  </style>
 </head>
 <body>
 <header>
     <nav class="navbar">
         <div class="logo"><a href="index.html">MyBrand</a></div>
-        <!-- Search Bar -->
+        
+        <!-- Search Bar - MOVED AFTER NAV-LINKS FOR MOBILE -->
         <div class="search-bar">
             <input type="text" id="searchInput" placeholder="Search products...">
             <button onclick="searchProducts()">🔍</button>
@@ -28,7 +60,6 @@
                     <span class="cart-count" id="cartCount">0</span>
                 </a>
             </li>
-            <!-- Wishlist Link -->
             <li>
                 <a href="wishlist.html">Wishlist 
                     <span class="wishlist-count" id="wishlistCount">0</span>
@@ -38,8 +69,9 @@
             <li><a href="contact.html">Contact</a></li>
             <li id="profileNavItem"><a href="profile.html">Profile</a></li>
             <li><a href="login.html" id="authLink">Login</a></li>
-			
         </ul>
+        
+        <!-- MOBILE MENU BUTTON - MUST BE VISIBLE -->
         <div class="menu-icon" id="menuToggle">☰</div>
     </nav>
 </header>
@@ -97,79 +129,79 @@
         </div>
       </div>
     </div>
-      
   </section>
 
   <!-- CATEGORIES SECTION -->
   <section class="categories">
-    <h2>Shop by Category</h2>
-    <div class="category-grid">
-      <a class="category-card" href="shop.html?cat=men">
-        <img src="images/men.jpg" alt="Men" onerror="this.src='images/placeholder.png'">
-        <h3>Men</h3>
-      </a>
-      <a class="category-card" href="shop.html?cat=women">
-        <img src="images/women.jpg" alt="Women" onerror="this.src='images/placeholder.png'">
-        <h3>Women</h3>
-      </a>
-      <a class="category-card" href="shop.html?cat=kids">
-        <img src="images/kids.jpg" alt="Kids" onerror="this.src='images/placeholder.png'">
-        <h3>Kids</h3>
-      </a>
+    <div class="container">
+      <h2>Shop by Category</h2>
+      <div class="category-grid">
+        <a class="category-card" href="shop.html?cat=men">
+          <img src="images/men.jpg" alt="Men" onerror="this.src='images/placeholder.png'">
+          <h3>Men</h3>
+        </a>
+        <a class="category-card" href="shop.html?cat=women">
+          <img src="images/women.jpg" alt="Women" onerror="this.src='images/placeholder.png'">
+          <h3>Women</h3>
+        </a>
+        <a class="category-card" href="shop.html?cat=kids">
+          <img src="images/kids.jpg" alt="Kids" onerror="this.src='images/placeholder.png'">
+          <h3>Kids</h3>
+        </a>
+      </div>
     </div>
   </section>
 
   <!-- FEATURED PRODUCTS SECTION -->
   <section class="featured">
-    <h2>Featured Products</h2>
-    <div class="product-grid">
-      
-      <div class="product-card">
-        <button class="wishlist-btn" onclick="addToWishlist(1, 'Classic White Hoodie', 799, 'images/product1.jpg')">
+    <div class="container">
+      <h2>Featured Products</h2>
+      <div class="product-grid">
+        
+        <div class="product-card">
+          <button class="wishlist-btn" onclick="addToWishlist(1, 'Classic White Hoodie', 799, 'images/product1.jpg')">
             🤍
-		</button>	
-       <img src="images/product1.jpg" alt="Classic White Hoodie" onerror="this.src='images/placeholder.png'">
-        <h3>Classic White Hoodie</h3>
-        <p class="price">₹799</p>
-        <button class="btn" onclick="addToCart('Classic White Hoodie', 799, 'images/product1.jpg')">Add to Cart</button>
-        <a class="small-link" href="product.html?id=1">View Details</a>
-      </div>
+          </button>	
+          <img src="images/product1.jpg" alt="Classic White Hoodie" onerror="this.src='images/placeholder.png'">
+          <h3>Classic White Hoodie</h3>
+          <p class="price">₹799</p>
+          <button class="btn" onclick="addToCart('Classic White Hoodie', 799, 'images/product1.jpg')">Add to Cart</button>
+          <a class="small-link" href="product.html?id=1">View Details</a>
+        </div>
 
-      <div class="product-card">
-        <button class="wishlist-btn" onclick="addToWishlist(2, 'Black Oversized T-Shirt', 299, 'images/product2.jpg')">
+        <div class="product-card">
+          <button class="wishlist-btn" onclick="addToWishlist(2, 'Black Oversized T-Shirt', 299, 'images/product2.jpg')">
             🤍
-        </button>
-        <img src="images/product2.jpg" alt="Black Oversized T-Shirt" onerror="this.src='images/placeholder.png'">
-        <h3>Black Oversized T-Shirt</h3>
-        <p class="price">₹299</p>
-        <button class="btn" onclick="addToCart('Black Oversized T-Shirt', 299, 'images/product2.jpg')">Add to Cart</button>
-        <a class="small-link" href="product.html?id=2">View Details</a>
-      </div>
+          </button>
+          <img src="images/product2.jpg" alt="Black Oversized T-Shirt" onerror="this.src='images/placeholder.png'">
+          <h3>Black Oversized T-Shirt</h3>
+          <p class="price">₹299</p>
+          <button class="btn" onclick="addToCart('Black Oversized T-Shirt', 299, 'images/product2.jpg')">Add to Cart</button>
+          <a class="small-link" href="product.html?id=2">View Details</a>
+        </div>
 
-      <div class="product-card">
-        <button class="wishlist-btn" onclick="addToWishlist(3, 'Premium Mulberry Polo T-Shirt', 599, 'images/product3.jpg')">
+        <div class="product-card">
+          <button class="wishlist-btn" onclick="addToWishlist(3, 'Premium Mulberry Polo T-Shirt', 599, 'images/product3.jpg')">
             🤍
-        </button>
-        <img src="images/product3.jpg" alt="Premium Mulberry Polo T-Shirt" onerror="this.src='images/placeholder.png'">
-        <h3>Premium Mulberry Polo T-Shirt</h3>
-        <p class="price">₹599</p>
-        <button class="btn" onclick="addToCart('Premium Mulberry Polo T-Shirt', 599, 'images/product3.jpg')">Add to Cart</button>
-        <a class="small-link" href="product.html?id=3">View Details</a>
-      </div>
+          </button>
+          <img src="images/product3.jpg" alt="Premium Mulberry Polo T-Shirt" onerror="this.src='images/placeholder.png'">
+          <h3>Premium Mulberry Polo T-Shirt</h3>
+          <p class="price">₹599</p>
+          <button class="btn" onclick="addToCart('Premium Mulberry Polo T-Shirt', 599, 'images/product3.jpg')">Add to Cart</button>
+          <a class="small-link" href="product.html?id=3">View Details</a>
+        </div>
 
-		<div class="product-card">
-		 <button class="wishlist-btn" onclick="addToWishlist(4, 'Maroon regular Fit T-Shirt', 249, 'images/product4.jpg')">
+        <div class="product-card">
+          <button class="wishlist-btn" onclick="addToWishlist(4, 'Maroon regular Fit T-Shirt', 249, 'images/product4.jpg')">
             🤍
-        </button>
-        <img src="images/product4.jpg" alt="Maroon regular Fit T-Shirt" onerror="this.src='images/placeholder.png'">
-        <h3>Maroon regular Fit T-Shirt</h3>
-        <p class="price">₹249</p>
-        <button class="btn" onclick="addToCart('Maroon regular Fit T-Shirt', 249, 'images/product4.jpg')">Add to Cart</button>
-        <a class="small-link" href="product.html?id=4">View Details</a>
+          </button>
+          <img src="images/product4.jpg" alt="Maroon regular Fit T-Shirt" onerror="this.src='images/placeholder.png'">
+          <h3>Maroon regular Fit T-Shirt</h3>
+          <p class="price">₹249</p>
+          <button class="btn" onclick="addToCart('Maroon regular Fit T-Shirt', 249, 'images/product4.jpg')">Add to Cart</button>
+          <a class="small-link" href="product.html?id=4">View Details</a>
+        </div>
       </div>
-	   
-		   <!-- Additional featured products -->
-
     </div>
   </section>
 
@@ -248,17 +280,50 @@
     </div>
   </footer>
 
-  <!-- Are these scripts included in the correct order? -->
-<script src="js/script.js"></script>
-    <script src="js/mobile-menu.js"></script>
-    <script src="js/auth.js"></script>
-   
+  <!-- SCRIPT ORDER IS CRITICAL -->
+  <script src="js/script.js"></script>
+  <script src="js/mobile-menu.js"></script>
+  <script src="js/auth.js"></script>
+  
+  <!-- Add temporary test script -->
+  <script>
+    // Test if responsive is working
+    console.log('📱 Testing responsive design...');
+    console.log('Window width:', window.innerWidth, 'px');
+    console.log('Is mobile?', window.innerWidth <= 768 ? 'Yes' : 'No');
     
+    // Check if mobile menu exists
+    const menuToggle = document.getElementById('menuToggle');
+    const navLinks = document.getElementById('navLinks');
+    console.log('Menu toggle exists:', !!menuToggle);
+    console.log('Nav links exists:', !!navLinks);
+    
+    // Add a test button to check responsiveness
+    setTimeout(function() {
+      const testBtn = document.createElement('button');
+      testBtn.innerHTML = 'Test Mobile';
+      testBtn.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #ff6b6b;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        z-index: 9999;
+        cursor: pointer;
+        font-size: 14px;
+      `;
+      testBtn.onclick = function() {
+        alert(
+          'Screen: ' + window.innerWidth + 'x' + window.innerHeight + '\n' +
+          'Mobile menu: ' + (menuToggle ? 'Found' : 'Missing') + '\n' +
+          'Nav active: ' + (navLinks ? navLinks.classList.contains('active') : 'N/A')
+        );
+      };
+      document.body.appendChild(testBtn);
+    }, 1000);
+  </script>
 </body>
-
 </html>
-
-
-
-
-
