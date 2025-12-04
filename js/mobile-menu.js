@@ -1,124 +1,242 @@
-// MOBILE MENU FIX - MUST HAVE THIS FILE
+// ENHANCED MOBILE MENU - WORKS WITH MULTIPLE NAVIGATION SYSTEMS
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('📱 Initializing mobile menu...');
+    console.log('📱 Initializing enhanced mobile menu...');
     
-    const menuToggle = document.getElementById('menuToggle');
-    const navLinks = document.getElementById('navLinks');
+    // Try multiple possible element IDs (compatibility mode)
+    let menuToggle = document.getElementById('menuToggle');
+    let navLinks = document.getElementById('navLinks');
     
+    // If new IDs exist, use them instead
     if (!menuToggle) {
-        console.error('❌ menuToggle element not found!');
+        menuToggle = document.getElementById('mobileMenuBtn');
+        console.log('⚠️ Using mobileMenuBtn instead of menuToggle');
+    }
+    
+    if (!navLinks) {
+        navLinks = document.getElementById('mobileNav');
+        console.log('⚠️ Using mobileNav instead of navLinks');
+    }
+    
+    // If still not found, try to find by class
+    if (!menuToggle) {
+        menuToggle = document.querySelector('.menu-icon, .mobile-menu-btn');
+        console.log('⚠️ Found menu by class:', menuToggle?.className);
+    }
+    
+    if (!navLinks) {
+        navLinks = document.querySelector('.nav-links, .mobile-nav-links');
+        console.log('⚠️ Found nav by class:', navLinks?.className);
+    }
+    
+    // Final check - if no menu elements found
+    if (!menuToggle) {
+        console.error('❌ No menu toggle element found! Checked: menuToggle, mobileMenuBtn, .menu-icon, .mobile-menu-btn');
+        console.log('Available IDs:', Array.from(document.querySelectorAll('[id]')).map(el => el.id));
         return;
     }
     
     if (!navLinks) {
-        console.error('❌ navLinks element not found!');
+        console.error('❌ No navigation element found! Checked: navLinks, mobileNav, .nav-links, .mobile-nav-links');
         return;
     }
     
-    // Show mobile menu icon on mobile
-    if (window.innerWidth <= 768) {
-        menuToggle.style.display = 'block';
-        menuToggle.style.visibility = 'visible';
-        navLinks.style.display = 'none';
+    console.log('✅ Menu elements found:');
+    console.log('- Toggle:', menuToggle.id || menuToggle.className);
+    console.log('- Nav:', navLinks.id || navLinks.className);
+    
+    // Ensure proper classes for CSS compatibility
+    if (!menuToggle.classList.contains('menu-icon')) {
+        menuToggle.classList.add('menu-icon');
     }
     
-    // Toggle mobile menu
-    menuToggle.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        console.log('📱 Menu toggle clicked');
-        
-        navLinks.classList.toggle('active');
-        menuToggle.textContent = navLinks.classList.contains('active') ? '✕' : '☰';
-        
-        // Prevent body scroll when menu is open
-        if (navLinks.classList.contains('active')) {
-            document.body.style.overflow = 'hidden';
+    if (!navLinks.classList.contains('nav-links')) {
+        navLinks.classList.add('nav-links');
+    }
+    
+    // Show/hide based on screen size
+    function updateMenuVisibility() {
+        if (window.innerWidth <= 768) {
+            // Mobile: show menu button, hide navigation
+            menuToggle.style.display = 'block';
+            menuToggle.style.visibility = 'visible';
+            navLinks.style.display = 'none';
+            navLinks.classList.remove('active');
         } else {
+            // Desktop: hide menu button, show navigation
+            menuToggle.style.display = 'none';
+            navLinks.style.display = 'flex';
+            navLinks.classList.remove('active');
             document.body.style.overflow = '';
         }
-    });
+    }
     
-    // Close menu when clicking outside
-    document.addEventListener('click', function(e) {
-        if (navLinks.classList.contains('active') && 
-            !e.target.closest('.nav-links') && 
-            !e.target.closest('#menuToggle')) {
-            closeMobileMenu();
-        }
-    });
-    
-    // Close menu when clicking a link
-    document.querySelectorAll('.nav-links a').forEach(link => {
-        link.addEventListener('click', function() {
-            if (window.innerWidth <= 768) {
+    // Toggle mobile menu with robust click handling
+    function setupMenuToggle() {
+        // Remove any existing click handlers to prevent conflicts
+        const newToggle = menuToggle.cloneNode(true);
+        menuToggle.parentNode.replaceChild(newToggle, menuToggle);
+        menuToggle = newToggle;
+        
+        // Add fresh click handler
+        menuToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation(); // Prevent other handlers
+            
+            console.log('📱 Menu clicked - toggling...');
+            
+            const isActive = navLinks.classList.contains('active');
+            
+            if (!isActive) {
+                // Open menu
+                navLinks.classList.add('active');
+                navLinks.style.display = 'flex';
+                menuToggle.textContent = '✕';
+                document.body.style.overflow = 'hidden';
+                
+                // Add close handler to document
+                document.addEventListener('click', closeMenuOnClickOutside, true);
+                document.addEventListener('keydown', closeMenuOnEscape);
+            } else {
+                // Close menu
                 closeMobileMenu();
             }
-        });
-    });
-    
-    // Close on escape key
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && navLinks.classList.contains('active')) {
-            closeMobileMenu();
-        }
-    });
+        }, true); // Use capture phase to get first
+        
+        console.log('✅ Menu toggle event listener added');
+    }
     
     // Close menu function
     function closeMobileMenu() {
         navLinks.classList.remove('active');
+        navLinks.style.display = 'none';
         menuToggle.textContent = '☰';
         document.body.style.overflow = '';
+        
+        // Remove event listeners
+        document.removeEventListener('click', closeMenuOnClickOutside, true);
+        document.removeEventListener('keydown', closeMenuOnEscape);
     }
     
-    // Handle window resize
-    window.addEventListener('resize', function() {
-        if (window.innerWidth > 768) {
-            // On desktop, show nav links
-            navLinks.style.display = 'flex';
-            menuToggle.style.display = 'none';
-            navLinks.classList.remove('active');
-            document.body.style.overflow = '';
-        } else {
-            // On mobile, hide nav links (show only when menu is toggled)
-            menuToggle.style.display = 'block';
-            if (!navLinks.classList.contains('active')) {
-                navLinks.style.display = 'none';
-            }
+    // Close menu when clicking outside
+    function closeMenuOnClickOutside(e) {
+        if (!e.target.closest('.nav-links') && 
+            !e.target.closest('.mobile-nav-links') &&
+            !e.target.closest('#menuToggle') && 
+            !e.target.closest('#mobileMenuBtn') &&
+            !e.target.closest('.menu-icon') &&
+            !e.target.closest('.mobile-menu-btn')) {
+            closeMobileMenu();
         }
-    });
+    }
     
-    console.log('✅ Mobile menu initialized');
-});
-
-// Mobile touch improvements
-document.addEventListener('DOMContentLoaded', function() {
-    // Check if mobile
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    // Close on escape key
+    function closeMenuOnEscape(e) {
+        if (e.key === 'Escape') {
+            closeMobileMenu();
+        }
+    }
     
-    if (isMobile) {
-        console.log('📱 Mobile device detected');
-        
-        // Add touch feedback to buttons
-        document.querySelectorAll('button, .btn').forEach(btn => {
-            btn.addEventListener('touchstart', function() {
-                this.style.opacity = '0.7';
-            });
-            
-            btn.addEventListener('touchend', function() {
-                this.style.opacity = '1';
+    // Close menu when clicking a link (for all navigation types)
+    function setupLinkClickHandlers() {
+        const links = navLinks.querySelectorAll('a');
+        links.forEach(link => {
+            link.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    setTimeout(closeMobileMenu, 100); // Small delay for smooth transition
+                }
             });
         });
-        
-        // Fix for iOS Safari 100vh issue
-        function fixVH() {
-            let vh = window.innerHeight * 0.01;
-            document.documentElement.style.setProperty('--vh', `${vh}px`);
-        }
-        
-        fixVH();
-        window.addEventListener('resize', fixVH);
-        window.addEventListener('orientationchange', fixVH);
+        console.log(`✅ Added click handlers to ${links.length} navigation links`);
     }
+    
+    // Initialize everything
+    function initMobileMenu() {
+        updateMenuVisibility();
+        setupMenuToggle();
+        setupLinkClickHandlers();
+        
+        // Handle window resize
+        let resizeTimer;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(updateMenuVisibility, 250);
+        });
+        
+        console.log('✅ Enhanced mobile menu fully initialized');
+    }
+    
+    // Start initialization
+    initMobileMenu();
+    
+    // Make init function available globally for re-initialization
+    window.reinitMobileMenu = initMobileMenu;
 });
+
+// Mobile touch improvements (separate module to avoid conflicts)
+(function() {
+    'use strict';
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if mobile
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        if (isMobile) {
+            console.log('📱 Mobile device detected - applying touch improvements');
+            
+            // Add touch feedback to buttons (with debouncing)
+            const buttons = document.querySelectorAll('button, .btn, .menu-icon, .mobile-menu-btn');
+            buttons.forEach(btn => {
+                let touchTimer;
+                
+                btn.addEventListener('touchstart', function() {
+                    clearTimeout(touchTimer);
+                    this.style.opacity = '0.7';
+                }, { passive: true });
+                
+                btn.addEventListener('touchend', function() {
+                    clearTimeout(touchTimer);
+                    touchTimer = setTimeout(() => {
+                        this.style.opacity = '1';
+                    }, 100);
+                }, { passive: true });
+                
+                btn.addEventListener('touchcancel', function() {
+                    clearTimeout(touchTimer);
+                    this.style.opacity = '1';
+                }, { passive: true });
+            });
+            
+            // Fix for iOS Safari 100vh issue
+            function fixViewportHeight() {
+                const vh = window.innerHeight * 0.01;
+                document.documentElement.style.setProperty('--vh', `${vh}px`);
+                
+                // Also fix any hero/slider heights
+                document.querySelectorAll('.hero, .slider-container').forEach(el => {
+                    el.style.height = `calc(var(--vh, 1vh) * 100)`;
+                });
+            }
+            
+            fixViewportHeight();
+            window.addEventListener('resize', fixViewportHeight);
+            window.addEventListener('orientationchange', function() {
+                setTimeout(fixViewportHeight, 100);
+            });
+            
+            // Prevent zoom on double-tap
+            document.addEventListener('dblclick', function(e) {
+                if (e.target.tagName === 'BUTTON' || 
+                    e.target.tagName === 'A' || 
+                    e.target.classList.contains('btn')) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+        }
+    });
+})();
+
+// Export for module systems (if needed)
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { initMobileMenu: window.reinitMobileMenu };
+}
