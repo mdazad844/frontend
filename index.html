@@ -280,6 +280,52 @@
     </div>
   </footer>
 
+
+<script>
+// SIMPLE GUARANTEED MOBILE MENU FOR INDEX.HTML
+document.addEventListener('DOMContentLoaded', function() {
+    const menuBtn = document.getElementById('mobileMenuBtn');
+    const mobileNav = document.getElementById('mobileNav');
+    const desktopNav = document.getElementById('navLinks');
+    
+    // Show/hide based on screen size
+    function checkScreenSize() {
+        if (window.innerWidth <= 768) {
+            // Mobile: show mobile button, hide desktop nav
+            menuBtn.style.display = 'block';
+            desktopNav.style.display = 'none';
+            mobileNav.style.display = 'none';
+        } else {
+            // Desktop: hide mobile button, show desktop nav
+            menuBtn.style.display = 'none';
+            mobileNav.style.display = 'none';
+            desktopNav.style.display = 'flex';
+        }
+    }
+    
+    // Toggle mobile menu
+    menuBtn.addEventListener('click', function() {
+        if (mobileNav.style.display === 'block') {
+            mobileNav.style.display = 'none';
+            menuBtn.innerHTML = '☰';
+        } else {
+            mobileNav.style.display = 'block';
+            menuBtn.innerHTML = '✕';
+        }
+    });
+    
+    // Initial check
+    checkScreenSize();
+    
+    // Check on resize
+    window.addEventListener('resize', checkScreenSize);
+    
+    console.log('✅ SIMPLE MENU INITIALIZED FOR INDEX.HTML');
+});
+</script>
+
+	
+
   <!-- SCRIPT ORDER IS CRITICAL -->
   <script src="js/script.js"></script>
   <script src="js/mobile-menu.js"></script>
@@ -365,6 +411,7 @@ if (menuToggle) {
 </script>
 </body>
 </html>
+
 
 
 
