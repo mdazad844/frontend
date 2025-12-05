@@ -106,7 +106,7 @@
     border-radius: 0 8px 8px 0 !important;
   }
   
-  /* 3. FIX HERO SECTION - PREVENT CLICK BLOCKING */
+  /* 3. FIX HERO SECTION - SIMPLIFIED WITHOUT SLIDER */
   .hero {
     height: 40vh !important;
     min-height: 250px !important;
@@ -114,83 +114,49 @@
     padding: 0 !important;
     position: relative !important;
     z-index: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    padding: 20px !important;
+    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)) !important;
+    color: white !important;
   }
   
-  .hero-slider {
-    height: 100% !important;
-    position: relative !important;
-    z-index: 1 !important;
+  .hero-content {
+    max-width: 100% !important;
+    padding: 20px !important;
   }
   
-  .slider-container {
-    pointer-events: none !important;
-    position: relative !important;
-    z-index: 1 !important;
+  .hero-content h1 {
+    font-size: 28px !important;
+    margin-bottom: 15px !important;
   }
   
-  /* Allow clicks ONLY on slider navigation */
+  .hero-content p {
+    font-size: 16px !important;
+    margin-bottom: 20px !important;
+  }
+  
+  .hero-content .btn {
+    display: inline-block !important;
+    padding: 12px 30px !important;
+    font-size: 16px !important;
+    pointer-events: auto !important;
+  }
+  
+  /* Remove slider-specific styles */
+  .hero-slider,
+  .slider-container,
+  .slider,
+  .slide,
+  .slide-content,
   .slider-nav,
   .prev-btn,
   .next-btn,
   .dots,
-  .slide-link {
-    pointer-events: auto !important;
-    position: relative !important;
-    z-index: 2 !important;
-  }
-  
-  .slide {
-    pointer-events: none !important;
-  }
-  
-  .slide-link {
-    pointer-events: auto !important;
-  }
-  
-  .slide-content {
-    left: 5% !important;
-    right: 5% !important;
-    text-align: center !important;
-    padding: 20px !important;
-    background: rgba(0,0,0,0.5) !important;
-    border-radius: 10px !important;
-    pointer-events: none !important;
-  }
-  
-  .slide-content .btn {
-    pointer-events: auto !important;
-  }
-  
-  .slide-content h1 {
-    font-size: 22px !important;
-    line-height: 1.3 !important;
-    margin-bottom: 10px !important;
-  }
-  
-  .slide-content p {
-    font-size: 14px !important;
-    margin-bottom: 15px !important;
-  }
-  
-  .slide-content .btn {
-    padding: 10px 20px !important;
-    font-size: 14px !important;
-  }
-  
-  .slider-nav {
-    bottom: 15px !important;
-    z-index: 3 !important;
-  }
-  
   .dot {
-    width: 8px !important;
-    height: 8px !important;
-  }
-  
-  .prev-btn, .next-btn {
-    width: 36px !important;
-    height: 36px !important;
-    font-size: 14px !important;
+    display: none !important;
   }
   
   /* 4. FIX CATEGORIES SECTION */
@@ -354,8 +320,8 @@
     height: 50vh !important;
   }
   
-  .slide-content h1 {
-    font-size: 28px !important;
+  .hero-content h1 {
+    font-size: 32px !important;
   }
   
   .navbar {
@@ -370,12 +336,12 @@
     min-height: 200px !important;
   }
   
-  .slide-content h1 {
-    font-size: 20px !important;
+  .hero-content h1 {
+    font-size: 24px !important;
   }
   
-  .slide-content p {
-    font-size: 13px !important;
+  .hero-content p {
+    font-size: 14px !important;
   }
   
   .categories h2, .featured h2 {
@@ -448,7 +414,7 @@ img {
   }
 }
 
-/* SHOP-SPECIFIC RESPONSIVE STYLES */
+/* SHOP-SPECIFIC RESPONSIVE STYLES - CLEANED UP */
 @media (max-width: 768px) {
   .shop-section .container {
     padding: 0 15px !important;
@@ -477,27 +443,14 @@ img {
     margin: 0 auto !important;
   }
   
-  .filters-panel {
-    position: fixed !important;
-    top: 0 !important;
-    left: -100% !important;
-    width: 85% !important;
-    height: 100vh !important;
-    transition: left 0.3s ease !important;
-    z-index: 10003 !important;
-  }
-  
-  .filters-panel.active {
-    left: 0 !important;
-  }
-  
-  .filters-overlay.active {
-    display: block !important;
-  }
-  
-  .filters-content {
-    max-height: calc(100vh - 60px) !important;
-    overflow-y: auto !important;
+  /* Remove filter-related styles */
+  .filters-panel,
+  .filters-overlay,
+  .filter-toggle,
+  .active-filters,
+  .filter-group,
+  .filter-options {
+    display: none !important;
   }
 }
 
@@ -512,11 +465,6 @@ img {
 @media (max-width: 768px) {
   .navbar > * {
     pointer-events: auto !important;
-  }
-  
-  /* Fix for any element that might overlay the menu */
-  .hero-slider *:not(.slider-nav):not(.prev-btn):not(.next-btn):not(.dots):not(.slide-link .btn) {
-    pointer-events: none !important;
   }
   
   /* Ensure menu button is always on top */
