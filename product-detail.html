@@ -35,80 +35,57 @@
             box-shadow: 0 3px 15px rgba(0,0,0,0.1);
         }
 
-        /* RESPONSIVE IMAGE GALLERY */
+        /* Image Gallery */
         .product-gallery {
             display: flex;
             flex-direction: column;
             gap: 15px;
         }
 
-        .main-image-container {
+        .main-image {
             width: 100%;
+            height: 500px;
             border-radius: 10px;
             overflow: hidden;
             background: #f8f9fa;
-            position: relative;
-            aspect-ratio: 1/1; /* Square aspect ratio for better mobile viewing */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #666;
         }
 
-        .main-image-container img {
+        .main-image img {
             width: 100%;
             height: 100%;
-            object-fit: contain; /* Changed from cover to contain to show full image */
-            display: block;
-            transition: transform 0.3s ease;
+            object-fit: cover;
         }
 
-        /* Mobile-friendly thumbnail gallery */
         .thumbnail-gallery {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
             gap: 10px;
-            padding: 10px 0;
-            overflow-x: auto; /* Horizontal scroll for mobile */
-            scrollbar-width: thin;
-            scrollbar-color: #ddd #f8f9fa;
-        }
-
-        .thumbnail-gallery::-webkit-scrollbar {
-            height: 6px;
-        }
-
-        .thumbnail-gallery::-webkit-scrollbar-track {
-            background: #f8f9fa;
-            border-radius: 3px;
-        }
-
-        .thumbnail-gallery::-webkit-scrollbar-thumb {
-            background: #ddd;
-            border-radius: 3px;
         }
 
         .thumbnail {
-            flex: 0 0 auto; /* Prevent thumbnails from shrinking */
-            width: 80px;
+            width: 100%;
             height: 80px;
-            border-radius: 8px;
+            border-radius: 5px;
             cursor: pointer;
             border: 2px solid transparent;
             transition: all 0.3s ease;
-            overflow: hidden;
         }
 
         .thumbnail:hover,
         .thumbnail.active {
             border-color: #007bff;
-            transform: scale(1.05);
         }
 
         .thumbnail img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-        }
-
-        /* Mobile Navigation Arrows */
-        .gallery-nav {
-            display: none; /* Hide on desktop */
+            border-radius: 3px;
         }
 
         /* Product Info */
@@ -155,8 +132,7 @@
             color: #28a745;
             font-weight: bold;
         }
-
-        /* Color Selection */
+        /* Color Selection - BULLETPROOF STYLING */
         .color-selection {
             margin-bottom: 25px;
         }
@@ -166,6 +142,7 @@
             font-size: 1.2rem;
         }
 
+        /* Use a very specific ID that doesn't exist anywhere else */
         #productDetailColorOptionsOnly {
             display: flex !important;
             gap: 12px !important;
@@ -174,6 +151,7 @@
             padding: 10px 0 !important;
         }
 
+        /* Use a class that doesn't exist in your main CSS */
         .product-detail-color-circle {
             width: 45px !important;
             height: 45px !important;
@@ -197,12 +175,13 @@
             transform: scale(1.1) !important;
         }
 
+        /* White color specific styling */
         .color-white-circle {
             border: 3px solid #999 !important;
             background: #ffffff !important;
         }
 
-        /* Size Selection */
+                /* Size Selection - BULLETPROOF STYLING */
         .size-selection {
             margin-bottom: 25px;
         }
@@ -212,6 +191,7 @@
             font-size: 1.2rem;
         }
 
+        /* Use a very specific ID for size options */
         #productDetailSizeOptionsOnly {
             display: grid !important;
             grid-template-columns: repeat(5, 1fr) !important;
@@ -220,6 +200,7 @@
             padding: 10px 0 !important;
         }
 
+        /* Use unique class for size boxes */
         .product-detail-size-box {
             padding: 12px 8px !important;
             border: 2px solid #ddd !important;
@@ -245,7 +226,7 @@
             border-color: #007bff !important;
         }
 
-        /* Quantity Selection */
+        /* Quantity Selection - BULLETPROOF STYLING */
         .quantity-selection {
             margin-bottom: 25px;
         }
@@ -255,6 +236,7 @@
             font-size: 1.2rem;
         }
 
+        /* Use specific container for quantity */
         #productDetailQuantityControls {
             display: flex !important;
             align-items: center !important;
@@ -262,6 +244,7 @@
             padding: 10px 0 !important;
         }
 
+        /* Unique classes for quantity controls */
         .product-detail-quantity-btn {
             width: 40px !important;
             height: 40px !important;
@@ -410,178 +393,19 @@
             display: block;
         }
 
-        /* ========== MOBILE RESPONSIVE STYLES ========== */
+        /* Responsive */
         @media (max-width: 768px) {
-            .product-detail-container {
-                padding: 10px;
-            }
-            
             .product-detail {
                 grid-template-columns: 1fr;
                 gap: 20px;
-                padding: 20px;
-                margin: 10px;
             }
             
-            .main-image-container {
-                aspect-ratio: 1/1;
-                max-height: 400px;
-            }
-            
-            /* Show navigation arrows on mobile */
-            .gallery-nav {
-                display: flex;
-                justify-content: space-between;
-                position: absolute;
-                top: 50%;
-                left: 10px;
-                right: 10px;
-                transform: translateY(-50%);
-                z-index: 10;
-            }
-            
-            .nav-arrow {
-                width: 40px;
-                height: 40px;
-                background: rgba(255, 255, 255, 0.9);
-                border: none;
-                border-radius: 50%;
-                font-size: 20px;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-                transition: all 0.3s ease;
-            }
-            
-            .nav-arrow:hover {
-                background: white;
-                transform: scale(1.1);
-            }
-            
-            .thumbnail-gallery {
-                gap: 8px;
-                padding: 15px 0;
-            }
-            
-            .thumbnail {
-                width: 70px;
-                height: 70px;
-            }
-            
-            .product-title {
-                font-size: 1.5rem;
-            }
-            
-            .product-price {
-                font-size: 1.5rem;
-            }
-            
-            #productDetailSizeOptionsOnly {
-                grid-template-columns: repeat(4, 1fr) !important;
-            }
-            
-            .product-detail-size-box {
-                padding: 10px 6px !important;
-                font-size: 13px !important;
-                min-width: 45px !important;
-            }
-            
-            .product-detail-color-circle {
-                width: 40px !important;
-                height: 40px !important;
+            .size-options {
+                grid-template-columns: repeat(3, 1fr);
             }
             
             .action-buttons {
                 flex-direction: column;
-                gap: 10px;
-            }
-            
-            .add-to-cart-btn,
-            .wishlist-btn {
-                width: 100%;
-                padding: 12px;
-                font-size: 16px;
-            }
-            
-            .details-tabs {
-                flex-direction: column;
-                gap: 10px;
-            }
-            
-            .tab {
-                text-align: center;
-                border-bottom: none;
-                border-left: 3px solid transparent;
-                padding: 10px;
-            }
-            
-            .tab.active {
-                border-bottom-color: transparent;
-                border-left-color: #007bff;
-            }
-            
-            /* Fix quantity controls for mobile */
-            #productDetailQuantityControls {
-                flex-wrap: wrap;
-                gap: 10px;
-            }
-            
-            .product-detail-quantity-note {
-                width: 100%;
-                text-align: center;
-                margin-top: 5px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .product-detail {
-                padding: 15px;
-                margin: 5px;
-            }
-            
-            .main-image-container {
-                max-height: 300px;
-            }
-            
-            .thumbnail {
-                width: 60px;
-                height: 60px;
-            }
-            
-            #productDetailSizeOptionsOnly {
-                grid-template-columns: repeat(3, 1fr) !important;
-            }
-            
-            .product-detail-color-circle {
-                width: 35px !important;
-                height: 35px !important;
-            }
-            
-            .nav-arrow {
-                width: 35px;
-                height: 35px;
-                font-size: 16px;
-            }
-            
-            .product-title {
-                font-size: 1.3rem;
-            }
-            
-            .product-price {
-                font-size: 1.3rem;
-            }
-        }
-
-        /* Landscape mode adjustments */
-        @media (max-width: 768px) and (orientation: landscape) {
-            .product-detail {
-                grid-template-columns: 1fr 1fr;
-            }
-            
-            .main-image-container {
-                aspect-ratio: 4/3;
             }
         }
     </style>
@@ -623,11 +447,7 @@
         <div class="product-detail">
             <!-- Image Gallery -->
             <div class="product-gallery">
-                <div class="main-image-container" id="mainImageContainer">
-                    <div class="gallery-nav">
-                        <button class="nav-arrow prev-arrow" onclick="prevImage()">←</button>
-                        <button class="nav-arrow next-arrow" onclick="nextImage()">→</button>
-                    </div>
+                <div class="main-image" id="mainImage">
                     <img src="" alt="Premium Cotton T-Shirt" id="currentImage">
                 </div>
                 <div class="thumbnail-gallery" id="thumbnailGallery">
@@ -654,6 +474,7 @@
                 </ul>
 
                 <!-- Color Selection -->
+                             
                 <div class="color-selection">
                     <h3>Select Color</h3>
                     <div id="productDetailColorOptionsOnly">
@@ -661,7 +482,7 @@
                     </div>
                 </div>
 				
-                <!-- Size Selection -->
+                                <!-- Size Selection -->
                 <div class="size-selection">
                     <h3>Select Size</h3>
                     <div id="productDetailSizeOptionsOnly">
@@ -706,8 +527,10 @@
                 <!-- Action Buttons -->
                 <div class="action-buttons">
 				<button class="btn" onclick="addToCartWithDetails()" style="padding: 12px 30px; font-size: 16px;">
-                    Add to Cart - <span id="currentPrice">₹199</span>
-                </button>
+    Add to Cart - <span id="currentPrice">₹199</span>
+</button>
+                    
+                   
                     <button class="wishlist-btn" onclick="addToWishlist()">❤️ Wishlist</button>
                 </div>
 
@@ -743,7 +566,7 @@
     </div>
 
 <script>
-    // COMPLETE PRODUCT DATABASE (unchanged)
+    // COMPLETE PRODUCT DATABASE
     const productDatabase = {
         "1001": {
             id: 1001,
@@ -784,28 +607,130 @@
                         "images/tshirt-blue-4.jpg"
                     ]
                 },
-                {
-                    name: "red",
-                    displayName: "Red",
-                    code: "#dc3545",
-                    images: [
-                        "images/tshirt-red-1.jpg",
-                        "images/tshirt-red-2.jpg",
-                        "images/tshirt-red-3.jpg",
-                        "images/tshirt-red-4.jpg"
-                    ]
-                },
-                {
-                    name: "green",
-                    displayName: "Green",
-                    code: "#28a745",
-                    images: [
-                        "images/tshirt-green-1.jpg",
-                        "images/tshirt-green-2.jpg",
-                        "images/tshirt-green-3.jpg",
-                        "images/tshirt-green-4.jpg"
-                    ]
-                }
+
+				{
+                name: "red",
+                displayName: "Red",
+                code: "#dc3545",
+                images: [
+                    "images/tshirt-red-1.jpg",
+                    "images/tshirt-red-2.jpg",
+                    "images/tshirt-red-3.jpg",
+                    "images/tshirt-red-4.jpg"
+                ]
+            },
+            {
+                name: "green",
+                displayName: "Green",
+                code: "#28a745",
+                images: [
+                    "images/tshirt-green-1.jpg",
+                    "images/tshirt-green-2.jpg",
+                    "images/tshirt-green-3.jpg",
+                    "images/tshirt-green-4.jpg"
+                ]
+            },
+            {
+                name: "orange",
+                displayName: "Orange",
+                code: "#FFA500",
+                images: [
+                    "images/tshirt-orange-1.jpg",
+                    "images/tshirt-orange-2.jpg",
+                    "images/tshirt-orange-3.jpg",
+                    "images/tshirt-orange-4.jpg"
+                ]
+            },
+
+
+			{
+                name: "sky blue",
+                displayName: "Sky Blue",
+                code: "#82CAFF",
+                images: [
+                    "images/tshirt-skyblue-1.jpg",
+                    "images/tshirt-skyblue-2.jpg",
+                    "images/tshirt-skyblue-3.jpg",
+                    "images/tshirt-skyblue-4.jpg"
+                ]
+            },
+
+
+			{
+                name: " mustard yellow",
+                displayName: "Mustard Yellow",
+                code: "#FFDB58",
+                images: [
+                    "images/tshirt-mustardyellow-1.jpg",
+                    "images/tshirt-mustardyellow-2.jpg",
+                    "images/tshirt-mustardyellow-3.jpg",
+                    "images/tshirt-mustardyellow-4.jpg"
+                ]
+            },
+
+
+
+
+			{
+                name: "lavender",
+                displayName: "Lavender",
+                code: "#BC8BC2",
+                images: [
+                    "images/tshirt-lavender-1.jpg",
+                    "images/tshirt-lavender-2.jpg",
+                    "images/tshirt-lavender-3.jpg",
+                    "images/tshirt-lavender-4.jpg"
+                ]
+            },
+
+			{
+                name: "royal blue",
+                displayName: "Royal Blue",
+                code: "#305CDE",
+                images: [
+                    "images/tshirt-royalblue-1.jpg",
+                    "images/tshirt-royalblue-2.jpg",
+                    "images/tshirt-royalblue-3.jpg",
+                    "images/tshirt-royalblue-4.jpg"
+                ]
+            },
+
+			
+            {
+                name: "beige",
+                displayName: "Beige",
+                code: "#D9BB9B",
+                images: [
+                    "images/tshirt-beige-1.jpg",
+                    "images/tshirt-beige-2.jpg",
+                    "images/tshirt-beige-3.jpg",
+                    "images/tshirt-beige-4.jpg"
+                ]
+            },
+            {
+                name: "marron",
+                displayName: "Marron",
+                code: "#800000",
+                images: [
+                    "images/tshirt-marron-1.jpg",
+                    "images/tshirt-marron-2.jpg",
+                    "images/tshirt-marron-3.jpg",
+                    "images/tshirt-marron-4.jpg"
+                ]
+            },
+            {
+                name: "gray",
+                displayName: "Gray",
+                code: "#6c757d",
+                images: [
+                    "images/tshirt-gray-1.jpg",
+                    "images/tshirt-gray-2.jpg",
+                    "images/tshirt-gray-3.jpg",
+                    "images/tshirt-gray-4.jpg"
+                ]
+            },
+                // Add other colors as needed
+			
             ],
             sizes: ["S", "M", "L", "XL", "XXL"],
             pricingTiers: [
@@ -828,6 +753,300 @@
                 care: "Machine washable",
                 neck: "Ribbed collar"
             }
+        },
+        "1002": {
+            id: 1002,
+            name: "Organic Cotton T-Shirt",
+            basePrice: 299,
+            description: "GOTS certified organic cotton, environmentally friendly production. Soft, sustainable, and perfect for eco-conscious customers.",
+            colors: [
+                {
+                    name: "white",
+                    displayName: "White",
+                    code: "#ffffff",
+                    images: [
+                        "images/oversize-white-1.jpg",
+                        "images/oversize-white-2.jpg",
+                        "images/oversize-white-3.jpg",
+                        "images/oversize-white-4.jpg"
+                    ]
+                },
+                {
+                    name: "black",
+                displayName: "Black",
+                code: "#000000",
+                images: [
+                    "images/oversize-black-1.jpg",
+                    "images/oversize-black-2.jpg",
+                    "images/oversize-black-3.jpg",
+                    "images/oversize-black-4.jpg"
+                    ]
+                },
+                    {
+                 name: "lavender",
+                displayName: "Lavender",
+                code: "#BC8BC2",
+                images: [
+                    "images/oversize-lavender-1.jpg",
+                    "images/oversize-lavender-2.jpg",
+                    "images/oversize-lavender-3.jpg",
+                    "images/oversize-lavender-4.jpg"
+                    ]
+                },
+
+
+				{
+                   name: "marron",
+                displayName: "Marron",
+                code: "#800000",
+                images: [
+                    "images/oversize-marron-1.jpg",
+                    "images/oversize-marron-2.jpg",
+                    "images/oversize-marron-3.jpg",
+                    "images/oversize-marron-4.jpg"
+                    ]
+                },
+
+
+				{
+                   name: "beige",
+                displayName: "Beige",
+                code: "#D9BB9B",
+                images: [
+                    "images/oversize-beige-1.jpg",
+                    "images/oversize-beige-2.jpg",
+                    "images/oversize-beige-3.jpg",
+                    "images/oversize-beige-4.jpg"
+                    ]
+                },
+
+
+				
+                {
+                    name: "green",
+                    displayName: "Green",
+                    code: "#28a745",
+                    images: [
+                        "images/organic-green-1.jpg",
+                        "images/organic-green-2.jpg",
+                        "images/organic-green-3.jpg",
+                        "images/organic-green-4.jpg"
+                    ]
+                }
+            ],
+            sizes: ["S", "M", "L", "XL", "XXL"],
+            pricingTiers: [
+                { min: 1, max: 49, price: 299 },
+                { min: 50, max: 99, price: 269 },
+                { min: 100, max: 499, price: 239 },
+                { min: 500, max: 999999, price: 209 }
+            ],
+            features: [
+                "GOTS Certified Organic Cotton",
+                "Eco-friendly dye",
+                "Sustainable production",
+                "Hypoallergenic",
+                "Biodegradable"
+            ],
+            specifications: {
+                fabric: "100% Organic Cotton",
+                weight: "160 GSM",
+                fit: "Regular",
+                care: "Cold wash, line dry",
+                certification: "GOTS Certified"
+            }
+        },
+        "1003": {
+            id: 1003,
+            name: "Classic Polo T-Shirt",
+            basePrice: 349,
+            description: "Premium pique cotton, collar style, perfect for corporate events, golf, or casual wear with a sophisticated look.",
+            colors: [
+                {
+                    name: "mulberry",
+                    displayName: "Mulberry",
+                    code: "#C54B8C",
+                    images: [
+                        "images/polo-mulberry-1.jpg",
+                        "images/polo-mulberry-2.jpg",
+                        "images/polo-mulberry-3.jpg",
+                        "images/polo-mulberry-4.jpg"
+                    ]
+                },
+                {
+                    name: "black",
+                    displayName: "Black",
+                    code: "#000000",
+                    images: [
+                        "images/polo-black-1.jpg",
+                        "images/polo-black-2.jpg",
+                        "images/polo-black-3.jpg",
+                        "images/polo-black-4.jpg"
+                    ]
+                },
+
+				{
+                    name: "marron",
+                    displayName: "Marron",
+                    code: "#800000",
+                    images: [
+                        "images/polo-marron-1.jpg",
+                        "images/polo-marron-2.jpg",
+                        "images/polo-marron-3.jpg",
+                        "images/polo-marron-4.jpg"
+                    ]
+                },
+
+
+				
+                {
+                    name: "white",
+                    displayName: "White",
+                    code: "#ffffff",
+                    images: [
+                        "images/polo-white-1.jpg",
+                        "images/polo-white-2.jpg",
+                        "images/polo-white-3.jpg",
+                        "images/polo-white-4.jpg"
+                    ]
+                },
+                {
+                    name: "red",
+                    displayName: "Red",
+                    code: "#dc3545",
+                    images: [
+                        "images/polo-red-1.jpg",
+                        "images/polo-red-2.jpg",
+                        "images/polo-red-3.jpg",
+                        "images/polo-red-4.jpg"
+                    ]
+                }
+            ],
+            sizes: ["S", "M", "L", "XL", "XXL"],
+            pricingTiers: [
+                { min: 1, max: 49, price: 349 },
+                { min: 50, max: 99, price: 319 },
+                { min: 100, max: 499, price: 289 },
+                { min: 500, max: 999999, price: 259 }
+            ],
+            features: [
+                "Premium Pique Cotton",
+                "Button-down placket",
+                "Ribbed collar and cuffs",
+                "Side vents",
+                "Perfect for embroidery"
+            ],
+            specifications: {
+                fabric: "100% Pique Cotton",
+                weight: "220 GSM",
+                fit: "Regular fit",
+                collar: "Ribbed polo collar",
+                placket: "3-button placket"
+            }
+        },
+        "1004": {
+            id: 1004,
+            name: "Performance T-Shirt",
+            basePrice: 249,
+            description: "Moisture-wicking fabric, quick dry, perfect for sports, gym, and active lifestyle. Keeps you cool and dry during workouts.",
+            colors: [
+                {
+                    name: "black",
+                    displayName: "Black",
+                    code: "#000000",
+                    images: [
+                        "images/matty-black-1.jpg",
+                        "images/matty-black-2.jpg",
+                        "images/matty-black-3.jpg",
+                        "images/matty-black-4.jpg"
+                    ]
+                },
+
+
+				{
+                    name: "marron",
+                    displayName: "Marron",
+                    code: "#800000",
+                    images: [
+                        "images/matty-marron-1.jpg",
+                        "images/matty-marron-2.jpg",
+                        "images/matty-marron-3.jpg",
+                        "images/matty-marron-4.jpg"
+                    ]
+                },
+
+
+				
+                {
+                    name: "white",
+                    displayName: "White",
+                    code: "#ffffff",
+                    images: [
+                        "images/matty-white-1.jpg",
+                        "images/matty-white-2.jpg",
+                        "images/matty-white-3.jpg",
+                        "images/matty-white-4.jpg"
+                    ]
+                },
+
+
+
+				
+                {
+                    name: "gray",
+                    displayName: "Gray",
+                    code: "#6c757d",
+                    images: [
+                        "images/performance-gray-1.jpg",
+                        "images/performance-gray-2.jpg",
+                        "images/performance-gray-3.jpg",
+                        "images/performance-gray-4.jpg"
+                    ]
+                },
+                {
+                    name: "blue",
+                    displayName: "Blue",
+                    code: "#007bff",
+                    images: [
+                        "images/performance-blue-1.jpg",
+                        "images/performance-blue-2.jpg",
+                        "images/performance-blue-3.jpg",
+                        "images/performance-blue-4.jpg"
+                    ]
+                },
+                {
+                    name: "red",
+                    displayName: "Red",
+                    code: "#dc3545",
+                    images: [
+                        "images/performance-red-1.jpg",
+                        "images/performance-red-2.jpg",
+                        "images/performance-red-3.jpg",
+                        "images/performance-red-4.jpg"
+                    ]
+                }
+            ],
+            sizes: ["S", "M", "L", "XL", "XXL"],
+            pricingTiers: [
+                { min: 1, max: 49, price: 249 },
+                { min: 50, max: 99, price: 229 },
+                { min: 100, max: 499, price: 209 },
+                { min: 500, max: 999999, price: 189 }
+            ],
+            features: [
+                "Moisture-wicking fabric",
+                "Quick dry technology",
+                "4-way stretch",
+                "Anti-odor treatment",
+                "Raglan sleeves"
+            ],
+            specifications: {
+                fabric: "Polyester/Cotton blend",
+                weight: "150 GSM",
+                fit: "Athletic fit",
+                technology: "Moisture-wicking",
+                stretch: "4-way stretch"
+            }
         }
     };
 
@@ -836,8 +1055,6 @@
     let selectedSize = '';
     let quantity = 1;
     let currentProduct = null;
-    let currentImageIndex = 0;
-    let currentImages = [];
 
     // Get product ID from URL
     function getProductIdFromURL() {
@@ -865,7 +1082,6 @@
         selectedColor = currentProduct.colors[0]?.name || '';
         selectedSize = currentProduct.sizes[0] || '';
         quantity = 1;
-        currentImageIndex = 0;
         
         // Update page content
         updatePageContent();
@@ -880,16 +1096,21 @@
     function updatePageContent() {
         if (!currentProduct) return;
         
+        // Update text content
         document.querySelector('.product-title').textContent = currentProduct.name;
         document.querySelector('.product-price').textContent = `Starting at ₹${currentProduct.basePrice}`;
         document.querySelector('.product-description').textContent = currentProduct.description;
         
+        // Update features list
         const featuresList = document.querySelector('.features-list');
         featuresList.innerHTML = currentProduct.features
             .map(feature => `<li>${feature}</li>`)
             .join('');
         
+        // Update page title
         document.title = `${currentProduct.name} - Bulk Order`;
+        
+        // Update bulk pricing
         updateBulkPricing();
     }
 
@@ -920,7 +1141,12 @@
                 <strong>Weight:</strong> ${specs.weight || 'N/A'}<br>
                 <strong>Fit:</strong> ${specs.fit || 'N/A'}<br>
                 <strong>Care:</strong> ${specs.care || 'N/A'}<br>
-                ${specs.neck ? `<strong>Neck:</strong> ${specs.neck}<br>` : ''}</p>
+                ${specs.neck ? `<strong>Neck:</strong> ${specs.neck}<br>` : ''}
+                ${specs.collar ? `<strong>Collar:</strong> ${specs.collar}<br>` : ''}
+                ${specs.placket ? `<strong>Placket:</strong> ${specs.placket}<br>` : ''}
+                ${specs.technology ? `<strong>Technology:</strong> ${specs.technology}<br>` : ''}
+                ${specs.stretch ? `<strong>Stretch:</strong> ${specs.stretch}<br>` : ''}
+                ${specs.certification ? `<strong>Certification:</strong> ${specs.certification}` : ''}</p>
             `;
         }
     }
@@ -983,6 +1209,7 @@
     function selectSize(size) {
         selectedSize = size;
         
+        // Update UI
         document.querySelectorAll('.product-detail-size-box').forEach(box => {
             box.classList.remove('active-size');
             if (box.getAttribute('data-size') === size) {
@@ -1001,21 +1228,17 @@
 
         if (!mainImage || !thumbnailGallery) return;
 
-        // Store current images
-        currentImages = currentColor?.images || [];
-        currentImageIndex = 0;
-
         // Update main image
-        if (currentImages.length > 0) {
-            mainImage.src = currentImages[0];
-            mainImage.alt = `${currentProduct.name} - ${currentColor?.displayName || selectedColor}`;
+        if (currentColor && currentColor.images.length > 0) {
+            mainImage.src = currentColor.images[0];
+            mainImage.alt = `${currentProduct.name} - ${currentColor.displayName}`;
         }
 
         // Generate thumbnails
-        thumbnailGallery.innerHTML = currentImages
+        thumbnailGallery.innerHTML = currentColor?.images
             .map((image, index) => `
                 <div class="thumbnail ${index === 0 ? 'active' : ''}" 
-                     onclick="changeMainImage(${index})">
+                     onclick="changeMainImage('${image}', this)">
                     <img src="${image}" alt="${currentProduct.name} view ${index + 1}" 
                          onerror="this.src='https://via.placeholder.com/80x80?text=${currentProduct.name}'">
                 </div>
@@ -1024,33 +1247,16 @@
     }
 
     // Change main image
-    function changeMainImage(index) {
+    function changeMainImage(imageSrc, clickedThumbnail) {
         const mainImage = document.getElementById('currentImage');
         const thumbnails = document.querySelectorAll('.thumbnail');
 
-        if (!mainImage || !currentImages[index]) return;
+        if (!mainImage) return;
 
-        currentImageIndex = index;
-        mainImage.src = currentImages[index];
+        mainImage.src = imageSrc;
         
         thumbnails.forEach(thumb => thumb.classList.remove('active'));
-        thumbnails[index]?.classList.add('active');
-    }
-
-    // Navigate to previous image
-    function prevImage() {
-        if (currentImages.length === 0) return;
-        
-        currentImageIndex = currentImageIndex === 0 ? currentImages.length - 1 : currentImageIndex - 1;
-        changeMainImage(currentImageIndex);
-    }
-
-    // Navigate to next image
-    function nextImage() {
-        if (currentImages.length === 0) return;
-        
-        currentImageIndex = currentImageIndex === currentImages.length - 1 ? 0 : currentImageIndex + 1;
-        changeMainImage(currentImageIndex);
+        clickedThumbnail.classList.add('active');
     }
 
     // Update quantity
@@ -1116,7 +1322,7 @@
             const productName = `${currentProduct.name} (${colorName}, ${selectedSize})`;
             
             // Get product image
-            const productImage = currentImages[0] || 'images/placeholder.png';
+            const productImage = currentColor?.images[0] || 'images/placeholder.png';
             
             console.log('Adding to cart:', {
                 name: productName,
@@ -1201,11 +1407,12 @@
         const currentColor = currentProduct.colors.find(color => color.name === selectedColor);
         const colorName = currentColor?.displayName || selectedColor;
         const productName = `${currentProduct.name} (${colorName}, ${selectedSize})`;
-        const productImage = currentImages[0] || 'images/placeholder.png';
+        const productImage = currentColor?.images[0] || 'images/placeholder.png';
         
         if (typeof window.addToWishlist === 'function') {
             window.addToWishlist(currentProduct.id, productName, unitPrice, productImage);
         } else {
+            // Fallback
             addToWishlistFallback(currentProduct.id, productName, unitPrice, productImage);
         }
     }
@@ -1227,6 +1434,7 @@
                 });
                 localStorage.setItem('wishlist', JSON.stringify(wishlist));
                 
+                // Update wishlist count
                 if (typeof window.updateWishlistCount === 'function') {
                     window.updateWishlistCount();
                 }
@@ -1256,12 +1464,14 @@
 
     // Switch tabs
     function switchTab(tabName) {
+        // Update active tab
         document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
         const targetTab = document.querySelector(`.tab[onclick="switchTab('${tabName}')"]`);
         if (targetTab) {
             targetTab.classList.add('active');
         }
 
+        // Update active content
         document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
         const targetContent = document.getElementById(tabName);
         if (targetContent) {
@@ -1291,34 +1501,6 @@
                 }
             });
         }
-        
-        // Touch swipe for mobile image navigation
-        let touchStartX = 0;
-        let touchEndX = 0;
-        const mainImageContainer = document.getElementById('mainImageContainer');
-        
-        if (mainImageContainer) {
-            mainImageContainer.addEventListener('touchstart', function(e) {
-                touchStartX = e.changedTouches[0].screenX;
-            });
-            
-            mainImageContainer.addEventListener('touchend', function(e) {
-                touchEndX = e.changedTouches[0].screenX;
-                handleSwipe();
-            });
-        }
-        
-        function handleSwipe() {
-            if (touchStartX - touchEndX > 50) {
-                // Swipe left
-                nextImage();
-            }
-            
-            if (touchEndX - touchStartX > 50) {
-                // Swipe right
-                prevImage();
-            }
-        }
     }
 
     // Initialize when page loads
@@ -1328,6 +1510,7 @@
         initializePage();
         initializeEvents();
         
+        // Update counts
         if (typeof window.updateCartCount === 'function') {
             window.updateCartCount();
         }
