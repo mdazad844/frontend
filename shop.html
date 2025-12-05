@@ -72,195 +72,15 @@
             </div>
         </section>
 
-        <!-- Filters and Products Section -->
+        <!-- Products Section -->
         <section class="shop-section">
             <div class="container">
-                <!-- Filters Container -->
-                <div class="filters-container">
-                    <!-- Filter Toggle Button -->
-                    <div class="filter-toggle">
-                        <button class="filter-toggle-btn" onclick="toggleFilters()" aria-expanded="false" aria-controls="filtersPanel">
-                            <span>🔍 Filters</span>
-                            <span class="filter-badge" id="activeFiltersCount">0</span>
-                            <span class="toggle-arrow">▼</span>
-                        </button>
-                    </div>
-
-                    <!-- Filters Panel -->
-                    <div class="filters-panel" id="filtersPanel" role="dialog" aria-label="Product filters">
-                        <div class="filters-header">
-                            <h3>Filter Products</h3>
-                            <button class="close-filters" onclick="toggleFilters()" aria-label="Close filters">×</button>
-                        </div>
-
-                        <div class="filters-content">
-                            <!-- Category Filter -->
-                            <div class="filter-group">
-                                <div class="filter-header" onclick="toggleFilterGroup(this)" role="button" tabindex="0" aria-expanded="false">
-                                    <h4>Category</h4>
-                                    <span class="group-arrow">▼</span>
-                                </div>
-                                <div class="filter-options">
-                                    <label class="filter-option">
-                                        <input type="checkbox" name="category" value="men" onchange="updateFilters()">
-                                        <span class="checkmark"></span>
-                                        <span class="filter-text">Men</span>
-                                        <span class="product-count">(8)</span>
-                                    </label>
-                                    <label class="filter-option">
-                                        <input type="checkbox" name="category" value="women" onchange="updateFilters()">
-                                        <span class="checkmark"></span>
-                                        <span class="filter-text">Women</span>
-                                        <span class="product-count">(7)</span>
-                                    </label>
-                                    <label class="filter-option">
-                                        <input type="checkbox" name="category" value="kids" onchange="updateFilters()">
-                                        <span class="checkmark"></span>
-                                        <span class="filter-text">Kids</span>
-                                        <span class="product-count">(3)</span>
-                                    </label>
-                                    <label class="filter-option">
-                                        <input type="checkbox" name="category" value="footwear" onchange="updateFilters()">
-                                        <span class="checkmark"></span>
-                                        <span class="filter-text">Footwear</span>
-                                        <span class="product-count">(3)</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <!-- Price Range Filter -->
-                            <div class="filter-group">
-                                <div class="filter-header" onclick="toggleFilterGroup(this)" role="button" tabindex="0" aria-expanded="false">
-                                    <h4>Price Range</h4>
-                                    <span class="group-arrow">▼</span>
-                                </div>
-                                <div class="filter-options">
-                                    <label class="filter-option">
-                                        <input type="checkbox" name="price" value="0-500" onchange="updateFilters()">
-                                        <span class="checkmark"></span>
-                                        <span class="filter-text">Under ₹500</span>
-                                        <span class="product-count">(2)</span>
-                                    </label>
-                                    <label class="filter-option">
-                                        <input type="checkbox" name="price" value="500-1000" onchange="updateFilters()">
-                                        <span class="checkmark"></span>
-                                        <span class="filter-text">₹500 - ₹1000</span>
-                                        <span class="product-count">(8)</span>
-                                    </label>
-                                    <label class="filter-option">
-                                        <input type="checkbox" name="price" value="1000-2000" onchange="updateFilters()">
-                                        <span class="checkmark"></span>
-                                        <span class="filter-text">₹1000 - ₹2000</span>
-                                        <span class="product-count">(7)</span>
-                                    </label>
-                                    <label class="filter-option">
-                                        <input type="checkbox" name="price" value="2000-5000" onchange="updateFilters()">
-                                        <span class="checkmark"></span>
-                                        <span class="filter-text">₹2000 - ₹5000</span>
-                                        <span class="product-count">(3)</span>
-                                    </label>
-                                    <label class="filter-option">
-                                        <input type="checkbox" name="price" value="5000+" onchange="updateFilters()">
-                                        <span class="checkmark"></span>
-                                        <span class="filter-text">Above ₹5000</span>
-                                        <span class="product-count">(1)</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <!-- Size Filter -->
-                            <div class="filter-group">
-                                <div class="filter-header" onclick="toggleFilterGroup(this)" role="button" tabindex="0" aria-expanded="false">
-                                    <h4>Size</h4>
-                                    <span class="group-arrow">▼</span>
-                                </div>
-                                <div class="filter-options size-options">
-                                    <label class="size-option">
-                                        <input type="checkbox" name="size" value="S" onchange="updateFilters()">
-                                        <span class="size-box">S</span>
-                                    </label>
-                                    <label class="size-option">
-                                        <input type="checkbox" name="size" value="M" onchange="updateFilters()">
-                                        <span class="size-box">M</span>
-                                    </label>
-                                    <label class="size-option">
-                                        <input type="checkbox" name="size" value="L" onchange="updateFilters()">
-                                        <span class="size-box">L</span>
-                                    </label>
-                                    <label class="size-option">
-                                        <input type="checkbox" name="size" value="XL" onchange="updateFilters()">
-                                        <span class="size-box">XL</span>
-                                    </label>
-                                    <label class="size-option">
-                                        <input type="checkbox" name="size" value="XXL" onchange="updateFilters()">
-                                        <span class="size-box">XXL</span>
-                                    </label>
-                                </div>
-                            </div>
-                            
-                            <!-- Color Filter -->
-                            <div class="filter-group">
-                                <div class="filter-header" onclick="toggleFilterGroup(this)" role="button" tabindex="0" aria-expanded="false">
-                                    <h4>Color</h4>
-                                    <span class="group-arrow">▼</span>
-                                </div>
-                                <div class="filter-options color-options">
-                                    <label class="color-option">
-                                        <input type="checkbox" name="color" value="black" onchange="updateFilters()">
-                                        <span class="color-box" style="background-color: #000;"></span>
-                                        <span class="color-text">Black</span>
-                                    </label>
-                                    <label class="color-option">
-                                        <input type="checkbox" name="color" value="white" onchange="updateFilters()">
-                                        <span class="color-box" style="background-color: #fff; border: 1px solid #ddd;"></span>
-                                        <span class="color-text">White</span>
-                                    </label>
-                                    <label class="color-option">
-                                        <input type="checkbox" name="color" value="blue" onchange="updateFilters()">
-                                        <span class="color-box" style="background-color: #007bff;"></span>
-                                        <span class="color-text">Blue</span>
-                                    </label>
-                                    <label class="color-option">
-                                        <input type="checkbox" name="color" value="red" onchange="updateFilters()">
-                                        <span class="color-box" style="background-color: #dc3545;"></span>
-                                        <span class="color-text">Red</span>
-                                    </label>
-                                    <label class="color-option">
-                                        <input type="checkbox" name="color" value="green" onchange="updateFilters()">
-                                        <span class="color-box" style="background-color: #28a745;"></span>
-                                        <span class="color-text">Green</span>
-                                    </label>
-                                    <label class="color-option">
-                                        <input type="checkbox" name="color" value="gray" onchange="updateFilters()">
-                                        <span class="color-box" style="background-color: #6c757d;"></span>
-                                        <span class="color-text">Gray</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <!-- Active Filters Display -->
-                            <div class="active-filters" id="activeFilters" aria-live="polite">
-                                <!-- Active filters will appear here dynamically -->
-                            </div>
-
-                            <!-- Filter Actions -->
-                            <div class="filter-actions">
-                                <button class="apply-filters-btn" onclick="applyFilters()">Apply Filters</button>
-                                <button class="clear-filters-btn" onclick="clearAllFilters()">Clear All</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Overlay for mobile -->
-                    <div class="filters-overlay" id="filtersOverlay" onclick="toggleFilters()"></div>
-                </div>
-
                 <!-- Products Grid -->
                 <div class="product-grid" id="productGrid">
                     <!-- Product cards remain the same... -->
                     <!-- (Keep all your product cards exactly as they are) -->
                     <!-- Product 1 -->
-                    <div class="product-card" data-category="men" data-price="799" data-size="M" data-color="white">
+                    <div class="product-card">
                         <button class="wishlist-btn" onclick="addToWishlist(1, 'Classic White Hoodie', 799, 'images/product1.jpg')" aria-label="Add to wishlist">
                             🤍
                         </button>
@@ -272,7 +92,7 @@
                     </div>
 
                     <!-- Product 2 -->
-                    <div class="product-card" data-category="men" data-price="299" data-size="S" data-color="black">
+                    <div class="product-card">
                         <button class="wishlist-btn" onclick="addToWishlist(2, 'Black Oversized T-Shirt', 299, 'images/product2.jpg')" aria-label="Add to wishlist">
                             🤍
                         </button>
@@ -284,7 +104,7 @@
                     </div>
 
                     <!-- Product 3 -->
-                    <div class="product-card" data-category="men" data-price="599" data-size="L" data-color="blue">
+                    <div class="product-card">
                         <button class="wishlist-btn" onclick="addToWishlist(3, 'Premium Mulberry Polo T-shirt', 599, 'images/product3.jpg')" aria-label="Add to wishlist">
                             🤍
                         </button>
@@ -296,7 +116,7 @@
                     </div>
 
                     <!-- Product 4 -->
-                    <div class="product-card" data-category="men" data-price="249" data-size="XL" data-color="blue">
+                    <div class="product-card">
                         <button class="wishlist-btn" onclick="addToWishlist(4, 'Marron regular Fit T-shirt', 249, 'images/product4.jpg')" aria-label="Add to wishlist">
                             🤍
                         </button>
@@ -308,7 +128,7 @@
                     </div>
 
                     <!-- Product 5 -->
-                    <div class="product-card" data-category="footwear" data-price="599" data-size="9" data-color="black">
+                    <div class="product-card">
                         <button class="wishlist-btn" onclick="addToWishlist(5, 'Premium Black Polo T-shirt', 599, 'images/product5.jpg')" aria-label="Add to wishlist">
                             🤍
                         </button>
@@ -320,7 +140,7 @@
                     </div>
 
                     <!-- Product 6 -->
-                    <div class="product-card" data-category="women" data-price="599" data-size="M" data-color="white">
+                    <div class="product-card">
                         <button class="wishlist-btn" onclick="addToWishlist(6, 'Premium White Polo T-shirt', 599, 'images/product6.jpg')" aria-label="Add to wishlist">
                             🤍
                         </button>
@@ -332,7 +152,7 @@
                     </div>
 
                     <!-- Product 7 -->
-                    <div class="product-card" data-category="men" data-price="599" data-size="L" data-color="marron">
+                    <div class="product-card">
                         <button class="wishlist-btn" onclick="addToWishlist(7, 'Premium Marron Polo T-shirt', 1499, 'images/product7.jpg')" aria-label="Add to wishlist">
                             🤍
                         </button>
@@ -344,7 +164,7 @@
                     </div>
 
                     <!-- Product 8 -->
-                    <div class="product-card" data-category="men" data-price="249" data-size="S" data-color="white">
+                    <div class="product-card">
                         <button class="wishlist-btn" onclick="addToWishlist(8, 'White regular Fit T-shirt', 249, 'images/product8.jpg')" aria-label="Add to wishlist">
                             🤍
                         </button>
@@ -356,7 +176,7 @@
                     </div>
 
                     <!-- Product 9 -->
-                    <div class="product-card" data-category="men" data-price="249" data-size="S" data-color="blue">
+                    <div class="product-card">
                         <button class="wishlist-btn" onclick="addToWishlist(9, 'Black regular Fit T-shirt', 249, 'images/product9.jpg')" aria-label="Add to wishlist">
                             🤍
                         </button>
@@ -368,7 +188,7 @@
                     </div>
 
                     <!-- Product 10 -->
-                    <div class="product-card" data-category="footwear" data-price="249" data-size="8" data-color="white">
+                    <div class="product-card">
                         <button class="wishlist-btn" onclick="addToWishlist(10, 'Beige regular Fit T-shirt', 249, 'images/product10.jpg')" aria-label="Add to wishlist">
                             🤍
                         </button>
@@ -380,7 +200,7 @@
                     </div>
 
                     <!-- Product 11 -->
-                    <div class="product-card" data-category="women" data-price="249" data-size="M" data-color="green">
+                    <div class="product-card">
                         <button class="wishlist-btn" onclick="addToWishlist(11, 'Blue regular Fit T-shirt', 249, 'images/product11.jpg')" aria-label="Add to wishlist">
                             🤍
                         </button>
@@ -392,7 +212,7 @@
                     </div>
 
                     <!-- Product 12 -->
-                    <div class="product-card" data-category="men" data-price="249" data-size="XL" data-color="black">
+                    <div class="product-card">
                         <button class="wishlist-btn" onclick="addToWishlist(12, 'Grey regular Fit T-shirt', 249, 'images/product12.jpg')" aria-label="Add to wishlist">
                             🤍
                         </button>
@@ -404,7 +224,7 @@
                     </div>
 
                     <!-- Product 13 -->
-                    <div class="product-card" data-category="kids" data-price="249" data-size="M" data-color="red">
+                    <div class="product-card">
                         <button class="wishlist-btn" onclick="addToWishlist(13, 'lavender regular Fit T-shirt', 249, 'images/product13.jpg')" aria-label="Add to wishlist">
                             🤍
                         </button>
@@ -416,7 +236,7 @@
                     </div>
 
                     <!-- Product 14 -->
-                    <div class="product-card" data-category="women" data-price="249" data-size="L" data-color="black">
+                    <div class="product-card">
                         <button class="wishlist-btn" onclick="addToWishlist(14, 'Orange regular Fit T-shirt', 1599, 'images/product14.jpg')" aria-label="Add to wishlist">
                             🤍
                         </button>
@@ -428,7 +248,7 @@
                     </div>
 
                     <!-- Product 15 -->
-                    <div class="product-card" data-category="men" data-price="249" data-size="M" data-color="blue">
+                    <div class="product-card">
                         <button class="wishlist-btn" onclick="addToWishlist(15, 'Sky blue regular Fit T-shirt', 249, 'images/product15.jpg')" aria-label="Add to wishlist">
                             🤍
                         </button>
@@ -440,7 +260,7 @@
                     </div>
 
                     <!-- Product 16 -->
-                    <div class="product-card" data-category="footwear" data-price="299" data-size="10" data-color="brown">
+                    <div class="product-card">
                         <button class="wishlist-btn" onclick="addToWishlist(16, 'White Oversized T-Shirt', 299, 'images/product16.jpg')" aria-label="Add to wishlist">
                             🤍
                         </button>
@@ -452,7 +272,7 @@
                     </div>
 
                     <!-- Product 17 -->
-                    <div class="product-card" data-category="women" data-price="299" data-size="S" data-color="pink">
+                    <div class="product-card">
                         <button class="wishlist-btn" onclick="addToWishlist(17, 'Marron Oversized T-Shirt', 299, 'images/product17.jpg')" aria-label="Add to wishlist">
                             🤍
                         </button>
@@ -464,7 +284,7 @@
                     </div>
 
                     <!-- Product 18 -->
-                    <div class="product-card" data-category="men" data-price="299" data-size="L" data-color="green">
+                    <div class="product-card">
                         <button class="wishlist-btn" onclick="addToWishlist(18, 'Beige Oversized T-Shirt', 299, 'images/product18.jpg')" aria-label="Add to wishlist">
                             🤍
                         </button>
@@ -476,7 +296,7 @@
                     </div>
 
                     <!-- Product 19 -->
-                    <div class="product-card" data-category="kids" data-price="299" data-size="S" data-color="yellow">
+                    <div class="product-card">
                         <button class="wishlist-btn" onclick="addToWishlist(19, 'Lavender Oversized T-Shirt', 299, 'images/product19.jpg')" aria-label="Add to wishlist">
                             🤍
                         </button>
@@ -488,7 +308,7 @@
                     </div>
 
                     <!-- Product 20 -->
-                    <div class="product-card" data-category="women" data-price="399" data-size="M" data-color="black">
+                    <div class="product-card">
                         <button class="wishlist-btn" onclick="addToWishlist(20, 'Black Sweatshirt', 399, 'images/product20.jpg')" aria-label="Add to wishlist">
                             🤍
                         </button>
@@ -500,7 +320,7 @@
                     </div>
 
                     <!-- Product 21 -->
-                    <div class="product-card" data-category="men" data-price="399" data-size="XL" data-color="white">
+                    <div class="product-card">
                         <button class="wishlist-btn" onclick="addToWishlist(21, 'Grey Sweatshirt', 399, 'images/product21.jpg')" aria-label="Add to wishlist">
                             🤍
                         </button>
@@ -512,7 +332,7 @@
                     </div>
 
                      <!-- Product 22 -->
-                    <div class="product-card" data-category="men" data-price="399" data-size="XL" data-color="white">
+                    <div class="product-card">
                         <button class="wishlist-btn" onclick="addToWishlist(22, 'Navy Blue Sweatshirt', 399, 'images/product22.jpg')" aria-label="Add to wishlist">
                             🤍
                         </button>
@@ -524,7 +344,7 @@
                     </div>
 
                      <!-- Product 23 -->
-                    <div class="product-card" data-category="men" data-price="449" data-size="XL" data-color="white">
+                    <div class="product-card">
                         <button class="wishlist-btn" onclick="addToWishlist(23, 'Matty Black Polo T-shirt', 449, 'images/product23.jpg')" aria-label="Add to wishlist">
                             🤍
                         </button>
@@ -536,7 +356,7 @@
                     </div>
 
                      <!-- Product 24 -->
-                    <div class="product-card" data-category="men" data-price="449" data-size="XL" data-color="white">
+                    <div class="product-card">
                         <button class="wishlist-btn" onclick="addToWishlist(24, 'Matty White Polo T-shirt', 449, 'images/product24.jpg')" aria-label="Add to wishlist">
                             🤍
                         </button>
@@ -548,7 +368,7 @@
                     </div>
 
                      <!-- Product 25 -->
-                    <div class="product-card" data-category="men" data-price="449" data-size="XL" data-color="white">
+                    <div class="product-card">
                         <button class="wishlist-btn" onclick="addToWishlist(25, 'Matty Marron Polo T-shirt', 449, 'images/product25.jpg')" aria-label="Add to wishlist">
                             🤍
                         </button>
@@ -626,234 +446,28 @@
     <script src="js/mobile-menu.js"></script>
     <script src="js/auth.js"></script>
     
-    <!-- SHOP-SPECIFIC FIXES -->
+    <!-- SIMPLIFIED SHOP FUNCTIONALITY -->
     <script>
-    // Move the shop functionality to a separate module
-    const ShopFilters = {
-        currentFilters: {
-            category: [],
-            price: [],
-            size: [],
-            color: []
-        },
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('🛍️ Initializing simplified shop page...');
         
-        visibleProducts: 12,
+        let visibleProducts = 12;
+        const productCards = document.querySelectorAll('.product-card');
         
-        // Toggle filters panel - FIXED FOR MOBILE
-        toggleFilters: function() {
-            const filtersPanel = document.getElementById('filtersPanel');
-            const filtersOverlay = document.getElementById('filtersOverlay');
-            const toggleBtn = document.querySelector('.filter-toggle-btn');
-            
-            if (filtersPanel && filtersOverlay) {
-                const isActive = filtersPanel.classList.contains('active');
-                
-                if (isActive) {
-                    filtersPanel.classList.remove('active');
-                    filtersOverlay.classList.remove('active');
-                    toggleBtn.setAttribute('aria-expanded', 'false');
-                    document.body.style.overflow = '';
-                } else {
-                    filtersPanel.classList.add('active');
-                    filtersOverlay.classList.add('active');
-                    toggleBtn.setAttribute('aria-expanded', 'true');
-                    // On mobile, prevent body scroll when filters are open
-                    if (window.innerWidth <= 768) {
-                        document.body.style.overflow = 'hidden';
-                    }
-                }
-            }
-        },
+        // Remove data attributes from product cards since we don't need filtering
+        productCards.forEach(card => {
+            card.removeAttribute('data-category');
+            card.removeAttribute('data-price');
+            card.removeAttribute('data-size');
+            card.removeAttribute('data-color');
+        });
         
-        // Toggle filter group
-        toggleFilterGroup: function(header) {
-            const filterGroup = header.parentElement;
-            filterGroup.classList.toggle('active');
-            header.setAttribute('aria-expanded', filterGroup.classList.contains('active').toString());
-        },
-        
-        // Update filters
-        updateFilters: function() {
-            const newFilters = {
-                category: [],
-                price: [],
-                size: [],
-                color: []
-            };
-            
-            const checkedBoxes = document.querySelectorAll('.filter-options input[type="checkbox"]:checked');
-            
-            checkedBoxes.forEach(checkbox => {
-                const name = checkbox.getAttribute('name');
-                const value = checkbox.value;
-                
-                if (name && newFilters[name] && !newFilters[name].includes(value)) {
-                    newFilters[name].push(value);
-                }
-            });
-            
-            this.currentFilters = newFilters;
-            this.updateActiveFiltersDisplay();
-            this.filterProducts();
-        },
-        
-        // Apply filters
-        applyFilters: function() {
-            this.filterProducts();
-            this.toggleFilters(); // Close filters panel
-        },
-        
-        // Clear all filters
-        clearAllFilters: function() {
-            const checkboxes = document.querySelectorAll('.filter-options input[type="checkbox"]');
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = false;
-            });
-            
-            this.currentFilters = {
-                category: [],
-                price: [],
-                size: [],
-                color: []
-            };
-            
-            this.updateActiveFiltersDisplay();
-            this.filterProducts();
-        },
-        
-        // Update active filters display
-        updateActiveFiltersDisplay: function() {
-            const activeFiltersContainer = document.getElementById('activeFilters');
-            const activeFiltersCount = document.getElementById('activeFiltersCount');
-            
-            if (!activeFiltersContainer) return;
-            
-            let totalActive = 0;
-            Object.values(this.currentFilters).forEach(filterArray => {
-                totalActive += filterArray.length;
-            });
-            
-            if (activeFiltersCount) {
-                activeFiltersCount.textContent = totalActive;
-            }
-            
-            activeFiltersContainer.innerHTML = '';
-            
-            Object.keys(this.currentFilters).forEach(filterType => {
-                this.currentFilters[filterType].forEach(value => {
-                    const filterTag = document.createElement('span');
-                    filterTag.className = 'active-filter-tag';
-                    filterTag.innerHTML = `
-                        ${this.getFilterDisplayName(filterType, value)}
-                        <button class="remove-filter" onclick="ShopFilters.removeFilter('${filterType}', '${value}')" aria-label="Remove ${this.getFilterDisplayName(filterType, value)} filter">×</button>
-                    `;
-                    activeFiltersContainer.appendChild(filterTag);
-                });
-            });
-            
-            if (totalActive > 0) {
-                activeFiltersContainer.classList.add('has-filters');
-            } else {
-                activeFiltersContainer.classList.remove('has-filters');
-            }
-        },
-        
-        // Get filter display name
-        getFilterDisplayName: function(filterType, value) {
-            const displayNames = {
-                category: {
-                    'men': 'Men',
-                    'women': 'Women',
-                    'kids': 'Kids',
-                    'footwear': 'Footwear'
-                },
-                price: {
-                    '0-500': 'Under ₹500',
-                    '500-1000': '₹500-1000',
-                    '1000-2000': '₹1000-2000',
-                    '2000-5000': '₹2000-5000',
-                    '5000+': 'Above ₹5000'
-                },
-                size: {
-                    'S': 'Size S',
-                    'M': 'Size M',
-                    'L': 'Size L',
-                    'XL': 'Size XL',
-                    'XXL': 'Size XXL',
-                    '8': 'Size 8',
-                    '9': 'Size 9',
-                    '10': 'Size 10'
-                },
-                color: {
-                    'black': 'Black',
-                    'white': 'White',
-                    'blue': 'Blue',
-                    'red': 'Red',
-                    'green': 'Green',
-                    'gray': 'Gray',
-                    'marron': 'Marron',
-                    'beige': 'Beige',
-                    'lavender': 'Lavender',
-                    'orange': 'Orange',
-                    'yellow': 'Yellow',
-                    'pink': 'Pink',
-                    'brown': 'Brown'
-                }
-            };
-            
-            return displayNames[filterType]?.[value] || value;
-        },
-        
-        // Remove specific filter
-        removeFilter: function(filterType, value) {
-            const checkbox = document.querySelector(`input[name="${filterType}"][value="${value}"]`);
-            if (checkbox) {
-                checkbox.checked = false;
-            }
-            this.updateFilters();
-        },
-        
-        // Filter products
-        filterProducts: function() {
-            const productCards = document.querySelectorAll('.product-card');
+        // Filter products (simplified - just show/hide based on visibility count)
+        function filterProducts() {
             let visibleCount = 0;
             
             productCards.forEach(card => {
-                const category = card.getAttribute('data-category');
-                const price = parseInt(card.getAttribute('data-price') || 0);
-                const size = card.getAttribute('data-size');
-                const color = card.getAttribute('data-color');
-                
-                let shouldShow = true;
-                
-                // Check category filter
-                if (this.currentFilters.category.length > 0 && !this.currentFilters.category.includes(category)) {
-                    shouldShow = false;
-                }
-                
-                // Check price filter
-                if (this.currentFilters.price.length > 0) {
-                    let priceMatch = false;
-                    this.currentFilters.price.forEach(priceRange => {
-                        if (this.checkPriceRange(price, priceRange)) {
-                            priceMatch = true;
-                        }
-                    });
-                    if (!priceMatch) shouldShow = false;
-                }
-                
-                // Check size filter
-                if (this.currentFilters.size.length > 0 && !this.currentFilters.size.includes(size)) {
-                    shouldShow = false;
-                }
-                
-                // Check color filter
-                if (this.currentFilters.color.length > 0 && !this.currentFilters.color.includes(color)) {
-                    shouldShow = false;
-                }
-                
-                // Apply visibility
-                if (shouldShow && visibleCount < this.visibleProducts) {
+                if (visibleCount < visibleProducts) {
                     card.style.display = 'block';
                     visibleCount++;
                 } else {
@@ -861,63 +475,45 @@
                 }
             });
             
-            this.updateResultsCount(visibleCount);
+            updateResultsCount(visibleCount);
             
             const loadMoreBtn = document.getElementById('loadMoreBtn');
             if (loadMoreBtn) {
-                if (visibleCount >= productCards.length) {
-                    loadMoreBtn.style.display = 'none';
-                } else {
-                    loadMoreBtn.style.display = 'block';
-                }
+                loadMoreBtn.style.display = visibleCount >= productCards.length ? 'none' : 'block';
             }
-        },
-        
-        // Check price range
-        checkPriceRange: function(price, range) {
-            if (range === '5000+') return price >= 5000;
-            
-            const [min, max] = range.split('-').map(Number);
-            return price >= min && price <= max;
-        },
+        }
         
         // Update results count
-        updateResultsCount: function(visibleCount) {
+        function updateResultsCount(visibleCount) {
             const resultsCount = document.getElementById('resultsCount');
-            const totalProducts = document.querySelectorAll('.product-card').length;
+            const totalProducts = productCards.length;
             
             if (resultsCount) {
                 if (visibleCount === 0) {
-                    resultsCount.innerHTML = 'No products found. Try changing your filters.';
+                    resultsCount.innerHTML = 'No products found.';
                 } else if (visibleCount === totalProducts) {
                     resultsCount.innerHTML = `Showing all ${totalProducts} products`;
                 } else {
-                    const filterCount = Object.values(this.currentFilters).reduce((sum, arr) => sum + arr.length, 0);
-                    if (filterCount > 0) {
-                        resultsCount.innerHTML = `Showing ${visibleCount} of ${totalProducts} products (filtered)`;
-                    } else {
-                        resultsCount.innerHTML = `Showing ${visibleCount} of ${totalProducts} products`;
-                    }
+                    resultsCount.innerHTML = `Showing ${visibleCount} of ${totalProducts} products`;
                 }
             }
-        },
+        }
         
         // Load more products
-        loadMoreProducts: function() {
-            this.visibleProducts += 12;
-            this.filterProducts();
-        },
+        window.loadMoreProducts = function() {
+            visibleProducts += 12;
+            filterProducts();
+        };
         
         // Search products
-        searchProducts: function() {
+        window.searchProducts = function() {
             const searchInput = document.getElementById('searchInput');
             if (!searchInput) return;
             
             const searchTerm = searchInput.value.toLowerCase().trim();
-            const productCards = document.querySelectorAll('.product-card');
             
             if (searchTerm === '') {
-                this.filterProducts();
+                filterProducts();
                 return;
             }
             
@@ -937,83 +533,32 @@
             
             const resultsCount = document.getElementById('resultsCount');
             if (resultsCount) {
-                if (foundCount === 0) {
-                    resultsCount.innerHTML = `No products found for "${searchTerm}"`;
-                } else {
-                    resultsCount.innerHTML = `Found ${foundCount} products for "${searchTerm}"`;
-                }
+                resultsCount.innerHTML = foundCount === 0 
+                    ? `No products found for "${searchTerm}"`
+                    : `Found ${foundCount} products for "${searchTerm}"`;
             }
-        },
+        };
         
         // Initialize shop page
-        initialize: function() {
-            console.log('🛍️ Initializing shop filters...');
+        function initializeShopPage() {
+            console.log('🛍️ Shop page initialized');
             
-            // Initialize filter groups
-            const filterGroups = document.querySelectorAll('.filter-group');
-            filterGroups.forEach(group => {
-                const header = group.querySelector('.filter-header');
-                if (header) {
-                    header.setAttribute('aria-expanded', 'false');
-                }
-            });
+            filterProducts();
             
-            // Set initial product visibility
-            this.filterProducts();
-            
-            // Add event listener for Enter key in search
+            // Setup search input
             const searchInput = document.getElementById('searchInput');
             if (searchInput) {
-                searchInput.addEventListener('keypress', (e) => {
+                searchInput.addEventListener('keypress', function(e) {
                     if (e.key === 'Enter') {
-                        this.searchProducts();
+                        searchProducts();
                     }
                 });
             }
-            
-            // Initialize mobile filter overlay
-            const filtersOverlay = document.getElementById('filtersOverlay');
-            if (filtersOverlay) {
-                filtersOverlay.addEventListener('click', () => {
-                    this.toggleFilters();
-                });
-            }
-            
-            // Initialize close filters button
-            const closeFilters = document.querySelector('.close-filters');
-            if (closeFilters) {
-                closeFilters.addEventListener('click', () => {
-                    this.toggleFilters();
-                });
-            }
-            
-            console.log('✅ Shop filters initialized');
-        }
-    };
-    
-    // Initialize shop page when DOM is loaded
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize shop filters
-        if (document.querySelector('.shop-section')) {
-            ShopFilters.initialize();
         }
         
-        // Initialize mobile menu (from mobile-menu.js)
-        if (typeof initMobileMenu === 'function') {
-            initMobileMenu();
-        }
+        // Initialize when DOM is loaded
+        initializeShopPage();
     });
-    
-    // Make functions globally available
-    window.toggleFilters = () => ShopFilters.toggleFilters();
-    window.toggleFilterGroup = (header) => ShopFilters.toggleFilterGroup(header);
-    window.updateFilters = () => ShopFilters.updateFilters();
-    window.applyFilters = () => ShopFilters.applyFilters();
-    window.clearAllFilters = () => ShopFilters.clearAllFilters();
-    window.removeFilter = (type, value) => ShopFilters.removeFilter(type, value);
-    window.loadMoreProducts = () => ShopFilters.loadMoreProducts();
-    window.searchProducts = () => ShopFilters.searchProducts();
     </script>
 </body>
 </html>
-
