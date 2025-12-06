@@ -82,6 +82,53 @@
             transition: opacity 0.3s ease;
         }
 
+
+
+		.desktop-nav-arrows {
+    position: absolute !important;
+    top: 50% !important;
+    left: 0 !important;
+    right: 0 !important;
+    transform: translateY(-50%) !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    padding: 0 20px !important;
+    z-index: 999 !important; /* VERY HIGH z-index */
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+/* Make sure buttons are clickable */
+.desktop-nav-arrows button {
+    position: relative !important;
+    z-index: 1000 !important;
+    pointer-events: auto !important;
+}
+
+/* Make sure main image container doesn't hide them */
+.main-image-container {
+    position: relative !important;
+    overflow: visible !important; /* Change from hidden to visible */
+}
+
+.main-image-wrapper {
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+/* Test borders to see what's happening */
+.dot-indicators.test-border {
+    border: 3px solid red !important;
+    background: rgba(255, 0, 0, 0.1) !important;
+}
+
+.desktop-nav-arrows.test-border {
+    border: 3px solid blue !important;
+    background: rgba(0, 0, 255, 0.1) !important;
+}
+
+		
         .desktop-nav-arrows.hidden {
             opacity: 0;
             visibility: hidden;
@@ -118,6 +165,25 @@
             padding: 10px 0;
             min-height: 20px;
         }
+
+
+
+		.dot-indicators {
+    display: flex !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    margin-top: 15px !important;
+    padding: 10px 0 !important;
+    position: relative !important;
+    z-index: 100 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    min-height: 30px !important;
+}
+
+
+		
 
         .dot {
             width: 12px;
@@ -1751,5 +1817,6 @@ updateCartCount();
 
 </body>
 </html>
+
 
 
