@@ -35,7 +35,7 @@
             box-shadow: 0 3px 15px rgba(0,0,0,0.1);
         }
 
-        /* ENHANCED RESPONSIVE IMAGE GALLERY WITH SLIDER */
+        /* ENHANCED IMAGE GALLERY */
         .product-gallery {
             display: flex;
             flex-direction: column;
@@ -66,8 +66,8 @@
             transition: opacity 0.3s ease;
         }
 
-        /* Desktop Navigation Arrows - Visible on desktop */
-        .desktop-nav-arrows {
+        /* Navigation Arrows */
+        .gallery-nav-arrows {
             position: absolute;
             top: 50%;
             left: 0;
@@ -80,45 +80,10 @@
             pointer-events: none;
         }
 
-        .desktop-nav-arrows button {
+        .gallery-nav-arrows button {
             pointer-events: auto;
-            width: 50px;
-            height: 50px;
-            background: rgba(255, 255, 255, 0.9);
-            border: none;
-            border-radius: 50%;
-            font-size: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-            color: #333;
-        }
-
-        .desktop-nav-arrows button:hover {
-            background: white;
-            transform: scale(1.1);
-        }
-
-        /* Mobile Navigation Arrows - Hidden on desktop, shown on mobile */
-        .mobile-nav-arrows {
-            display: none;
-            position: absolute;
-            top: 50%;
-            left: 10px;
-            right: 10px;
-            transform: translateY(-50%);
-            justify-content: space-between;
-            z-index: 20;
-            pointer-events: none;
-        }
-
-        .mobile-nav-arrows button {
-            pointer-events: auto;
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             background: rgba(255, 255, 255, 0.9);
             border: none;
             border-radius: 50%;
@@ -132,33 +97,9 @@
             color: #333;
         }
 
-        /* Dot Indicators */
-        .dot-indicators {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 15px;
-            padding: 10px 0;
-        }
-
-        .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #ddd;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: none;
-            padding: 0;
-        }
-
-        .dot.active {
-            background: #007bff;
-            transform: scale(1.2);
-        }
-
-        .dot:hover {
-            background: #bbb;
+        .gallery-nav-arrows button:hover {
+            background: white;
+            transform: scale(1.1);
         }
 
         /* Thumbnail Gallery */
@@ -532,10 +473,6 @@
             background: #dc3545;
         }
 
-        .notification.info {
-            background: #17a2b8;
-        }
-
         /* ========== MOBILE RESPONSIVE STYLES ========== */
         @media (max-width: 768px) {
             .product-detail-container {
@@ -554,20 +491,10 @@
                 max-height: 400px;
             }
             
-            /* Hide desktop arrows on mobile */
-            .desktop-nav-arrows {
-                display: none;
-            }
-            
-            /* Show mobile arrows on mobile */
-            .mobile-nav-arrows {
-                display: flex;
-            }
-            
-            .mobile-nav-arrows button {
+            .gallery-nav-arrows button {
                 width: 40px;
                 height: 40px;
-                font-size: 18px;
+                font-size: 16px;
             }
             
             .thumbnail-gallery {
@@ -668,10 +595,9 @@
                 height: 35px !important;
             }
             
-            .mobile-nav-arrows button {
+            .gallery-nav-arrows button {
                 width: 35px;
                 height: 35px;
-                font-size: 16px;
             }
             
             .product-title {
@@ -680,17 +606,6 @@
             
             .product-price {
                 font-size: 1.3rem;
-            }
-        }
-
-        /* Landscape mode adjustments */
-        @media (max-width: 768px) and (orientation: landscape) {
-            .product-detail {
-                grid-template-columns: 1fr 1fr;
-            }
-            
-            .main-image-container {
-                aspect-ratio: 4/3;
             }
         }
     </style>
@@ -724,29 +639,22 @@
 
     <div class="product-detail-container">
         <div class="product-detail">
-            <!-- ENHANCED Image Gallery with Slider -->
+            <!-- Image Gallery with Navigation -->
             <div class="product-gallery">
                 <div class="main-image-container" id="mainImageContainer">
                     <div class="main-image-wrapper">
                         <img src="" alt="Premium Cotton T-Shirt" id="currentImage">
                         
-                        <!-- Desktop Navigation Arrows -->
-                        <div class="desktop-nav-arrows">
-                            <button class="prev-btn" aria-label="Previous image">←</button>
-                            <button class="next-btn" aria-label="Next image">→</button>
-                        </div>
-                        
-                        <!-- Mobile Navigation Arrows -->
-                        <div class="mobile-nav-arrows">
-                            <button class="prev-btn" aria-label="Previous image">←</button>
-                            <button class="next-btn" aria-label="Next image">→</button>
+                        <!-- Navigation Arrows -->
+                        <div class="gallery-nav-arrows">
+                            <button class="prev-btn" aria-label="Previous image">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button class="next-btn" aria-label="Next image">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
                         </div>
                     </div>
-                </div>
-                
-                <!-- Dot Indicators -->
-                <div class="dot-indicators" id="dotIndicators">
-                    <!-- Dots will be generated by JavaScript -->
                 </div>
                 
                 <!-- Thumbnail Gallery -->
@@ -866,7 +774,7 @@
     <div class="notification" id="notification"></div>
 
 <script>
-// COMPLETE PRODUCT DATABASE
+// PRODUCT DATA (Simplified version)
 const productDatabase = {
     "1001": {
         id: 1001,
@@ -906,116 +814,6 @@ const productDatabase = {
                     "images/tshirt-blue-3.jpg",
                     "images/tshirt-blue-4.jpg"
                 ]
-            },
-            {
-                name: "red",
-                displayName: "Red",
-                code: "#dc3545",
-                images: [
-                    "images/tshirt-red-1.jpg",
-                    "images/tshirt-red-2.jpg",
-                    "images/tshirt-red-3.jpg",
-                    "images/tshirt-red-4.jpg"
-                ]
-            },
-            {
-                name: "green",
-                displayName: "Green",
-                code: "#28a745",
-                images: [
-                    "images/tshirt-green-1.jpg",
-                    "images/tshirt-green-2.jpg",
-                    "images/tshirt-green-3.jpg",
-                    "images/tshirt-green-4.jpg"
-                ]
-            },
-            {
-                name: "orange",
-                displayName: "Orange",
-                code: "#FFA500",
-                images: [
-                    "images/tshirt-orange-1.jpg",
-                    "images/tshirt-orange-2.jpg",
-                    "images/tshirt-orange-3.jpg",
-                    "images/tshirt-orange-4.jpg"
-                ]
-            },
-            {
-                name: "sky blue",
-                displayName: "Sky Blue",
-                code: "#82CAFF",
-                images: [
-                    "images/tshirt-skyblue-1.jpg",
-                    "images/tshirt-skyblue-2.jpg",
-                    "images/tshirt-skyblue-3.jpg",
-                    "images/tshirt-skyblue-4.jpg"
-                ]
-            },
-            {
-                name: "mustard yellow",
-                displayName: "Mustard Yellow",
-                code: "#FFDB58",
-                images: [
-                    "images/tshirt-mustardyellow-1.jpg",
-                    "images/tshirt-mustardyellow-2.jpg",
-                    "images/tshirt-mustardyellow-3.jpg",
-                    "images/tshirt-mustardyellow-4.jpg"
-                ]
-            },
-            {
-                name: "lavender",
-                displayName: "Lavender",
-                code: "#BC8BC2",
-                images: [
-                    "images/tshirt-lavender-1.jpg",
-                    "images/tshirt-lavender-2.jpg",
-                    "images/tshirt-lavender-3.jpg",
-                    "images/tshirt-lavender-4.jpg"
-                ]
-            },
-            {
-                name: "royal blue",
-                displayName: "Royal Blue",
-                code: "#305CDE",
-                images: [
-                    "images/tshirt-royalblue-1.jpg",
-                    "images/tshirt-royalblue-2.jpg",
-                    "images/tshirt-royalblue-3.jpg",
-                    "images/tshirt-royalblue-4.jpg"
-                ]
-            },
-            {
-                name: "beige",
-                displayName: "Beige",
-                code: "#D9BB9B",
-                images: [
-                    "images/tshirt-beige-1.jpg",
-                    "images/tshirt-beige-2.jpg",
-                    "images/tshirt-beige-3.jpg",
-                    "images/tshirt-beige-4.jpg"
-                ]
-            },
-            {
-                name: "marron",
-                displayName: "Marron",
-                code: "#800000",
-                images: [
-                    "images/tshirt-marron-1.jpg",
-                    "images/tshirt-marron-2.jpg",
-                    "images/tshirt-marron-3.jpg",
-                    "images/tshirt-marron-4.jpg"
-                ]
-            },
-            {
-                name: "gray",
-                displayName: "Gray",
-                code: "#6c757d",
-                images: [
-                    "images/tshirt-gray-1.jpg",
-                    "images/tshirt-gray-2.jpg",
-                    "images/tshirt-gray-3.jpg",
-                    "images/tshirt-gray-4.jpg"
-                ]
             }
         ],
         sizes: ["S", "M", "L", "XL", "XXL"],
@@ -1046,16 +844,13 @@ const productDatabase = {
 let currentProduct = null;
 let selectedColor = '';
 let selectedSize = '';
-let quantity = 1;
 let currentImages = [];
 let currentImageIndex = 0;
-let touchStartX = 0;
-let touchEndX = 0;
-const SWIPE_THRESHOLD = 50;
+let quantity = 1;
 
-// INITIALIZE PAGE
+// INITIALIZATION
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🔄 Initializing product detail page...');
+    console.log('Initializing product page...');
     
     // Get product ID from URL
     const urlParams = new URLSearchParams(window.location.search);
@@ -1071,8 +866,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Set defaults
     selectedColor = currentProduct.colors[0]?.name || '';
     selectedSize = currentProduct.sizes[0] || '';
-    quantity = 1;
-    currentImageIndex = 0;
     
     // Initialize page
     updateProductInfo();
@@ -1081,16 +874,14 @@ document.addEventListener('DOMContentLoaded', function() {
     updateImages();
     updatePrice();
     setupEventListeners();
-    setupGalleryNavigation();
     
     // Update cart count
     updateCartCount();
-    updateWishlistCount();
     
-    console.log('✅ Product page initialized');
+    console.log('Product page initialized');
 });
 
-// UPDATE PRODUCT INFO
+// PRODUCT INFO
 function updateProductInfo() {
     if (!currentProduct) return;
     
@@ -1195,9 +986,8 @@ function updateImages() {
     
     const mainImage = document.getElementById('currentImage');
     const thumbnailGallery = document.getElementById('thumbnailGallery');
-    const dotIndicators = document.getElementById('dotIndicators');
     
-    if (!mainImage || !thumbnailGallery || !dotIndicators) return;
+    if (!mainImage || !thumbnailGallery) return;
     
     // Update main image
     if (currentImages.length > 0) {
@@ -1215,15 +1005,6 @@ function updateImages() {
             </div>
         `)
         .join('');
-    
-    // Generate dot indicators
-    dotIndicators.innerHTML = currentImages
-        .map((_, index) => `
-            <button class="dot ${index === 0 ? 'active' : ''}" 
-                    onclick="goToImage(${index})">
-            </button>
-        `)
-        .join('');
 }
 
 function goToImage(index) {
@@ -1231,7 +1012,6 @@ function goToImage(index) {
     
     const mainImage = document.getElementById('currentImage');
     const thumbnails = document.querySelectorAll('.thumbnail');
-    const dots = document.querySelectorAll('.dot');
     
     // Fade transition
     mainImage.style.opacity = '0.7';
@@ -1244,43 +1024,10 @@ function goToImage(index) {
         // Update active states
         thumbnails.forEach(thumb => thumb.classList.remove('active'));
         if (thumbnails[index]) thumbnails[index].classList.add('active');
-        
-        dots.forEach(dot => dot.classList.remove('active'));
-        if (dots[index]) dots[index].classList.add('active');
     }, 150);
 }
 
-// GALLERY NAVIGATION
-function setupGalleryNavigation() {
-    // Keyboard navigation
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowLeft') navigateImage(-1);
-        if (e.key === 'ArrowRight') navigateImage(1);
-    });
-    
-    // Touch events for mobile swipe
-    const mainImageContainer = document.getElementById('mainImageContainer');
-    if (mainImageContainer) {
-        mainImageContainer.addEventListener('touchstart', (e) => {
-            touchStartX = e.touches[0].clientX;
-        });
-        
-        mainImageContainer.addEventListener('touchend', (e) => {
-            touchEndX = e.changedTouches[0].clientX;
-            handleSwipe();
-        });
-    }
-    
-    // Navigation buttons
-    document.querySelectorAll('.prev-btn').forEach(btn => {
-        btn.addEventListener('click', () => navigateImage(-1));
-    });
-    
-    document.querySelectorAll('.next-btn').forEach(btn => {
-        btn.addEventListener('click', () => navigateImage(1));
-    });
-}
-
+// NAVIGATION ARROWS
 function navigateImage(direction) {
     if (currentImages.length === 0) return;
     
@@ -1294,19 +1041,6 @@ function navigateImage(direction) {
     }
     
     goToImage(newIndex);
-}
-
-function handleSwipe() {
-    const swipeDistance = touchEndX - touchStartX;
-    
-    // Swipe left (next image)
-    if (swipeDistance < -SWIPE_THRESHOLD) {
-        navigateImage(1);
-    }
-    // Swipe right (previous image)
-    else if (swipeDistance > SWIPE_THRESHOLD) {
-        navigateImage(-1);
-    }
 }
 
 // QUANTITY & PRICING
@@ -1328,6 +1062,16 @@ function setupEventListeners() {
             const tabName = tab.dataset.tab;
             switchTab(tabName);
         });
+    });
+    
+    // Navigation arrows
+    document.querySelector('.prev-btn').addEventListener('click', () => navigateImage(-1));
+    document.querySelector('.next-btn').addEventListener('click', () => navigateImage(1));
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') navigateImage(-1);
+        if (e.key === 'ArrowRight') navigateImage(1);
     });
 }
 
@@ -1399,22 +1143,8 @@ function addToCart() {
     // Get existing cart
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     
-    // Check if item already exists with same size and color
-    const existingItemIndex = cart.findIndex(item => 
-        item.productId === currentProduct.id && 
-        item.size === selectedSize && 
-        item.color === colorName
-    );
-    
-    if (existingItemIndex > -1) {
-        // Update quantity if exists
-        cart[existingItemIndex].quantity += quantity;
-        cart[existingItemIndex].totalPrice = cart[existingItemIndex].price * cart[existingItemIndex].quantity;
-    } else {
-        // Add new item
-        cart.push(cartItem);
-    }
-    
+    // Add to cart
+    cart.push(cartItem);
     localStorage.setItem('cart', JSON.stringify(cart));
     
     // Show notification
@@ -1428,9 +1158,6 @@ function addToWishlist() {
     if (!currentProduct) return;
     
     showNotification(`❤️ "${currentProduct.name}" added to wishlist!`, 'success');
-    
-    // Update wishlist count
-    updateWishlistCount();
 }
 
 // UTILITIES
@@ -1462,16 +1189,6 @@ function updateCartCount() {
     }
 }
 
-function updateWishlistCount() {
-    const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-    const count = wishlist.length;
-    
-    const wishlistCountElement = document.getElementById('wishlistCount');
-    if (wishlistCountElement) {
-        wishlistCountElement.textContent = count;
-    }
-}
-
 function showNotification(message, type = 'success') {
     const notification = document.getElementById('notification');
     notification.textContent = message;
@@ -1494,11 +1211,10 @@ function showError(message) {
         `;
     }
 }
-
-// Initialize cart and wishlist counts on load
-updateCartCount();
-updateWishlistCount();
 </script>
+
+<!-- Add Font Awesome for arrow icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <script src="js/mobile-menu.js"></script>
 <script src="js/auth.js"></script>
