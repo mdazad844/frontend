@@ -660,14 +660,11 @@
             <!-- ENHANCED IMAGE GALLERY -->
             <div class="product-gallery">
                 <div class="main-image-container" id="mainImageContainer">
-                    <div class="main-image-wrapper">
+                    
                         <img src="" alt="Premium Cotton T-Shirt" id="currentImage">
                         
                         <!-- DESKTOP NAVIGATION ARROWS -->
-                        <div class="desktop-nav-arrows">
-                            <button class="prev-btn" aria-label="Previous image">←</button>
-                            <button class="next-btn" aria-label="Next image">→</button>
-                        </div>
+                       
                     </div>
                 </div>
                 
@@ -787,488 +784,59 @@
 
 <script>
 // ========== PRODUCT DATABASE ==========
-  const productDatabase = {
-        "1001": {
-            id: 1001,
-            name: "Premium Cotton T-Shirt",
-            basePrice: 199,
-            description: "100% premium cotton t-shirt, pre-shrunk for perfect fit. Comfortable, breathable, and perfect for everyday wear.",
-            colors: [
-                {
-                    name: "white",
-                    displayName: "White",
-                    code: "#ffffff",
-                    images: [
-                        "images/tshirt-white-1.jpg",
-                        "images/tshirt-white-2.jpg",
-                        "images/tshirt-white-3.jpg",
-                        "images/tshirt-white-4.jpg"
-                    ]
-                },
-                {
-                    name: "black",
-                    displayName: "Black",
-                    code: "#000000",
-                    images: [
-                        "images/tshirt-black-1.jpg",
-                        "images/tshirt-black-2.jpg",
-                        "images/tshirt-black-3.jpg",
-                        "images/tshirt-black-4.jpg"
-                    ]
-                },
-                {
-                    name: "blue",
-                    displayName: "Blue",
-                    code: "#151B54",
-                    images: [
-                        "images/tshirt-blue-1.jpg",
-                        "images/tshirt-blue-2.jpg",
-                        "images/tshirt-blue-3.jpg",
-                        "images/tshirt-blue-4.jpg"
-                    ]
-                },
-
-				{
-                name: "red",
-                displayName: "Red",
-                code: "#dc3545",
+const productDatabase = {
+    "1001": {
+        id: 1001,
+        name: "Premium Cotton T-Shirt",
+        basePrice: 199,
+        description: "100% premium cotton t-shirt, pre-shrunk for perfect fit. Comfortable, breathable, and perfect for everyday wear.",
+        colors: [
+            {
+                name: "white",
+                displayName: "White",
+                code: "#ffffff",
                 images: [
-                    "images/tshirt-red-1.jpg",
-                    "images/tshirt-red-2.jpg",
-                    "images/tshirt-red-3.jpg",
-                    "images/tshirt-red-4.jpg"
+                    "images/tshirt-white-1.jpg",
+                    "images/tshirt-white-2.jpg",
+                    "images/tshirt-white-3.jpg",
+                    "images/tshirt-white-4.jpg"
                 ]
             },
             {
-                name: "green",
-                displayName: "Green",
-                code: "#28a745",
-                images: [
-                    "images/tshirt-green-1.jpg",
-                    "images/tshirt-green-2.jpg",
-                    "images/tshirt-green-3.jpg",
-                    "images/tshirt-green-4.jpg"
-                ]
-            },
-            {
-                name: "orange",
-                displayName: "Orange",
-                code: "#FFA500",
-                images: [
-                    "images/tshirt-orange-1.jpg",
-                    "images/tshirt-orange-2.jpg",
-                    "images/tshirt-orange-3.jpg",
-                    "images/tshirt-orange-4.jpg"
-                ]
-            },
-
-
-			{
-                name: "sky blue",
-                displayName: "Sky Blue",
-                code: "#82CAFF",
-                images: [
-                    "images/tshirt-skyblue-1.jpg",
-                    "images/tshirt-skyblue-2.jpg",
-                    "images/tshirt-skyblue-3.jpg",
-                    "images/tshirt-skyblue-4.jpg"
-                ]
-            },
-
-
-			{
-                name: " mustard yellow",
-                displayName: "Mustard Yellow",
-                code: "#FFDB58",
-                images: [
-                    "images/tshirt-mustardyellow-1.jpg",
-                    "images/tshirt-mustardyellow-2.jpg",
-                    "images/tshirt-mustardyellow-3.jpg",
-                    "images/tshirt-mustardyellow-4.jpg"
-                ]
-            },
-
-
-
-
-			{
-                name: "lavender",
-                displayName: "Lavender",
-                code: "#BC8BC2",
-                images: [
-                    "images/tshirt-lavender-1.jpg",
-                    "images/tshirt-lavender-2.jpg",
-                    "images/tshirt-lavender-3.jpg",
-                    "images/tshirt-lavender-4.jpg"
-                ]
-            },
-
-			{
-                name: "royal blue",
-                displayName: "Royal Blue",
-                code: "#305CDE",
-                images: [
-                    "images/tshirt-royalblue-1.jpg",
-                    "images/tshirt-royalblue-2.jpg",
-                    "images/tshirt-royalblue-3.jpg",
-                    "images/tshirt-royalblue-4.jpg"
-                ]
-            },
-
-			
-            {
-                name: "beige",
-                displayName: "Beige",
-                code: "#D9BB9B",
-                images: [
-                    "images/tshirt-beige-1.jpg",
-                    "images/tshirt-beige-2.jpg",
-                    "images/tshirt-beige-3.jpg",
-                    "images/tshirt-beige-4.jpg"
-                ]
-            },
-            {
-                name: "marron",
-                displayName: "Marron",
-                code: "#800000",
-                images: [
-                    "images/tshirt-marron-1.jpg",
-                    "images/tshirt-marron-2.jpg",
-                    "images/tshirt-marron-3.jpg",
-                    "images/tshirt-marron-4.jpg"
-                ]
-            },
-            {
-                name: "gray",
-                displayName: "Gray",
-                code: "#6c757d",
-                images: [
-                    "images/tshirt-gray-1.jpg",
-                    "images/tshirt-gray-2.jpg",
-                    "images/tshirt-gray-3.jpg",
-                    "images/tshirt-gray-4.jpg"
-                ]
-            },
-                // Add other colors as needed
-			
-            ],
-            sizes: ["S", "M", "L", "XL", "XXL"],
-            pricingTiers: [
-                { min: 1, max: 49, price: 199 },
-                { min: 50, max: 99, price: 179 },
-                { min: 100, max: 499, price: 159 },
-                { min: 500, max: 999999, price: 139 }
-            ],
-            features: [
-                "100% Premium Cotton",
-                "Pre-shrunk fabric",
-                "Reinforced neckline",
-                "Double-stitched seams",
-                "Machine washable"
-            ],
-            specifications: {
-                fabric: "100% Premium Cotton",
-                weight: "180 GSM",
-                fit: "Regular",
-                care: "Machine washable",
-                neck: "Ribbed collar"
-            }
-        },
-        "1002": {
-            id: 1002,
-            name: "Organic Cotton T-Shirt",
-            basePrice: 299,
-            description: "GOTS certified organic cotton, environmentally friendly production. Soft, sustainable, and perfect for eco-conscious customers.",
-            colors: [
-                {
-                    name: "white",
-                    displayName: "White",
-                    code: "#ffffff",
-                    images: [
-                        "images/oversize-white-1.jpg",
-                        "images/oversize-white-2.jpg",
-                        "images/oversize-white-3.jpg",
-                        "images/oversize-white-4.jpg"
-                    ]
-                },
-                {
-                    name: "black",
+                name: "black",
                 displayName: "Black",
                 code: "#000000",
                 images: [
-                    "images/oversize-black-1.jpg",
-                    "images/oversize-black-2.jpg",
-                    "images/oversize-black-3.jpg",
-                    "images/oversize-black-4.jpg"
-                    ]
-                },
-                    {
-                 name: "lavender",
-                displayName: "Lavender",
-                code: "#BC8BC2",
-                images: [
-                    "images/oversize-lavender-1.jpg",
-                    "images/oversize-lavender-2.jpg",
-                    "images/oversize-lavender-3.jpg",
-                    "images/oversize-lavender-4.jpg"
-                    ]
-                },
-
-
-				{
-                   name: "marron",
-                displayName: "Marron",
-                code: "#800000",
-                images: [
-                    "images/oversize-marron-1.jpg",
-                    "images/oversize-marron-2.jpg",
-                    "images/oversize-marron-3.jpg",
-                    "images/oversize-marron-4.jpg"
-                    ]
-                },
-
-
-				{
-                   name: "beige",
-                displayName: "Beige",
-                code: "#D9BB9B",
-                images: [
-                    "images/oversize-beige-1.jpg",
-                    "images/oversize-beige-2.jpg",
-                    "images/oversize-beige-3.jpg",
-                    "images/oversize-beige-4.jpg"
-                    ]
-                },
-
-
-				
-                {
-                    name: "green",
-                    displayName: "Green",
-                    code: "#28a745",
-                    images: [
-                        "images/organic-green-1.jpg",
-                        "images/organic-green-2.jpg",
-                        "images/organic-green-3.jpg",
-                        "images/organic-green-4.jpg"
-                    ]
-                }
-            ],
-            sizes: ["S", "M", "L", "XL", "XXL"],
-            pricingTiers: [
-                { min: 1, max: 49, price: 299 },
-                { min: 50, max: 99, price: 269 },
-                { min: 100, max: 499, price: 239 },
-                { min: 500, max: 999999, price: 209 }
-            ],
-            features: [
-                "GOTS Certified Organic Cotton",
-                "Eco-friendly dye",
-                "Sustainable production",
-                "Hypoallergenic",
-                "Biodegradable"
-            ],
-            specifications: {
-                fabric: "100% Organic Cotton",
-                weight: "160 GSM",
-                fit: "Regular",
-                care: "Cold wash, line dry",
-                certification: "GOTS Certified"
+                    "images/tshirt-black-1.jpg",
+                    "images/tshirt-black-2.jpg",
+                    "images/tshirt-black-3.jpg",
+                    "images/tshirt-black-4.jpg"
+                ]
             }
-        },
-        "1003": {
-            id: 1003,
-            name: "Classic Polo T-Shirt",
-            basePrice: 349,
-            description: "Premium pique cotton, collar style, perfect for corporate events, golf, or casual wear with a sophisticated look.",
-            colors: [
-                {
-                    name: "mulberry",
-                    displayName: "Mulberry",
-                    code: "#C54B8C",
-                    images: [
-                        "images/polo-mulberry-1.jpg",
-                        "images/polo-mulberry-2.jpg",
-                        "images/polo-mulberry-3.jpg",
-                        "images/polo-mulberry-4.jpg"
-                    ]
-                },
-                {
-                    name: "black",
-                    displayName: "Black",
-                    code: "#000000",
-                    images: [
-                        "images/polo-black-1.jpg",
-                        "images/polo-black-2.jpg",
-                        "images/polo-black-3.jpg",
-                        "images/polo-black-4.jpg"
-                    ]
-                },
-
-				{
-                    name: "marron",
-                    displayName: "Marron",
-                    code: "#800000",
-                    images: [
-                        "images/polo-marron-1.jpg",
-                        "images/polo-marron-2.jpg",
-                        "images/polo-marron-3.jpg",
-                        "images/polo-marron-4.jpg"
-                    ]
-                },
-
-
-				
-                {
-                    name: "white",
-                    displayName: "White",
-                    code: "#ffffff",
-                    images: [
-                        "images/polo-white-1.jpg",
-                        "images/polo-white-2.jpg",
-                        "images/polo-white-3.jpg",
-                        "images/polo-white-4.jpg"
-                    ]
-                },
-                {
-                    name: "red",
-                    displayName: "Red",
-                    code: "#dc3545",
-                    images: [
-                        "images/polo-red-1.jpg",
-                        "images/polo-red-2.jpg",
-                        "images/polo-red-3.jpg",
-                        "images/polo-red-4.jpg"
-                    ]
-                }
-            ],
-            sizes: ["S", "M", "L", "XL", "XXL"],
-            pricingTiers: [
-                { min: 1, max: 49, price: 349 },
-                { min: 50, max: 99, price: 319 },
-                { min: 100, max: 499, price: 289 },
-                { min: 500, max: 999999, price: 259 }
-            ],
-            features: [
-                "Premium Pique Cotton",
-                "Button-down placket",
-                "Ribbed collar and cuffs",
-                "Side vents",
-                "Perfect for embroidery"
-            ],
-            specifications: {
-                fabric: "100% Pique Cotton",
-                weight: "220 GSM",
-                fit: "Regular fit",
-                collar: "Ribbed polo collar",
-                placket: "3-button placket"
-            }
-        },
-        "1004": {
-            id: 1004,
-            name: "Performance T-Shirt",
-            basePrice: 249,
-            description: "Moisture-wicking fabric, quick dry, perfect for sports, gym, and active lifestyle. Keeps you cool and dry during workouts.",
-            colors: [
-                {
-                    name: "black",
-                    displayName: "Black",
-                    code: "#000000",
-                    images: [
-                        "images/matty-black-1.jpg",
-                        "images/matty-black-2.jpg",
-                        "images/matty-black-3.jpg",
-                        "images/matty-black-4.jpg"
-                    ]
-                },
-
-
-				{
-                    name: "marron",
-                    displayName: "Marron",
-                    code: "#800000",
-                    images: [
-                        "images/matty-marron-1.jpg",
-                        "images/matty-marron-2.jpg",
-                        "images/matty-marron-3.jpg",
-                        "images/matty-marron-4.jpg"
-                    ]
-                },
-
-
-				
-                {
-                    name: "white",
-                    displayName: "White",
-                    code: "#ffffff",
-                    images: [
-                        "images/matty-white-1.jpg",
-                        "images/matty-white-2.jpg",
-                        "images/matty-white-3.jpg",
-                        "images/matty-white-4.jpg"
-                    ]
-                },
-
-
-
-				
-                {
-                    name: "gray",
-                    displayName: "Gray",
-                    code: "#6c757d",
-                    images: [
-                        "images/performance-gray-1.jpg",
-                        "images/performance-gray-2.jpg",
-                        "images/performance-gray-3.jpg",
-                        "images/performance-gray-4.jpg"
-                    ]
-                },
-                {
-                    name: "blue",
-                    displayName: "Blue",
-                    code: "#007bff",
-                    images: [
-                        "images/performance-blue-1.jpg",
-                        "images/performance-blue-2.jpg",
-                        "images/performance-blue-3.jpg",
-                        "images/performance-blue-4.jpg"
-                    ]
-                },
-                {
-                    name: "red",
-                    displayName: "Red",
-                    code: "#dc3545",
-                    images: [
-                        "images/performance-red-1.jpg",
-                        "images/performance-red-2.jpg",
-                        "images/performance-red-3.jpg",
-                        "images/performance-red-4.jpg"
-                    ]
-                }
-            ],
-            sizes: ["S", "M", "L", "XL", "XXL"],
-            pricingTiers: [
-                { min: 1, max: 49, price: 249 },
-                { min: 50, max: 99, price: 229 },
-                { min: 100, max: 499, price: 209 },
-                { min: 500, max: 999999, price: 189 }
-            ],
-            features: [
-                "Moisture-wicking fabric",
-                "Quick dry technology",
-                "4-way stretch",
-                "Anti-odor treatment",
-                "Raglan sleeves"
-            ],
-            specifications: {
-                fabric: "Polyester/Cotton blend",
-                weight: "150 GSM",
-                fit: "Athletic fit",
-                technology: "Moisture-wicking",
-                stretch: "4-way stretch"
-            }
+        ],
+        sizes: ["S", "M", "L", "XL", "XXL"],
+        pricingTiers: [
+            { min: 1, max: 49, price: 199 },
+            { min: 50, max: 99, price: 179 },
+            { min: 100, max: 499, price: 159 },
+            { min: 500, max: 999999, price: 139 }
+        ],
+        features: [
+            "100% Premium Cotton",
+            "Pre-shrunk fabric",
+            "Reinforced neckline",
+            "Double-stitched seams",
+            "Machine washable"
+        ],
+        specifications: {
+            fabric: "100% Premium Cotton",
+            weight: "180 GSM",
+            fit: "Regular",
+            care: "Machine washable",
+            neck: "Ribbed collar"
         }
-    };
+    }
+};
 
 // ========== GLOBAL STATE ==========
 let currentProduct = null;
@@ -1301,10 +869,9 @@ document.addEventListener('DOMContentLoaded', function() {
     updateProductInfo();
     generateColorOptions();
     generateSizeOptions();
-    updateImages();
+    updateImages(); // This will generate dot indicators
     updatePrice();
     setupEventListeners();
-    setupSlider();
     
     console.log('✅ Product page initialized');
 });
@@ -1404,7 +971,7 @@ function selectSize(size) {
     });
 }
 
-// ========== IMAGE SLIDER ==========
+// ========== IMAGE MANAGEMENT ==========
 function updateImages() {
     if (!currentProduct) return;
     
@@ -1435,68 +1002,14 @@ function updateImages() {
         `)
         .join('');
     
-    // ✅ GENERATE DOT INDICATORS
+    // ✅ GENERATE DOT INDICATORS - SIMPLE AND CLEAN
     dotIndicators.innerHTML = currentImages
         .map((_, index) => `
             <button class="dot ${index === 0 ? 'active' : ''}" 
-                    data-index="${index}"
-                    onclick="goToImage(${index})"
-                    aria-label="Go to image ${index + 1}">
+                    onclick="goToImage(${index})">
             </button>
         `)
         .join('');
-    
-    // Update desktop arrows visibility based on screen size
-    updateArrowsVisibility();
-}
-
-function setupSlider() {
-    // Arrow navigation
-    document.querySelector('.prev-btn').addEventListener('click', () => navigateImage(-1));
-    document.querySelector('.next-btn').addEventListener('click', () => navigateImage(1));
-    
-    // Keyboard navigation
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowLeft') navigateImage(-1);
-        if (e.key === 'ArrowRight') navigateImage(1);
-    });
-    
-    // Touch swipe for mobile
-    const mainImageContainer = document.getElementById('mainImageContainer');
-    let touchStartX = 0;
-    
-    mainImageContainer.addEventListener('touchstart', (e) => {
-        touchStartX = e.touches[0].clientX;
-    }, { passive: true });
-    
-    mainImageContainer.addEventListener('touchend', (e) => {
-        if (!touchStartX) return;
-        
-        const touchEndX = e.changedTouches[0].clientX;
-        const swipeDistance = touchEndX - touchStartX;
-        const SWIPE_THRESHOLD = 50;
-        
-        if (Math.abs(swipeDistance) > SWIPE_THRESHOLD) {
-            if (swipeDistance > 0) {
-                navigateImage(-1); // Swipe right = previous
-            } else {
-                navigateImage(1); // Swipe left = next
-            }
-        }
-        
-        touchStartX = 0;
-    }, { passive: true });
-}
-
-function navigateImage(direction) {
-    if (currentImages.length === 0) return;
-    
-    let newIndex = currentImageIndex + direction;
-    
-    if (newIndex < 0) newIndex = currentImages.length - 1;
-    if (newIndex >= currentImages.length) newIndex = 0;
-    
-    goToImage(newIndex);
 }
 
 function goToImage(index) {
@@ -1522,28 +1035,6 @@ function goToImage(index) {
         if (dots[index]) dots[index].classList.add('active');
     }, 150);
 }
-
-// ========== DESKTOP ARROWS VISIBILITY ==========
-function updateArrowsVisibility() {
-    const arrows = document.querySelector('.desktop-nav-arrows');
-    if (!arrows) return;
-    
-    // Hide arrows if no images or only one image
-    if (currentImages.length <= 1) {
-        arrows.classList.add('hidden');
-        return;
-    }
-    
-    // Show/hide based on screen size
-    if (window.innerWidth <= 768) {
-        arrows.classList.add('hidden');
-    } else {
-        arrows.classList.remove('hidden');
-    }
-}
-
-// Update on resize
-window.addEventListener('resize', updateArrowsVisibility);
 
 // ========== QUANTITY & PRICING ==========
 function setupEventListeners() {
@@ -1748,7 +1239,7 @@ updateCartCount();
 <!-- Load your existing scripts -->
 
 <script src="js/auth.js"></script>
-<script src="js/script.js"></script>
+
 
 </body>
 </html>
