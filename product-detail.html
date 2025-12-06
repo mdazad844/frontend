@@ -1289,11 +1289,10 @@ function updateImages() {
 }
 
 function setupSlider() {
-    // Arrow navigation
-    document.querySelector('.prev-btn').addEventListener('click', () => navigateImage(-1));
-    document.querySelector('.next-btn').addEventListener('click', () => navigateImage(1));
+    // Remove arrow event listeners
+    // Keep only keyboard and touch navigation
     
-    // Keyboard navigation
+    // Keyboard navigation (still works for desktop users)
     document.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowLeft') navigateImage(-1);
         if (e.key === 'ArrowRight') navigateImage(1);
@@ -1326,6 +1325,8 @@ function setupSlider() {
     }, { passive: true });
 }
 
+// Remove the updateArrowsVisibility function completely
+// Remove any arrow-related code
 function navigateImage(direction) {
     if (currentImages.length === 0) return;
     
@@ -1589,6 +1590,7 @@ updateCartCount();
 
 </body>
 </html>
+
 
 
 
