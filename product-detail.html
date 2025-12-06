@@ -2,10 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Premium Cotton T-Shirt - Bulk Order</title>
-	<link rel="stylesheet" href="css/style.css"/>
+    <link rel="stylesheet" href="css/style.css"/>
     <style>
         * {
             margin: 0;
@@ -416,14 +415,12 @@
     <nav class="navbar">
         <div class="logo"><a href="index.html">MyBrand</a></div>
         <!-- Search Bar -->
-        <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="Search products...">
-            <button onclick="searchProducts()">🔍</button>
-        </div>
+       
         
         <ul class="nav-links" id="navLinks">
             <li><a href="index.html" class="active">Home</a></li>
             <li><a href="shop.html">Shop</a></li>
+			<li><a href="bulktshirts.html">Bulk plain T-shirts</a></li>
 			
             <li>
                 <a href="cart.html">Cart 
@@ -440,7 +437,7 @@
             <li><a href="contact.html">Contact</a></li>
             <li id="profileNavItem"><a href="profile.html">Profile</a></li>
             <li><a href="login.html" id="authLink">Login</a></li>
-			<li><a href="delivery-charges.html">Delivery Charges</a></li>
+			
         </ul>
         <div class="menu-icon" id="menuToggle">☰</div>
     </nav>
@@ -568,49 +565,50 @@
         </div>
     </div>
 
-   // Load scripts FIRST to avoid conflicts
-
 <script>
-    // Product data - compatible with your existing system
-    const productData = {
-        id: 1001, // Unique ID for this bulk t-shirt product
-        name: "Premium Cotton T-Shirt",
-        basePrice: 199,
-        colors: [
-            {
-                name: "white",
-                displayName: "White",
-                code: "#ffffff",
-                images: [
-                    "images/tshirt-white-1.jpg",
-                    "images/tshirt-white-2.jpg",
-                    "images/tshirt-white-3.jpg",
-                    "images/tshirt-white-4.jpg"
-                ]
-            },
-            {
-                name: "black",
-                displayName: "Black",
-                code: "#000000",
-                images: [
-                    "images/tshirt-black-1.jpg",
-                    "images/tshirt-black-2.jpg",
-                    "images/tshirt-black-3.jpg",
-                    "images/tshirt-black-4.jpg"
-                ]
-            },
-            {
-                name: "blue",
-                displayName: "Blue",
-                code: "#007bff",
-                images: [
-                    "images/tshirt-blue-1.jpg",
-                    "images/tshirt-blue-2.jpg",
-                    "images/tshirt-blue-3.jpg",
-                    "images/tshirt-blue-4.jpg"
-                ]
-            },
-            {
+    // COMPLETE PRODUCT DATABASE
+    const productDatabase = {
+        "1001": {
+            id: 1001,
+            name: "Premium Cotton T-Shirt",
+            basePrice: 199,
+            description: "100% premium cotton t-shirt, pre-shrunk for perfect fit. Comfortable, breathable, and perfect for everyday wear.",
+            colors: [
+                {
+                    name: "white",
+                    displayName: "White",
+                    code: "#ffffff",
+                    images: [
+                        "images/tshirt-white-1.jpg",
+                        "images/tshirt-white-2.jpg",
+                        "images/tshirt-white-3.jpg",
+                        "images/tshirt-white-4.jpg"
+                    ]
+                },
+                {
+                    name: "black",
+                    displayName: "Black",
+                    code: "#000000",
+                    images: [
+                        "images/tshirt-black-1.jpg",
+                        "images/tshirt-black-2.jpg",
+                        "images/tshirt-black-3.jpg",
+                        "images/tshirt-black-4.jpg"
+                    ]
+                },
+                {
+                    name: "blue",
+                    displayName: "Blue",
+                    code: "#151B54",
+                    images: [
+                        "images/tshirt-blue-1.jpg",
+                        "images/tshirt-blue-2.jpg",
+                        "images/tshirt-blue-3.jpg",
+                        "images/tshirt-blue-4.jpg"
+                    ]
+                },
+
+				{
                 name: "red",
                 displayName: "Red",
                 code: "#dc3545",
@@ -633,6 +631,94 @@
                 ]
             },
             {
+                name: "orange",
+                displayName: "Orange",
+                code: "#FFA500",
+                images: [
+                    "images/tshirt-orange-1.jpg",
+                    "images/tshirt-orange-2.jpg",
+                    "images/tshirt-orange-3.jpg",
+                    "images/tshirt-orange-4.jpg"
+                ]
+            },
+
+
+			{
+                name: "sky blue",
+                displayName: "Sky Blue",
+                code: "#82CAFF",
+                images: [
+                    "images/tshirt-skyblue-1.jpg",
+                    "images/tshirt-skyblue-2.jpg",
+                    "images/tshirt-skyblue-3.jpg",
+                    "images/tshirt-skyblue-4.jpg"
+                ]
+            },
+
+
+			{
+                name: " mustard yellow",
+                displayName: "Mustard Yellow",
+                code: "#FFDB58",
+                images: [
+                    "images/tshirt-mustardyellow-1.jpg",
+                    "images/tshirt-mustardyellow-2.jpg",
+                    "images/tshirt-mustardyellow-3.jpg",
+                    "images/tshirt-mustardyellow-4.jpg"
+                ]
+            },
+
+
+
+
+			{
+                name: "lavender",
+                displayName: "Lavender",
+                code: "#BC8BC2",
+                images: [
+                    "images/tshirt-lavender-1.jpg",
+                    "images/tshirt-lavender-2.jpg",
+                    "images/tshirt-lavender-3.jpg",
+                    "images/tshirt-lavender-4.jpg"
+                ]
+            },
+
+			{
+                name: "royal blue",
+                displayName: "Royal Blue",
+                code: "#305CDE",
+                images: [
+                    "images/tshirt-royalblue-1.jpg",
+                    "images/tshirt-royalblue-2.jpg",
+                    "images/tshirt-royalblue-3.jpg",
+                    "images/tshirt-royalblue-4.jpg"
+                ]
+            },
+
+			
+            {
+                name: "beige",
+                displayName: "Beige",
+                code: "#D9BB9B",
+                images: [
+                    "images/tshirt-beige-1.jpg",
+                    "images/tshirt-beige-2.jpg",
+                    "images/tshirt-beige-3.jpg",
+                    "images/tshirt-beige-4.jpg"
+                ]
+            },
+            {
+                name: "marron",
+                displayName: "Marron",
+                code: "#800000",
+                images: [
+                    "images/tshirt-marron-1.jpg",
+                    "images/tshirt-marron-2.jpg",
+                    "images/tshirt-marron-3.jpg",
+                    "images/tshirt-marron-4.jpg"
+                ]
+            },
+            {
                 name: "gray",
                 displayName: "Gray",
                 code: "#6c757d",
@@ -642,163 +728,522 @@
                     "images/tshirt-gray-3.jpg",
                     "images/tshirt-gray-4.jpg"
                 ]
+            },
+                // Add other colors as needed
+			
+            ],
+            sizes: ["S", "M", "L", "XL", "XXL"],
+            pricingTiers: [
+                { min: 1, max: 49, price: 199 },
+                { min: 50, max: 99, price: 179 },
+                { min: 100, max: 499, price: 159 },
+                { min: 500, max: 999999, price: 139 }
+            ],
+            features: [
+                "100% Premium Cotton",
+                "Pre-shrunk fabric",
+                "Reinforced neckline",
+                "Double-stitched seams",
+                "Machine washable"
+            ],
+            specifications: {
+                fabric: "100% Premium Cotton",
+                weight: "180 GSM",
+                fit: "Regular",
+                care: "Machine washable",
+                neck: "Ribbed collar"
             }
-        ],
-        sizes: ["S", "M", "L", "XL", "XXL"],
-        pricingTiers: [
-            { min: 1, max: 49, price: 199 },
-            { min: 50, max: 99, price: 179 },
-            { min: 100, max: 499, price: 159 },
-            { min: 500, max: 999999, price: 139 }
-        ]
+        },
+        "1002": {
+            id: 1002,
+            name: "Organic Cotton T-Shirt",
+            basePrice: 299,
+            description: "GOTS certified organic cotton, environmentally friendly production. Soft, sustainable, and perfect for eco-conscious customers.",
+            colors: [
+                {
+                    name: "white",
+                    displayName: "White",
+                    code: "#ffffff",
+                    images: [
+                        "images/oversize-white-1.jpg",
+                        "images/oversize-white-2.jpg",
+                        "images/oversize-white-3.jpg",
+                        "images/oversize-white-4.jpg"
+                    ]
+                },
+                {
+                    name: "black",
+                displayName: "Black",
+                code: "#000000",
+                images: [
+                    "images/oversize-black-1.jpg",
+                    "images/oversize-black-2.jpg",
+                    "images/oversize-black-3.jpg",
+                    "images/oversize-black-4.jpg"
+                    ]
+                },
+                    {
+                 name: "lavender",
+                displayName: "Lavender",
+                code: "#BC8BC2",
+                images: [
+                    "images/oversize-lavender-1.jpg",
+                    "images/oversize-lavender-2.jpg",
+                    "images/oversize-lavender-3.jpg",
+                    "images/oversize-lavender-4.jpg"
+                    ]
+                },
+
+
+				{
+                   name: "marron",
+                displayName: "Marron",
+                code: "#800000",
+                images: [
+                    "images/oversize-marron-1.jpg",
+                    "images/oversize-marron-2.jpg",
+                    "images/oversize-marron-3.jpg",
+                    "images/oversize-marron-4.jpg"
+                    ]
+                },
+
+
+				{
+                   name: "beige",
+                displayName: "Beige",
+                code: "#D9BB9B",
+                images: [
+                    "images/oversize-beige-1.jpg",
+                    "images/oversize-beige-2.jpg",
+                    "images/oversize-beige-3.jpg",
+                    "images/oversize-beige-4.jpg"
+                    ]
+                },
+
+
+				
+                {
+                    name: "green",
+                    displayName: "Green",
+                    code: "#28a745",
+                    images: [
+                        "images/organic-green-1.jpg",
+                        "images/organic-green-2.jpg",
+                        "images/organic-green-3.jpg",
+                        "images/organic-green-4.jpg"
+                    ]
+                }
+            ],
+            sizes: ["S", "M", "L", "XL", "XXL"],
+            pricingTiers: [
+                { min: 1, max: 49, price: 299 },
+                { min: 50, max: 99, price: 269 },
+                { min: 100, max: 499, price: 239 },
+                { min: 500, max: 999999, price: 209 }
+            ],
+            features: [
+                "GOTS Certified Organic Cotton",
+                "Eco-friendly dye",
+                "Sustainable production",
+                "Hypoallergenic",
+                "Biodegradable"
+            ],
+            specifications: {
+                fabric: "100% Organic Cotton",
+                weight: "160 GSM",
+                fit: "Regular",
+                care: "Cold wash, line dry",
+                certification: "GOTS Certified"
+            }
+        },
+        "1003": {
+            id: 1003,
+            name: "Classic Polo T-Shirt",
+            basePrice: 349,
+            description: "Premium pique cotton, collar style, perfect for corporate events, golf, or casual wear with a sophisticated look.",
+            colors: [
+                {
+                    name: "mulberry",
+                    displayName: "Mulberry",
+                    code: "#C54B8C",
+                    images: [
+                        "images/polo-mulberry-1.jpg",
+                        "images/polo-mulberry-2.jpg",
+                        "images/polo-mulberry-3.jpg",
+                        "images/polo-mulberry-4.jpg"
+                    ]
+                },
+                {
+                    name: "black",
+                    displayName: "Black",
+                    code: "#000000",
+                    images: [
+                        "images/polo-black-1.jpg",
+                        "images/polo-black-2.jpg",
+                        "images/polo-black-3.jpg",
+                        "images/polo-black-4.jpg"
+                    ]
+                },
+
+				{
+                    name: "marron",
+                    displayName: "Marron",
+                    code: "#800000",
+                    images: [
+                        "images/polo-marron-1.jpg",
+                        "images/polo-marron-2.jpg",
+                        "images/polo-marron-3.jpg",
+                        "images/polo-marron-4.jpg"
+                    ]
+                },
+
+
+				
+                {
+                    name: "white",
+                    displayName: "White",
+                    code: "#ffffff",
+                    images: [
+                        "images/polo-white-1.jpg",
+                        "images/polo-white-2.jpg",
+                        "images/polo-white-3.jpg",
+                        "images/polo-white-4.jpg"
+                    ]
+                },
+                {
+                    name: "red",
+                    displayName: "Red",
+                    code: "#dc3545",
+                    images: [
+                        "images/polo-red-1.jpg",
+                        "images/polo-red-2.jpg",
+                        "images/polo-red-3.jpg",
+                        "images/polo-red-4.jpg"
+                    ]
+                }
+            ],
+            sizes: ["S", "M", "L", "XL", "XXL"],
+            pricingTiers: [
+                { min: 1, max: 49, price: 349 },
+                { min: 50, max: 99, price: 319 },
+                { min: 100, max: 499, price: 289 },
+                { min: 500, max: 999999, price: 259 }
+            ],
+            features: [
+                "Premium Pique Cotton",
+                "Button-down placket",
+                "Ribbed collar and cuffs",
+                "Side vents",
+                "Perfect for embroidery"
+            ],
+            specifications: {
+                fabric: "100% Pique Cotton",
+                weight: "220 GSM",
+                fit: "Regular fit",
+                collar: "Ribbed polo collar",
+                placket: "3-button placket"
+            }
+        },
+        "1004": {
+            id: 1004,
+            name: "Performance T-Shirt",
+            basePrice: 249,
+            description: "Moisture-wicking fabric, quick dry, perfect for sports, gym, and active lifestyle. Keeps you cool and dry during workouts.",
+            colors: [
+                {
+                    name: "black",
+                    displayName: "Black",
+                    code: "#000000",
+                    images: [
+                        "images/matty-black-1.jpg",
+                        "images/matty-black-2.jpg",
+                        "images/matty-black-3.jpg",
+                        "images/matty-black-4.jpg"
+                    ]
+                },
+
+
+				{
+                    name: "marron",
+                    displayName: "Marron",
+                    code: "#800000",
+                    images: [
+                        "images/matty-marron-1.jpg",
+                        "images/matty-marron-2.jpg",
+                        "images/matty-marron-3.jpg",
+                        "images/matty-marron-4.jpg"
+                    ]
+                },
+
+
+				
+                {
+                    name: "white",
+                    displayName: "White",
+                    code: "#ffffff",
+                    images: [
+                        "images/matty-white-1.jpg",
+                        "images/matty-white-2.jpg",
+                        "images/matty-white-3.jpg",
+                        "images/matty-white-4.jpg"
+                    ]
+                },
+
+
+
+				
+                {
+                    name: "gray",
+                    displayName: "Gray",
+                    code: "#6c757d",
+                    images: [
+                        "images/performance-gray-1.jpg",
+                        "images/performance-gray-2.jpg",
+                        "images/performance-gray-3.jpg",
+                        "images/performance-gray-4.jpg"
+                    ]
+                },
+                {
+                    name: "blue",
+                    displayName: "Blue",
+                    code: "#007bff",
+                    images: [
+                        "images/performance-blue-1.jpg",
+                        "images/performance-blue-2.jpg",
+                        "images/performance-blue-3.jpg",
+                        "images/performance-blue-4.jpg"
+                    ]
+                },
+                {
+                    name: "red",
+                    displayName: "Red",
+                    code: "#dc3545",
+                    images: [
+                        "images/performance-red-1.jpg",
+                        "images/performance-red-2.jpg",
+                        "images/performance-red-3.jpg",
+                        "images/performance-red-4.jpg"
+                    ]
+                }
+            ],
+            sizes: ["S", "M", "L", "XL", "XXL"],
+            pricingTiers: [
+                { min: 1, max: 49, price: 249 },
+                { min: 50, max: 99, price: 229 },
+                { min: 100, max: 499, price: 209 },
+                { min: 500, max: 999999, price: 189 }
+            ],
+            features: [
+                "Moisture-wicking fabric",
+                "Quick dry technology",
+                "4-way stretch",
+                "Anti-odor treatment",
+                "Raglan sleeves"
+            ],
+            specifications: {
+                fabric: "Polyester/Cotton blend",
+                weight: "150 GSM",
+                fit: "Athletic fit",
+                technology: "Moisture-wicking",
+                stretch: "4-way stretch"
+            }
+        }
     };
 
-    let selectedColor = 'white';
-    let selectedSize = 'M';
+    // Global variables
+    let selectedColor = '';
+    let selectedSize = '';
     let quantity = 1;
+    let currentProduct = null;
+
+    // Get product ID from URL
+    function getProductIdFromURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('id');
+    }
 
     // Initialize the page
     function initializePage() {
+        const productId = getProductIdFromURL();
+        
+        if (!productId) {
+            showError("No product selected");
+            return;
+        }
+        
+        currentProduct = productDatabase[productId];
+        
+        if (!currentProduct) {
+            showError(`Product ${productId} not found`);
+            return;
+        }
+        
+        // Set defaults
+        selectedColor = currentProduct.colors[0]?.name || '';
+        selectedSize = currentProduct.sizes[0] || '';
+        quantity = 1;
+        
+        // Update page content
+        updatePageContent();
         generateColorOptions();
         generateSizeOptions();
         updateImages();
         updatePrice();
+        updateSpecifications();
     }
 
-    // Generate color options - USING INLINE STYLES AND UNIQUE CLASSES
+    // Update page content with product data
+    function updatePageContent() {
+        if (!currentProduct) return;
+        
+        // Update text content
+        document.querySelector('.product-title').textContent = currentProduct.name;
+        document.querySelector('.product-price').textContent = `Starting at ₹${currentProduct.basePrice}`;
+        document.querySelector('.product-description').textContent = currentProduct.description;
+        
+        // Update features list
+        const featuresList = document.querySelector('.features-list');
+        featuresList.innerHTML = currentProduct.features
+            .map(feature => `<li>${feature}</li>`)
+            .join('');
+        
+        // Update page title
+        document.title = `${currentProduct.name} - Bulk Order`;
+        
+        // Update bulk pricing
+        updateBulkPricing();
+    }
+
+    // Update bulk pricing display
+    function updateBulkPricing() {
+        if (!currentProduct) return;
+        
+        const pricingTiers = document.querySelector('.pricing-tiers');
+        pricingTiers.innerHTML = currentProduct.pricingTiers
+            .map(tier => `
+                <div class="pricing-tier">
+                    <span class="tier-range">${tier.min} - ${tier.max === 999999 ? '+' : tier.max} pieces</span>
+                    <span class="tier-price">₹${tier.price} each</span>
+                </div>
+            `)
+            .join('');
+    }
+
+    // Update specifications tab
+    function updateSpecifications() {
+        if (!currentProduct) return;
+        
+        const specsContent = document.getElementById('specifications');
+        if (specsContent) {
+            const specs = currentProduct.specifications;
+            specsContent.innerHTML = `
+                <p><strong>Fabric:</strong> ${specs.fabric || 'N/A'}<br>
+                <strong>Weight:</strong> ${specs.weight || 'N/A'}<br>
+                <strong>Fit:</strong> ${specs.fit || 'N/A'}<br>
+                <strong>Care:</strong> ${specs.care || 'N/A'}<br>
+                ${specs.neck ? `<strong>Neck:</strong> ${specs.neck}<br>` : ''}
+                ${specs.collar ? `<strong>Collar:</strong> ${specs.collar}<br>` : ''}
+                ${specs.placket ? `<strong>Placket:</strong> ${specs.placket}<br>` : ''}
+                ${specs.technology ? `<strong>Technology:</strong> ${specs.technology}<br>` : ''}
+                ${specs.stretch ? `<strong>Stretch:</strong> ${specs.stretch}<br>` : ''}
+                ${specs.certification ? `<strong>Certification:</strong> ${specs.certification}` : ''}</p>
+            `;
+        }
+    }
+
+    // Generate color options
     function generateColorOptions() {
         const colorContainer = document.getElementById('productDetailColorOptionsOnly');
-        if (!colorContainer) {
-            console.error('Color container not found!');
-            return;
-        }
+        if (!colorContainer || !currentProduct) return;
         
-        colorContainer.innerHTML = '';
-
-        productData.colors.forEach(color => {
-            const colorOption = document.createElement('div');
-            
-            // Use unique class names and inline styles
-            colorOption.className = `product-detail-color-circle ${color.name === 'white' ? 'color-white-circle' : ''} ${color.name === selectedColor ? 'active-color' : ''}`;
-            
-            // Set inline styles that cannot be overridden
-            colorOption.style.cssText = `
-                width: 45px !important;
-                height: 45px !important;
-                border-radius: 50% !important;
-                background-color: ${color.code} !important;
-                border: ${color.name === 'white' ? '3px solid #999' : '3px solid #ddd'} !important;
-                cursor: pointer !important;
-                transition: all 0.3s ease !important;
-                display: block !important;
-                flex-shrink: 0 !important;
-                box-sizing: border-box !important;
-            `;
-            
-            colorOption.setAttribute('data-color', color.name);
-            colorOption.setAttribute('title', color.displayName);
-            colorOption.onclick = () => selectColor(color.name);
-            
-            colorContainer.appendChild(colorOption);
-        });
+        colorContainer.innerHTML = currentProduct.colors
+            .map(color => `
+                <div class="product-detail-color-circle ${color.name === 'white' ? 'color-white-circle' : ''} ${color.name === selectedColor ? 'active-color' : ''}"
+                     style="background-color: ${color.code}; border: ${color.name === 'white' ? '3px solid #999' : '3px solid #ddd'}"
+                     data-color="${color.name}"
+                     title="${color.displayName}"
+                     onclick="selectColor('${color.name}')">
+                </div>
+            `)
+            .join('');
     }
 
-    // Select color - SINGLE VERSION (remove the duplicate below)
+    // Select color
     function selectColor(colorName) {
         selectedColor = colorName;
         
-        // Remove active class from all color options
-        const colorOptions = document.querySelectorAll('.product-detail-color-circle');
-        colorOptions.forEach(option => {
-            option.classList.remove('active-color');
-            // Reset border for all options
-            const dataColor = option.getAttribute('data-color');
-            if (dataColor === 'white') {
-                option.style.border = '3px solid #999 !important';
-                option.style.boxShadow = 'none !important';
+        // Update UI
+        document.querySelectorAll('.product-detail-color-circle').forEach(circle => {
+            circle.classList.remove('active-color');
+            const dataColor = circle.getAttribute('data-color');
+            if (dataColor === colorName) {
+                circle.classList.add('active-color');
+                circle.style.border = '3px solid #333';
+                circle.style.boxShadow = '0 0 0 2px #fff, 0 0 0 4px #333';
             } else {
-                option.style.border = '3px solid #ddd !important';
-                option.style.boxShadow = 'none !important';
+                circle.style.border = circle.getAttribute('data-color') === 'white' ? '3px solid #999' : '3px solid #ddd';
+                circle.style.boxShadow = 'none';
             }
         });
-        
-        // Add active class to selected color
-        const selectedOption = document.querySelector(`.product-detail-color-circle[data-color="${colorName}"]`);
-        if (selectedOption) {
-            selectedOption.classList.add('active-color');
-            selectedOption.style.border = '3px solid #333 !important';
-            selectedOption.style.boxShadow = '0 0 0 2px #fff, 0 0 0 4px #333 !important';
-        }
         
         updateImages();
     }
 
-    // Generate size options - USING UNIQUE CLASSES
+    // Generate size options
     function generateSizeOptions() {
         const sizeContainer = document.getElementById('productDetailSizeOptionsOnly');
-        if (!sizeContainer) {
-            console.error('Size container not found!');
-            return;
-        }
+        if (!sizeContainer || !currentProduct) return;
         
-        sizeContainer.innerHTML = '';
-
-        productData.sizes.forEach(size => {
-            const sizeOption = document.createElement('div');
-            sizeOption.className = `product-detail-size-box ${size === selectedSize ? 'active-size' : ''}`;
-            sizeOption.textContent = size;
-            sizeOption.setAttribute('data-size', size);
-            sizeOption.onclick = () => selectSize(size);
-            
-            sizeContainer.appendChild(sizeOption);
-        });
+        sizeContainer.innerHTML = currentProduct.sizes
+            .map(size => `
+                <div class="product-detail-size-box ${size === selectedSize ? 'active-size' : ''}"
+                     data-size="${size}"
+                     onclick="selectSize('${size}')">
+                    ${size}
+                </div>
+            `)
+            .join('');
     }
 
-    // Select size - SINGLE VERSION (remove the duplicate below)
+    // Select size
     function selectSize(size) {
         selectedSize = size;
         
-        // Remove active class from all size options
-        const sizeOptions = document.querySelectorAll('.product-detail-size-box');
-        sizeOptions.forEach(option => {
-            option.classList.remove('active-size');
+        // Update UI
+        document.querySelectorAll('.product-detail-size-box').forEach(box => {
+            box.classList.remove('active-size');
+            if (box.getAttribute('data-size') === size) {
+                box.classList.add('active-size');
+            }
         });
-        
-        // Add active class to selected size
-        const selectedOption = document.querySelector(`.product-detail-size-box[data-size="${size}"]`);
-        if (selectedOption) {
-            selectedOption.classList.add('active-size');
-        }
     }
 
     // Update images based on selected color
     function updateImages() {
-        const currentColor = productData.colors.find(color => color.name === selectedColor);
+        if (!currentProduct) return;
+        
+        const currentColor = currentProduct.colors.find(color => color.name === selectedColor);
         const mainImage = document.getElementById('currentImage');
         const thumbnailGallery = document.getElementById('thumbnailGallery');
 
-        if (!mainImage || !thumbnailGallery) {
-            console.error('Image elements not found!');
-            return;
-        }
+        if (!mainImage || !thumbnailGallery) return;
 
         // Update main image
         if (currentColor && currentColor.images.length > 0) {
             mainImage.src = currentColor.images[0];
-            mainImage.alt = `Premium Cotton T-Shirt - ${currentColor.displayName}`;
+            mainImage.alt = `${currentProduct.name} - ${currentColor.displayName}`;
         }
 
         // Generate thumbnails
-        thumbnailGallery.innerHTML = '';
-        if (currentColor) {
-            currentColor.images.forEach((image, index) => {
-                const thumbnail = document.createElement('div');
-                thumbnail.className = `thumbnail ${index === 0 ? 'active' : ''}`;
-                thumbnail.innerHTML = `<img src="${image}" alt="T-Shirt view ${index + 1}" onerror="this.src='https://via.placeholder.com/80x80?text=T-Shirt+${currentColor.displayName}'">`;
-                thumbnail.onclick = () => changeMainImage(image, thumbnail);
-                thumbnailGallery.appendChild(thumbnail);
-            });
-        }
+        thumbnailGallery.innerHTML = currentColor?.images
+            .map((image, index) => `
+                <div class="thumbnail ${index === 0 ? 'active' : ''}" 
+                     onclick="changeMainImage('${image}', this)">
+                    <img src="${image}" alt="${currentProduct.name} view ${index + 1}" 
+                         onerror="this.src='https://via.placeholder.com/80x80?text=${currentProduct.name}'">
+                </div>
+            `)
+            .join('') || '';
     }
 
     // Change main image
@@ -831,17 +1276,19 @@
 
     // Get unit price based on quantity
     function getUnitPrice() {
+        if (!currentProduct) return 0;
+        
         const qty = parseInt(quantity) || 1;
         
-        for (const tier of productData.pricingTiers) {
+        for (const tier of currentProduct.pricingTiers) {
             if (qty >= tier.min && qty <= tier.max) {
                 return tier.price;
             }
         }
-        return productData.basePrice;
+        return currentProduct.basePrice;
     }
 
-    // Update price based on quantity
+    // Update price display
     function updatePrice() {
         const currentPriceElement = document.getElementById('currentPrice');
         if (!currentPriceElement) return;
@@ -850,112 +1297,127 @@
         const totalPrice = unitPrice * quantity;
         
         currentPriceElement.textContent = `₹${totalPrice}`;
-	
     }
 
-// Enhanced add to cart for product detail page - COMPATIBLE VERSION
-function addToCartWithDetails() {
-    try {
-        console.log('=== ADD TO CART CALLED ===');
-        
-        // Get the actual unit price based on quantity
-        const unitPrice = getUnitPrice();
-        const totalPrice = unitPrice * quantity;
-        
-        // Create product name with color and size
-        const colorName = selectedColor.charAt(0).toUpperCase() + selectedColor.slice(1);
-        const productName = `Premium Cotton T-Shirt (${colorName}, ${selectedSize})`;
-        
-        // Get product image
-        const currentColor = productData.colors.find(color => color.name === selectedColor);
-        const productImage = currentColor?.images[0] || 'images/placeholder.png';
-        
-        console.log('Product Details for Cart:', {
-            name: productName,
-            price: unitPrice, // Use unit price, not total price
-            image: productImage,
-            size: selectedSize,
-            color: colorName,
-            quantity: quantity,
-            totalPrice: totalPrice
-        });
-        
-        // Validate the data
-        if (!productName || unitPrice <= 0 || isNaN(unitPrice)) {
-            console.error('Invalid product data:', { productName, unitPrice });
-            showNotification('Error: Invalid product information. Please check product details.', 'error');
+    // Add to cart with details
+    function addToCartWithDetails() {
+        try {
+            if (!currentProduct) {
+                showNotification('Product not loaded', 'error');
+                return;
+            }
+            
+            const quantityInput = document.getElementById('quantity');
+            if (!quantityInput) {
+                showNotification('Quantity input not found', 'error');
+                return;
+            }
+            
+            const selectedQuantity = parseInt(quantityInput.value) || 1;
+            const unitPrice = getUnitPrice();
+            
+            // Create product name with color and size
+            const currentColor = currentProduct.colors.find(color => color.name === selectedColor);
+            const colorName = currentColor?.displayName || selectedColor;
+            const productName = `${currentProduct.name} (${colorName}, ${selectedSize})`;
+            
+            // Get product image
+            const productImage = currentColor?.images[0] || 'images/placeholder.png';
+            
+            console.log('Adding to cart:', {
+                name: productName,
+                unitPrice: unitPrice,
+                quantity: selectedQuantity,
+                size: selectedSize,
+                color: colorName
+            });
+            
+            // Get current cart
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            
+            // Create unique identifier
+            const productIdentifier = `${currentProduct.id}-${selectedSize}-${selectedColor}`;
+            
+            // Check if item exists
+            let itemExists = false;
+            let updatedCart = cart.map(item => {
+                const itemIdentifier = `${item.productId || item.id}-${item.size || ''}-${item.color || ''}`;
+                if (itemIdentifier === productIdentifier) {
+                    itemExists = true;
+                    const updatedQuantity = (item.quantity || 1) + selectedQuantity;
+                    return {
+                        ...item,
+                        quantity: updatedQuantity,
+                        totalPrice: unitPrice * updatedQuantity
+                    };
+                }
+                return item;
+            });
+            
+            if (!itemExists) {
+                // Add new item
+                updatedCart.push({
+                    id: Date.now() + Math.random(),
+                    productId: currentProduct.id,
+                    name: productName,
+                    price: unitPrice,
+                    image: productImage,
+                    quantity: selectedQuantity,
+                    size: selectedSize,
+                    color: colorName,
+                    totalPrice: unitPrice * selectedQuantity,
+                    addedAt: new Date().toISOString()
+                });
+            }
+            
+            // Update cart
+            localStorage.setItem('cart', JSON.stringify(updatedCart));
+            
+            // Trigger updates
+            if (typeof window.AppState !== 'undefined') {
+                window.AppState.loadCart();
+            }
+            
+            if (typeof window.updateCartCount === 'function') {
+                window.updateCartCount();
+            }
+            
+            // Show notification
+            showNotification(`✅ ${selectedQuantity} x "${currentProduct.name}" added to cart!`, 'success');
+            
+            // Animate cart icon
+            if (typeof window.animateCartIcon === 'function') {
+                window.animateCartIcon();
+            }
+            
+        } catch (error) {
+            console.error('Error adding to cart:', error);
+            showNotification('Error adding product to cart', 'error');
+        }
+    }
+
+    // Add to wishlist
+    function addToWishlist() {
+        if (!currentProduct) {
+            showNotification('Product not loaded', 'error');
             return;
         }
         
-        // Check if your main addToCart function exists
-        if (typeof window.addToCart === 'function') {
-            console.log('Calling main addToCart function...');
-            
-            // Call your main function - IMPORTANT: Use unit price, not total price
-            // Your main function handles quantity internally
-            window.addToCart(productName, unitPrice, productImage, selectedSize, colorName);
-            
-        } else {
-            console.log('Main addToCart not found, using fallback');
-            // Use fallback if main function isn't available
-            addToCartFallback(productName, unitPrice, productImage, selectedSize, colorName);
-        }
-        
-    } catch (error) {
-        console.error('Error in addToCartWithDetails:', error);
-        showNotification('Error adding product to cart. Please try again.', 'error');
-    }
-}
-
-    // Fallback cart count update
-    function updateCartCountFallback() {
-        try {
-            const cart = JSON.parse(localStorage.getItem('cart')) || [];
-            const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
-            
-            // Update cart count in navbar
-            const cartCountElements = document.querySelectorAll('#cartCount, .cart-count');
-            cartCountElements.forEach(element => {
-                element.textContent = totalItems;
-                if (totalItems > 0) {
-                    element.style.display = 'inline-flex';
-                } else {
-                    element.style.display = 'none';
-                }
-            });
-        } catch (error) {
-            console.error('Error updating cart count:', error);
-        }
-    }
-
-    // ADD TO WISHLIST - COMPATIBLE WITH YOUR EXISTING SYSTEM
-    function addToWishlist() {
         const unitPrice = getUnitPrice();
-        const productName = `Premium Cotton T-Shirt (${selectedColor.charAt(0).toUpperCase() + selectedColor.slice(1)}, ${selectedSize})`;
-        const productImage = productData.colors.find(color => color.name === selectedColor)?.images[0] || 'images/placeholder.png';
+        const currentColor = currentProduct.colors.find(color => color.name === selectedColor);
+        const colorName = currentColor?.displayName || selectedColor;
+        const productName = `${currentProduct.name} (${colorName}, ${selectedSize})`;
+        const productImage = currentColor?.images[0] || 'images/placeholder.png';
         
-        console.log('Calling your addToWishlist function with:', {
-            productId: productData.id,
-            productName: productName,
-            productPrice: unitPrice,
-            productImage: productImage
-        });
-
-        // Call your existing addToWishlist function
         if (typeof window.addToWishlist === 'function') {
-            const success = window.addToWishlist(productData.id, productName, unitPrice, productImage);
-            if (success) {
-                // Your function shows notification, so we don't need to show another one
-            } else {
-                alert(`"${productName}" is already in your wishlist!`);
-            }
+            window.addToWishlist(currentProduct.id, productName, unitPrice, productImage);
         } else {
             // Fallback
-            addToWishlistFallback(productData.id, productName, unitPrice, productImage);
+            addToWishlistFallback(currentProduct.id, productName, unitPrice, productImage);
         }
     }
 
-    // Fallback wishlist system
+    // Fallback wishlist
     function addToWishlistFallback(productId, productName, productPrice, productImage) {
         try {
             let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
@@ -975,36 +1437,28 @@ function addToCartWithDetails() {
                 // Update wishlist count
                 if (typeof window.updateWishlistCount === 'function') {
                     window.updateWishlistCount();
-                } else {
-                    updateWishlistCountFallback();
                 }
                 
-                alert(`❤️ "${productName}" added to wishlist!`);
+                showNotification(`❤️ "${productName}" added to wishlist!`, 'success');
             } else {
-                alert(`"${productName}" is already in your wishlist!`);
+                showNotification(`"${productName}" is already in your wishlist!`, 'info');
             }
         } catch (error) {
-            console.error('Error in fallback wishlist system:', error);
-            alert('Error adding item to wishlist. Please try again.');
+            console.error('Error adding to wishlist:', error);
+            showNotification('Error adding to wishlist', 'error');
         }
     }
 
-    // Fallback wishlist count update
-    function updateWishlistCountFallback() {
-        try {
-            const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-            const wishlistCountElements = document.querySelectorAll('#wishlistCount, .wishlist-count');
-            
-            wishlistCountElements.forEach(element => {
-                element.textContent = wishlist.length;
-                if (wishlist.length > 0) {
-                    element.style.display = 'inline-flex';
-                } else {
-                    element.style.display = 'none';
-                }
-            });
-        } catch (error) {
-            console.error('Error updating wishlist count:', error);
+    // Show error
+    function showError(message) {
+        const productContainer = document.querySelector('.product-detail-container');
+        if (productContainer) {
+            productContainer.innerHTML = `
+                <div class="error-message" style="text-align: center; padding: 50px;">
+                    <h2>${message}</h2>
+                    <p><a href="bulktshirts.html" class="btn">Back to Products</a></p>
+                </div>
+            `;
         }
     }
 
@@ -1027,7 +1481,7 @@ function addToCartWithDetails() {
 
     // Initialize event listeners
     function initializeEvents() {
-        // Quantity input change handler
+        // Quantity input
         const quantityInput = document.getElementById('quantity');
         if (quantityInput) {
             quantityInput.addEventListener('change', function() {
@@ -1038,39 +1492,25 @@ function addToCartWithDetails() {
                 quantity = value;
                 updatePrice();
             });
+            
+            quantityInput.addEventListener('input', function() {
+                let value = parseInt(this.value);
+                if (!isNaN(value) && value >= 1 && value <= 1000) {
+                    quantity = value;
+                    updatePrice();
+                }
+            });
         }
-
-        // Initialize price on load
-        updatePrice();
     }
 
-    // Debug function to check if your functions are available
-    function checkCompatibility() {
-        console.log('=== CHECKING COMPATIBILITY WITH SCRIPT.JS ===');
-        console.log('addToCart function available:', typeof window.addToCart === 'function');
-        console.log('addToWishlist function available:', typeof window.addToWishlist === 'function');
-        console.log('updateCartCount function available:', typeof window.updateCartCount === 'function');
-        console.log('updateWishlistCount function available:', typeof window.updateWishlistCount === 'function');
-        
-        // Check current cart state
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
-        console.log('Current cart items:', cart);
-        console.log('Current wishlist items:', JSON.parse(localStorage.getItem('wishlist') || '[]'));
-        console.log('=== END COMPATIBILITY CHECK ===');
-    }
-
-    // Initialize page when loaded
+    // Initialize when page loads
     document.addEventListener('DOMContentLoaded', function() {
         console.log('=== PRODUCT DETAIL PAGE INITIALIZED ===');
         
-        // Check compatibility with your existing system
-        checkCompatibility();
-        
-        // Initialize page components
         initializePage();
         initializeEvents();
         
-        // Update cart and wishlist counts using your existing functions
+        // Update counts
         if (typeof window.updateCartCount === 'function') {
             window.updateCartCount();
         }
