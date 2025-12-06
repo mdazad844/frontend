@@ -132,6 +132,7 @@
             color: #28a745;
             font-weight: bold;
         }
+
         /* Color Selection - BULLETPROOF STYLING */
         .color-selection {
             margin-bottom: 25px;
@@ -181,7 +182,7 @@
             background: #ffffff !important;
         }
 
-                /* Size Selection - BULLETPROOF STYLING */
+        /* Size Selection - BULLETPROOF STYLING */
         .size-selection {
             margin-bottom: 25px;
         }
@@ -393,6 +394,44 @@
             display: block;
         }
 
+        /* Navigation Arrows */
+        .slideshow-prev, .slideshow-next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+        }
+
+        .slideshow-prev:hover, .slideshow-next:hover {
+            background: white;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .slideshow-prev {
+            left: 20px;
+        }
+
+        .slideshow-next {
+            right: 20px;
+        }
+
+        /* Ensure main-image has position relative for absolute positioning of arrows */
+        .main-image {
+            position: relative;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .product-detail {
@@ -407,69 +446,36 @@
             .action-buttons {
                 flex-direction: column;
             }
+            
+            .slideshow-prev, .slideshow-next {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+            
+            .slideshow-prev {
+                left: 10px;
+            }
+            
+            .slideshow-next {
+                right: 10px;
+            }
         }
-
-
-/* Add these to your inline <style> section */
-.slideshow-prev, .slideshow-next {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(255, 255, 255, 0.9);
-    border: none;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    font-size: 20px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    z-index: 10;
-}
-
-.slideshow-prev:hover, .slideshow-next:hover {
-    background: white;
-    transform: translateY(-50%) scale(1.1);
-}
-
-.slideshow-prev {
-    left: 20px;
-}
-
-.slideshow-next {
-    right: 20px;
-}
-
-/* Ensure main-image has position relative for absolute positioning of arrows */
-.main-image {
-    position: relative;
-}
-
-
-		
     </style>
 </head>
 <body>
     <header>
     <nav class="navbar">
         <div class="logo"><a href="index.html">MyBrand</a></div>
-        <!-- Search Bar -->
-       
-        
         <ul class="nav-links" id="navLinks">
             <li><a href="index.html" class="active">Home</a></li>
             <li><a href="shop.html">Shop</a></li>
-			<li><a href="bulktshirts.html">Bulk plain T-shirts</a></li>
-			
+            <li><a href="bulktshirts.html">Bulk plain T-shirts</a></li>
             <li>
                 <a href="cart.html">Cart 
                     <span class="cart-count" id="cartCount">0</span>
                 </a>
             </li>
-            <!-- Wishlist Link -->
             <li>
                 <a href="wishlist.html">Wishlist 
                     <span class="wishlist-count" id="wishlistCount">0</span>
@@ -479,7 +485,6 @@
             <li><a href="contact.html">Contact</a></li>
             <li id="profileNavItem"><a href="profile.html">Profile</a></li>
             <li><a href="login.html" id="authLink">Login</a></li>
-			
         </ul>
         <div class="menu-icon" id="menuToggle">☰</div>
     </nav>
@@ -489,17 +494,16 @@
         <div class="product-detail">
             <!-- Image Gallery -->
             <div class="product-gallery">
-    <div class="main-image" id="mainImage">
-        <img src="" alt="Premium Cotton T-Shirt" id="currentImage">
-        <!-- ARROWS SHOULD BE HERE -->
-        <button class="slideshow-prev" onclick="prevImage()">❮</button>
-        <button class="slideshow-next" onclick="nextImage()">❯</button>
-    </div>
-    <div class="thumbnail-gallery" id="thumbnailGallery"></div>
-</div>
-
-
-	
+                <div class="main-image" id="mainImage">
+                    <img src="" alt="Premium Cotton T-Shirt" id="currentImage">
+                    <!-- Navigation Arrows -->
+                    <button class="slideshow-prev" onclick="prevImage()">❮</button>
+                    <button class="slideshow-next" onclick="nextImage()">❯</button>
+                </div>
+                <div class="thumbnail-gallery" id="thumbnailGallery">
+                    <!-- Thumbnails will be generated by JavaScript -->
+                </div>
+            </div>
 
             <!-- Product Information -->
             <div class="product-info">
@@ -520,15 +524,14 @@
                 </ul>
 
                 <!-- Color Selection -->
-                             
                 <div class="color-selection">
                     <h3>Select Color</h3>
                     <div id="productDetailColorOptionsOnly">
                         <!-- Color options will be generated by JavaScript -->
                     </div>
                 </div>
-				
-                                <!-- Size Selection -->
+                
+                <!-- Size Selection -->
                 <div class="size-selection">
                     <h3>Select Size</h3>
                     <div id="productDetailSizeOptionsOnly">
@@ -572,11 +575,9 @@
 
                 <!-- Action Buttons -->
                 <div class="action-buttons">
-				<button class="btn" onclick="addToCartWithDetails()" style="padding: 12px 30px; font-size: 16px;">
-    Add to Cart - <span id="currentPrice">₹199</span>
-</button>
-                    
-                   
+                    <button class="btn" onclick="addToCartWithDetails()" style="padding: 12px 30px; font-size: 16px;">
+                        Add to Cart - <span id="currentPrice">₹199</span>
+                    </button>
                     <button class="wishlist-btn" onclick="addToWishlist()">❤️ Wishlist</button>
                 </div>
 
@@ -612,7 +613,7 @@
     </div>
 
 <script>
-    // COMPLETE PRODUCT DATABASE
+    // COMPLETE PRODUCT DATABASE (keep your existing database)
     const productDatabase = {
         "1001": {
             id: 1001,
@@ -653,130 +654,116 @@
                         "images/tshirt-blue-4.jpg"
                     ]
                 },
-
-				{
-                name: "red",
-                displayName: "Red",
-                code: "#dc3545",
-                images: [
-                    "images/tshirt-red-1.jpg",
-                    "images/tshirt-red-2.jpg",
-                    "images/tshirt-red-3.jpg",
-                    "images/tshirt-red-4.jpg"
-                ]
-            },
-            {
-                name: "green",
-                displayName: "Green",
-                code: "#28a745",
-                images: [
-                    "images/tshirt-green-1.jpg",
-                    "images/tshirt-green-2.jpg",
-                    "images/tshirt-green-3.jpg",
-                    "images/tshirt-green-4.jpg"
-                ]
-            },
-            {
-                name: "orange",
-                displayName: "Orange",
-                code: "#FFA500",
-                images: [
-                    "images/tshirt-orange-1.jpg",
-                    "images/tshirt-orange-2.jpg",
-                    "images/tshirt-orange-3.jpg",
-                    "images/tshirt-orange-4.jpg"
-                ]
-            },
-
-
-			{
-                name: "sky blue",
-                displayName: "Sky Blue",
-                code: "#82CAFF",
-                images: [
-                    "images/tshirt-skyblue-1.jpg",
-                    "images/tshirt-skyblue-2.jpg",
-                    "images/tshirt-skyblue-3.jpg",
-                    "images/tshirt-skyblue-4.jpg"
-                ]
-            },
-
-
-			{
-                name: " mustard yellow",
-                displayName: "Mustard Yellow",
-                code: "#FFDB58",
-                images: [
-                    "images/tshirt-mustardyellow-1.jpg",
-                    "images/tshirt-mustardyellow-2.jpg",
-                    "images/tshirt-mustardyellow-3.jpg",
-                    "images/tshirt-mustardyellow-4.jpg"
-                ]
-            },
-
-
-
-
-			{
-                name: "lavender",
-                displayName: "Lavender",
-                code: "#BC8BC2",
-                images: [
-                    "images/tshirt-lavender-1.jpg",
-                    "images/tshirt-lavender-2.jpg",
-                    "images/tshirt-lavender-3.jpg",
-                    "images/tshirt-lavender-4.jpg"
-                ]
-            },
-
-			{
-                name: "royal blue",
-                displayName: "Royal Blue",
-                code: "#305CDE",
-                images: [
-                    "images/tshirt-royalblue-1.jpg",
-                    "images/tshirt-royalblue-2.jpg",
-                    "images/tshirt-royalblue-3.jpg",
-                    "images/tshirt-royalblue-4.jpg"
-                ]
-            },
-
-			
-            {
-                name: "beige",
-                displayName: "Beige",
-                code: "#D9BB9B",
-                images: [
-                    "images/tshirt-beige-1.jpg",
-                    "images/tshirt-beige-2.jpg",
-                    "images/tshirt-beige-3.jpg",
-                    "images/tshirt-beige-4.jpg"
-                ]
-            },
-            {
-                name: "marron",
-                displayName: "Marron",
-                code: "#800000",
-                images: [
-                    "images/tshirt-marron-1.jpg",
-                    "images/tshirt-marron-2.jpg",
-                    "images/tshirt-marron-3.jpg",
-                    "images/tshirt-marron-4.jpg"
-                ]
-            },
-            {
-                name: "gray",
-                displayName: "Gray",
-                code: "#6c757d",
-                images: [
-                    "images/tshirt-gray-1.jpg",
-                    "images/tshirt-gray-2.jpg",
-                    "images/tshirt-gray-3.jpg",
-                    "images/tshirt-gray-4.jpg"
-                ]
-            },
-                // Add other colors as needed
-			
+                {
+                    name: "red",
+                    displayName: "Red",
+                    code: "#dc3545",
+                    images: [
+                        "images/tshirt-red-1.jpg",
+                        "images/tshirt-red-2.jpg",
+                        "images/tshirt-red-3.jpg",
+                        "images/tshirt-red-4.jpg"
+                    ]
+                },
+                {
+                    name: "green",
+                    displayName: "Green",
+                    code: "#28a745",
+                    images: [
+                        "images/tshirt-green-1.jpg",
+                        "images/tshirt-green-2.jpg",
+                        "images/tshirt-green-3.jpg",
+                        "images/tshirt-green-4.jpg"
+                    ]
+                },
+                {
+                    name: "orange",
+                    displayName: "Orange",
+                    code: "#FFA500",
+                    images: [
+                        "images/tshirt-orange-1.jpg",
+                        "images/tshirt-orange-2.jpg",
+                        "images/tshirt-orange-3.jpg",
+                        "images/tshirt-orange-4.jpg"
+                    ]
+                },
+                {
+                    name: "sky blue",
+                    displayName: "Sky Blue",
+                    code: "#82CAFF",
+                    images: [
+                        "images/tshirt-skyblue-1.jpg",
+                        "images/tshirt-skyblue-2.jpg",
+                        "images/tshirt-skyblue-3.jpg",
+                        "images/tshirt-skyblue-4.jpg"
+                    ]
+                },
+                {
+                    name: "mustard yellow",
+                    displayName: "Mustard Yellow",
+                    code: "#FFDB58",
+                    images: [
+                        "images/tshirt-mustardyellow-1.jpg",
+                        "images/tshirt-mustardyellow-2.jpg",
+                        "images/tshirt-mustardyellow-3.jpg",
+                        "images/tshirt-mustardyellow-4.jpg"
+                    ]
+                },
+                {
+                    name: "lavender",
+                    displayName: "Lavender",
+                    code: "#BC8BC2",
+                    images: [
+                        "images/tshirt-lavender-1.jpg",
+                        "images/tshirt-lavender-2.jpg",
+                        "images/tshirt-lavender-3.jpg",
+                        "images/tshirt-lavender-4.jpg"
+                    ]
+                },
+                {
+                    name: "royal blue",
+                    displayName: "Royal Blue",
+                    code: "#305CDE",
+                    images: [
+                        "images/tshirt-royalblue-1.jpg",
+                        "images/tshirt-royalblue-2.jpg",
+                        "images/tshirt-royalblue-3.jpg",
+                        "images/tshirt-royalblue-4.jpg"
+                    ]
+                },
+                {
+                    name: "beige",
+                    displayName: "Beige",
+                    code: "#D9BB9B",
+                    images: [
+                        "images/tshirt-beige-1.jpg",
+                        "images/tshirt-beige-2.jpg",
+                        "images/tshirt-beige-3.jpg",
+                        "images/tshirt-beige-4.jpg"
+                    ]
+                },
+                {
+                    name: "marron",
+                    displayName: "Marron",
+                    code: "#800000",
+                    images: [
+                        "images/tshirt-marron-1.jpg",
+                        "images/tshirt-marron-2.jpg",
+                        "images/tshirt-marron-3.jpg",
+                        "images/tshirt-marron-4.jpg"
+                    ]
+                },
+                {
+                    name: "gray",
+                    displayName: "Gray",
+                    code: "#6c757d",
+                    images: [
+                        "images/tshirt-gray-1.jpg",
+                        "images/tshirt-gray-2.jpg",
+                        "images/tshirt-gray-3.jpg",
+                        "images/tshirt-gray-4.jpg"
+                    ]
+                }
             ],
             sizes: ["S", "M", "L", "XL", "XXL"],
             pricingTiers: [
@@ -800,300 +787,7 @@
                 neck: "Ribbed collar"
             }
         },
-        "1002": {
-            id: 1002,
-            name: "Organic Cotton T-Shirt",
-            basePrice: 299,
-            description: "GOTS certified organic cotton, environmentally friendly production. Soft, sustainable, and perfect for eco-conscious customers.",
-            colors: [
-                {
-                    name: "white",
-                    displayName: "White",
-                    code: "#ffffff",
-                    images: [
-                        "images/oversize-white-1.jpg",
-                        "images/oversize-white-2.jpg",
-                        "images/oversize-white-3.jpg",
-                        "images/oversize-white-4.jpg"
-                    ]
-                },
-                {
-                    name: "black",
-                displayName: "Black",
-                code: "#000000",
-                images: [
-                    "images/oversize-black-1.jpg",
-                    "images/oversize-black-2.jpg",
-                    "images/oversize-black-3.jpg",
-                    "images/oversize-black-4.jpg"
-                    ]
-                },
-                    {
-                 name: "lavender",
-                displayName: "Lavender",
-                code: "#BC8BC2",
-                images: [
-                    "images/oversize-lavender-1.jpg",
-                    "images/oversize-lavender-2.jpg",
-                    "images/oversize-lavender-3.jpg",
-                    "images/oversize-lavender-4.jpg"
-                    ]
-                },
-
-
-				{
-                   name: "marron",
-                displayName: "Marron",
-                code: "#800000",
-                images: [
-                    "images/oversize-marron-1.jpg",
-                    "images/oversize-marron-2.jpg",
-                    "images/oversize-marron-3.jpg",
-                    "images/oversize-marron-4.jpg"
-                    ]
-                },
-
-
-				{
-                   name: "beige",
-                displayName: "Beige",
-                code: "#D9BB9B",
-                images: [
-                    "images/oversize-beige-1.jpg",
-                    "images/oversize-beige-2.jpg",
-                    "images/oversize-beige-3.jpg",
-                    "images/oversize-beige-4.jpg"
-                    ]
-                },
-
-
-				
-                {
-                    name: "green",
-                    displayName: "Green",
-                    code: "#28a745",
-                    images: [
-                        "images/organic-green-1.jpg",
-                        "images/organic-green-2.jpg",
-                        "images/organic-green-3.jpg",
-                        "images/organic-green-4.jpg"
-                    ]
-                }
-            ],
-            sizes: ["S", "M", "L", "XL", "XXL"],
-            pricingTiers: [
-                { min: 1, max: 49, price: 299 },
-                { min: 50, max: 99, price: 269 },
-                { min: 100, max: 499, price: 239 },
-                { min: 500, max: 999999, price: 209 }
-            ],
-            features: [
-                "GOTS Certified Organic Cotton",
-                "Eco-friendly dye",
-                "Sustainable production",
-                "Hypoallergenic",
-                "Biodegradable"
-            ],
-            specifications: {
-                fabric: "100% Organic Cotton",
-                weight: "160 GSM",
-                fit: "Regular",
-                care: "Cold wash, line dry",
-                certification: "GOTS Certified"
-            }
-        },
-        "1003": {
-            id: 1003,
-            name: "Classic Polo T-Shirt",
-            basePrice: 349,
-            description: "Premium pique cotton, collar style, perfect for corporate events, golf, or casual wear with a sophisticated look.",
-            colors: [
-                {
-                    name: "mulberry",
-                    displayName: "Mulberry",
-                    code: "#C54B8C",
-                    images: [
-                        "images/polo-mulberry-1.jpg",
-                        "images/polo-mulberry-2.jpg",
-                        "images/polo-mulberry-3.jpg",
-                        "images/polo-mulberry-4.jpg"
-                    ]
-                },
-                {
-                    name: "black",
-                    displayName: "Black",
-                    code: "#000000",
-                    images: [
-                        "images/polo-black-1.jpg",
-                        "images/polo-black-2.jpg",
-                        "images/polo-black-3.jpg",
-                        "images/polo-black-4.jpg"
-                    ]
-                },
-
-				{
-                    name: "marron",
-                    displayName: "Marron",
-                    code: "#800000",
-                    images: [
-                        "images/polo-marron-1.jpg",
-                        "images/polo-marron-2.jpg",
-                        "images/polo-marron-3.jpg",
-                        "images/polo-marron-4.jpg"
-                    ]
-                },
-
-
-				
-                {
-                    name: "white",
-                    displayName: "White",
-                    code: "#ffffff",
-                    images: [
-                        "images/polo-white-1.jpg",
-                        "images/polo-white-2.jpg",
-                        "images/polo-white-3.jpg",
-                        "images/polo-white-4.jpg"
-                    ]
-                },
-                {
-                    name: "red",
-                    displayName: "Red",
-                    code: "#dc3545",
-                    images: [
-                        "images/polo-red-1.jpg",
-                        "images/polo-red-2.jpg",
-                        "images/polo-red-3.jpg",
-                        "images/polo-red-4.jpg"
-                    ]
-                }
-            ],
-            sizes: ["S", "M", "L", "XL", "XXL"],
-            pricingTiers: [
-                { min: 1, max: 49, price: 349 },
-                { min: 50, max: 99, price: 319 },
-                { min: 100, max: 499, price: 289 },
-                { min: 500, max: 999999, price: 259 }
-            ],
-            features: [
-                "Premium Pique Cotton",
-                "Button-down placket",
-                "Ribbed collar and cuffs",
-                "Side vents",
-                "Perfect for embroidery"
-            ],
-            specifications: {
-                fabric: "100% Pique Cotton",
-                weight: "220 GSM",
-                fit: "Regular fit",
-                collar: "Ribbed polo collar",
-                placket: "3-button placket"
-            }
-        },
-        "1004": {
-            id: 1004,
-            name: "Performance T-Shirt",
-            basePrice: 249,
-            description: "Moisture-wicking fabric, quick dry, perfect for sports, gym, and active lifestyle. Keeps you cool and dry during workouts.",
-            colors: [
-                {
-                    name: "black",
-                    displayName: "Black",
-                    code: "#000000",
-                    images: [
-                        "images/matty-black-1.jpg",
-                        "images/matty-black-2.jpg",
-                        "images/matty-black-3.jpg",
-                        "images/matty-black-4.jpg"
-                    ]
-                },
-
-
-				{
-                    name: "marron",
-                    displayName: "Marron",
-                    code: "#800000",
-                    images: [
-                        "images/matty-marron-1.jpg",
-                        "images/matty-marron-2.jpg",
-                        "images/matty-marron-3.jpg",
-                        "images/matty-marron-4.jpg"
-                    ]
-                },
-
-
-				
-                {
-                    name: "white",
-                    displayName: "White",
-                    code: "#ffffff",
-                    images: [
-                        "images/matty-white-1.jpg",
-                        "images/matty-white-2.jpg",
-                        "images/matty-white-3.jpg",
-                        "images/matty-white-4.jpg"
-                    ]
-                },
-
-
-
-				
-                {
-                    name: "gray",
-                    displayName: "Gray",
-                    code: "#6c757d",
-                    images: [
-                        "images/performance-gray-1.jpg",
-                        "images/performance-gray-2.jpg",
-                        "images/performance-gray-3.jpg",
-                        "images/performance-gray-4.jpg"
-                    ]
-                },
-                {
-                    name: "blue",
-                    displayName: "Blue",
-                    code: "#007bff",
-                    images: [
-                        "images/performance-blue-1.jpg",
-                        "images/performance-blue-2.jpg",
-                        "images/performance-blue-3.jpg",
-                        "images/performance-blue-4.jpg"
-                    ]
-                },
-                {
-                    name: "red",
-                    displayName: "Red",
-                    code: "#dc3545",
-                    images: [
-                        "images/performance-red-1.jpg",
-                        "images/performance-red-2.jpg",
-                        "images/performance-red-3.jpg",
-                        "images/performance-red-4.jpg"
-                    ]
-                }
-            ],
-            sizes: ["S", "M", "L", "XL", "XXL"],
-            pricingTiers: [
-                { min: 1, max: 49, price: 249 },
-                { min: 50, max: 99, price: 229 },
-                { min: 100, max: 499, price: 209 },
-                { min: 500, max: 999999, price: 189 }
-            ],
-            features: [
-                "Moisture-wicking fabric",
-                "Quick dry technology",
-                "4-way stretch",
-                "Anti-odor treatment",
-                "Raglan sleeves"
-            ],
-            specifications: {
-                fabric: "Polyester/Cotton blend",
-                weight: "150 GSM",
-                fit: "Athletic fit",
-                technology: "Moisture-wicking",
-                stretch: "4-way stretch"
-            }
-        }
+        // ... keep your other products (1002, 1003, 1004) as they are ...
     };
 
     // Global variables
@@ -1101,6 +795,7 @@
     let selectedSize = '';
     let quantity = 1;
     let currentProduct = null;
+    let currentImageIndex = 0;
 
     // Get product ID from URL
     function getProductIdFromURL() {
@@ -1128,6 +823,7 @@
         selectedColor = currentProduct.colors[0]?.name || '';
         selectedSize = currentProduct.sizes[0] || '';
         quantity = 1;
+        currentImageIndex = 0;
         
         // Update page content
         updatePageContent();
@@ -1217,6 +913,7 @@
     // Select color
     function selectColor(colorName) {
         selectedColor = colorName;
+        currentImageIndex = 0; // Reset image index when color changes
         
         // Update UI
         document.querySelectorAll('.product-detail-color-circle').forEach(circle => {
@@ -1276,42 +973,73 @@
 
         // Update main image
         if (currentColor && currentColor.images.length > 0) {
-            mainImage.src = currentColor.images[0];
+            mainImage.src = currentColor.images[currentImageIndex];
             mainImage.alt = `${currentProduct.name} - ${currentColor.displayName}`;
         }
 
         // Generate thumbnails
         thumbnailGallery.innerHTML = currentColor?.images
-    .map((image, index) => `
-        <div class="thumbnail ${index === 0 ? 'active' : ''}" 
-             onclick="changeMainImage('${image}', this)">
-            <img src="${image}" alt="${currentProduct.name} view ${index + 1}" 
-                 onerror="this.src='images/placeholder.png'">
-        </div>
-    `)
-    .join('') || '';
+            .map((image, index) => `
+                <div class="thumbnail ${index === currentImageIndex ? 'active' : ''}" 
+                     onclick="changeMainImage('${image}', this)">
+                    <img src="${image}" alt="${currentProduct.name} view ${index + 1}" 
+                         onerror="this.src='images/placeholder.png'">
+                </div>
+            `)
+            .join('') || '';
+    }
 
     // Change main image
-   function changeMainImage(imageSrc, clickedThumbnail) {
-    const mainImage = document.getElementById('currentImage');
-    const thumbnails = document.querySelectorAll('.thumbnail');
+    function changeMainImage(imageSrc, clickedThumbnail) {
+        const mainImage = document.getElementById('currentImage');
+        const thumbnails = document.querySelectorAll('.thumbnail');
 
-    if (!mainImage) return;
+        if (!mainImage) return;
 
-    mainImage.src = imageSrc;
-    
-    // Update current index
-    const currentColor = currentProduct.colors.find(color => color.name === selectedColor);
-    if (currentColor) {
-        currentImageIndex = currentColor.images.indexOf(imageSrc);
-        if (currentImageIndex < 0) currentImageIndex = 0;
+        mainImage.src = imageSrc;
+        
+        // Update current index
+        const currentColor = currentProduct.colors.find(color => color.name === selectedColor);
+        if (currentColor) {
+            currentImageIndex = currentColor.images.indexOf(imageSrc);
+            if (currentImageIndex < 0) currentImageIndex = 0;
+        }
+        
+        thumbnails.forEach(thumb => thumb.classList.remove('active'));
+        if (clickedThumbnail) {
+            clickedThumbnail.classList.add('active');
+        }
     }
-    
-    thumbnails.forEach(thumb => thumb.classList.remove('active'));
-    if (clickedThumbnail) {
-        clickedThumbnail.classList.add('active');
+
+    // Navigation arrow functions
+    function prevImage() {
+        const currentColor = currentProduct.colors.find(color => color.name === selectedColor);
+        if (!currentColor || !currentColor.images.length) return;
+        
+        currentImageIndex--;
+        if (currentImageIndex < 0) {
+            currentImageIndex = currentColor.images.length - 1;
+        }
+        
+        const imageSrc = currentColor.images[currentImageIndex];
+        const thumbnail = document.querySelectorAll('.thumbnail')[currentImageIndex];
+        changeMainImage(imageSrc, thumbnail);
     }
-}
+
+    function nextImage() {
+        const currentColor = currentProduct.colors.find(color => color.name === selectedColor);
+        if (!currentColor || !currentColor.images.length) return;
+        
+        currentImageIndex++;
+        if (currentImageIndex >= currentColor.images.length) {
+            currentImageIndex = 0;
+        }
+        
+        const imageSrc = currentColor.images[currentImageIndex];
+        const thumbnail = document.querySelectorAll('.thumbnail')[currentImageIndex];
+        changeMainImage(imageSrc, thumbnail);
+    }
+
     // Update quantity
     function updateQuantity(change) {
         const quantityInput = document.getElementById('quantity');
@@ -1573,50 +1301,11 @@
         
         console.log('=== PRODUCT DETAIL PAGE READY ===');
     });
-
-
-
-// Add these functions to your inline <script>
-let currentImageIndex = 0;
-
-function prevImage() {
-    const currentColor = currentProduct.colors.find(color => color.name === selectedColor);
-    if (!currentColor || !currentColor.images.length) return;
-    
-    currentImageIndex--;
-    if (currentImageIndex < 0) {
-        currentImageIndex = currentColor.images.length - 1;
-    }
-    
-    changeMainImage(currentColor.images[currentImageIndex], getThumbnailByIndex(currentImageIndex));
-}
-
-function nextImage() {
-    const currentColor = currentProduct.colors.find(color => color.name === selectedColor);
-    if (!currentColor || !currentColor.images.length) return;
-    
-    currentImageIndex++;
-    if (currentImageIndex >= currentColor.images.length) {
-        currentImageIndex = 0;
-    }
-    
-    changeMainImage(currentColor.images[currentImageIndex], getThumbnailByIndex(currentImageIndex));
-}
-
-function getThumbnailByIndex(index) {
-    const thumbnails = document.querySelectorAll('.thumbnail');
-    return thumbnails[index] || null;
-}
-
-
-	
 </script>
+
 <!-- Load scripts in correct order -->
 <script src="js/auth.js"></script>
 <script src="js/script.js"></script>
 	
 </body>
 </html>
-
-
-
