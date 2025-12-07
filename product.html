@@ -6,8 +6,8 @@
   <meta name="description" content="Premium Classic White Hoodie - Comfortable cotton blend hoodie perfect for casual wear. Shop now with free shipping and easy returns.">
   <title>Classic White Hoodie - MyBrand</title>
   <link rel="stylesheet" href="css/style.css" />
-	
-	
+  <link rel="stylesheet" href="css/responsive.css">
+
   <style>
     /* Product Page Specific Styles */
     .product-page {
@@ -485,8 +485,8 @@
       <ul class="nav-links" id="navLinks">
         <li><a href="index.html">Home</a></li>
         <li><a href="shop.html">Shop</a></li>
-		  <li><a href="bulktshirts.html">Bulk plain T-shirts</a></li>
-		
+        <li><a href="bulktshirts.html">Bulk plain T-shirts</a></li>
+        
         <li>
           <a href="cart.html">
             Cart 
@@ -721,7 +721,6 @@
     </div>
   </footer>
 
-  <script src="js/script.js"></script>
   <script>
     // Enhanced Product Page Functionality
     document.addEventListener('DOMContentLoaded', function() {
@@ -740,7 +739,7 @@
       loadRelatedProducts();
     });
 
-    // Slideshow functionality
+    // Slideshow functionality - FIXED VERSION
     function initSlideshow() {
       const slides = document.querySelectorAll('.product-slide');
       const indicators = document.querySelectorAll('.indicator');
@@ -755,7 +754,6 @@
         // Hide all slides
         slides.forEach(slide => {
           slide.classList.remove('active');
-          slide.setAttribute('aria-hidden', 'true');
         });
         
         // Update indicators
@@ -765,7 +763,6 @@
         // Show current slide
         if (slides[n]) {
           slides[n].classList.add('active');
-          slides[n].setAttribute('aria-hidden', 'false');
         }
         if (indicators[n]) {
           indicators[n].classList.add('active');
@@ -853,50 +850,11 @@
           inStock: true,
           rating: 4.8,
           reviewCount: 127
-        },
-        '2': {
-          id: 2,
-          title: 'Black Oversized T-Shirt', 
-          price: 299, 
-          images: ['images/product2.jpg'],
-          desc: 'Trendy oversized black t-shirt with a relaxed fit. Perfect for casual outings and comfortable everyday wear.',
-          category: 'men',
-          sizes: ['S', 'M', 'L', 'XL'],
-          colors: ['black', 'white', 'gray'],
-          inStock: true,
-          rating: 4.5,
-          reviewCount: 89
-        },
-        '3': {
-          id: 3,
-          title: 'Premium Cotton Shirt', 
-          price: 599, 
-          images: ['images/product3.jpg'],
-          desc: 'High-quality cotton formal shirt with excellent breathability and a professional look.',
-          category: 'men',
-          sizes: ['M', 'L', 'XL'],
-          colors: ['blue', 'white'],
-          inStock: true,
-          rating: 4.7,
-          reviewCount: 156
-        },
-        '4': {
-          id: 4,
-          title: 'Denim Jacket', 
-          price: 1999, 
-          images: ['images/product4.jpg'],
-          desc: 'Classic denim jacket with a modern fit. Perfect for layering and adding style to any outfit.',
-          category: 'men',
-          sizes: ['S', 'M', 'L', 'XL'],
-          colors: ['blue', 'black'],
-          inStock: true,
-          rating: 4.9,
-          reviewCount: 203
         }
       };
 
       // Get product from URL
-      const params = new URLSearchParams(location.search);
+      const params = new URLSearchParams(window.location.search);
       const productId = params.get('id') || '1';
       const product = products[productId] || products['1'];
 
@@ -943,13 +901,15 @@
           
           if (window.currentProduct) {
             for (let i = 0; i < qty; i++) {
-              addToCart(
-                window.currentProduct.title, 
-                window.currentProduct.price, 
-                window.currentProduct.images[0],
-                size,
-                color
-              );
+              if (typeof addToCart === 'function') {
+                addToCart(
+                  window.currentProduct.title, 
+                  window.currentProduct.price, 
+                  window.currentProduct.images[0],
+                  size,
+                  color
+                );
+              }
             }
             
             // Show success notification
@@ -972,13 +932,15 @@
           
           if (window.currentProduct) {
             for (let i = 0; i < qty; i++) {
-              addToCart(
-                window.currentProduct.title, 
-                window.currentProduct.price, 
-                window.currentProduct.images[0],
-                size,
-                color
-              );
+              if (typeof addToCart === 'function') {
+                addToCart(
+                  window.currentProduct.title, 
+                  window.currentProduct.price, 
+                  window.currentProduct.images[0],
+                  size,
+                  color
+                );
+              }
             }
             
             window.location.href = 'cart.html';
@@ -990,12 +952,13 @@
     // Wishlist function
     window.addToWishlistProduct = function() {
       if (window.currentProduct) {
-        const added = addToWishlist(
-          window.currentProduct.id, 
-          window.currentProduct.title, 
-          window.currentProduct.price, 
-          window.currentProduct.images[0]
-        );
+        const added = (typeof addToWishlist === 'function') ? 
+          addToWishlist(
+            window.currentProduct.id, 
+            window.currentProduct.title, 
+            window.currentProduct.price, 
+            window.currentProduct.images[0]
+          ) : false;
         
         const wishlistBtn = document.getElementById('wishlist-btn');
         
@@ -1024,7 +987,7 @@
     // Load related products
     function loadRelatedProducts() {
       const relatedGrid = document.querySelector('.related-products .product-grid');
-      if (!relatedGrid || !window.currentProduct) return;
+      if (!relatedGrid) return;
 
       const relatedProducts = [
         { id: 2, title: 'Black Oversized T-Shirt', price: 699, image: 'images/product2.jpg', category: 'men' },
@@ -1067,15 +1030,6 @@
     setTimeout(checkWishlistState, 100);
   </script>
 
-
- <script src="js/auth.js"></script>
-
+  <script src="js/script.js"></script>
 </body>
-
 </html>
-
-
-
-
-
-
