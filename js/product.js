@@ -1,548 +1,502 @@
-// PRODUCT PAGE FUNCTIONALITY WITH DATABASE INTEGRATION
+// PRODUCT PAGE FUNCTIONALITY - SIMPLIFIED WORKING VERSION
 
-// Import product database (make sure it's loaded before this script)
+// Check if database is loaded
 if (typeof productDatabase === 'undefined') {
-    console.error('productDatabase not found! Make sure product-database.js is loaded first.');
+    console.error('productDatabase not found! Make sure products-database.js is loaded first.');
 }
 
-// Product Page Controller
-const ProductPage = {
-    // Current product data
-    currentProduct: null,
+// Global variables for slideshow
+let currentSlide = 0;
+let slides = [];
+let thumbnails = [];
+
+// Initialize the page
+function initProductPage() {
+    console.log('🛍️ Product page initialized');
     
-    // Initialize the page
-    init: function() {
-        console.log('🛍️ Product page initialized');
-        
-        this.loadProductFromURL();
-        this.initSlideshow();
-        this.initEventListeners();
-        this.loadRelatedProducts();
-        this.checkWishlistState();
-    },
+    loadProductFromURL();
+    setupEventListeners();
+    checkWishlistState();
+}
+
+// Load product based on URL parameter
+function loadProductFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    const productId = params.get('id') || '1';
     
-    // Load product based on URL parameter
-    loadProductFromURL: function() {
-        const params = new URLSearchParams(window.location.search);
-        const productId = params.get('id') || '1';
-        
-        // Get product from database
-        this.currentProduct = productDatabase[productId];
-        
-        if (!this.currentProduct) {
-            console.warn(`Product with ID ${productId} not found, showing first product`);
-            this.currentProduct = productDatabase['1'];
-        }
-        
-        this.updateProductDisplay();
-    },
+    // Get product from database
+    const product = productDatabase[productId];
     
-    // Update all product information on the page
-    updateProductDisplay: function() {
-        if (!this.currentProduct) return;
-        
-        const product = this.currentProduct;
-        
-        // Update basic info
-        this.updateElement('#product-title', product.name);
-        this.updateElement('#product-price', `₹${product.price}`);
-        this.updateElement('#product-desc', product.description);
-        document.title = `${product.name} - MyBrand`;
-        
-        // Update stock status
-        this.updateStockStatus(product.inStock);
-        
-        // Update rating
-        this.updateRating(product.rating, product.reviewCount);
-        
-        // Update size options
-        this.updateSizeOptions(product.sizes);
-        
-        // Update color options
-        this.updateColorOptions(product.colors);
-        
-        // Update product details
-        this.updateProductDetails(product.details);
-        
-        // Update images in slideshow
-        this.updateProductImages(product.images);
-    },
+    if (!product) {
+        console.warn(`Product with ID ${productId} not found, showing first product`);
+        product = productDatabase['1'];
+    }
     
-    // Update individual element
-    updateElement: function(selector, content) {
-        const element = document.querySelector(selector);
-        if (element) element.textContent = content;
-    },
+    window.currentProduct = product;
+    updateProductDisplay(product);
+}
+
+// Update all product information on the page
+function updateProductDisplay(product) {
+    if (!product) return;
     
-    // Update stock status display
-    updateStockStatus: function(inStock) {
-        const stockStatus = document.querySelector('.stock-status');
-        if (!stockStatus) return;
-        
-        if (inStock) {
-            stockStatus.innerHTML = '<span>✓</span> In Stock';
-            stockStatus.classList.remove('out-of-stock');
-        } else {
-            stockStatus.innerHTML = '<span>✗</span> Out of Stock';
-            stockStatus.classList.add('out-of-stock');
-        }
-    },
+    // Update basic info
+    updateElement('#product-title', product.name);
+    updateElement('#product-price', `₹${product.price}`);
+    updateElement('#product-desc', product.description);
+    document.title = `${product.name} - MyBrand`;
     
-    // Update rating display
-    updateRating: function(rating, reviewCount) {
-        const ratingElem = document.querySelector('.rating-stars');
-        const ratingCountElem = document.querySelector('.rating-count');
-        
-        if (ratingElem && ratingCountElem) {
-            // Create star rating (simplified - you could make this more dynamic)
-            const stars = '★★★★★'.slice(0, Math.floor(rating)) + '☆☆☆☆☆'.slice(Math.floor(rating));
-            ratingElem.textContent = stars;
-            ratingCountElem.textContent = `(${rating} • ${reviewCount} reviews)`;
-        }
-    },
+    // Update meta description
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+        metaDesc.content = `${product.name} - ${product.description.substring(0, 150)}...`;
+    }
     
-    // Update size dropdown
-    updateSizeOptions: function(sizes) {
-        const sizeSelect = document.getElementById('size');
-        if (!sizeSelect || !sizes) return;
-        
-        sizeSelect.innerHTML = sizes.map(size => 
-            `<option value="${size}">${size}</option>`
-        ).join('');
-        
-        // Select first size by default
-        if (sizes.length > 0) {
-            sizeSelect.value = sizes[0];
-        }
-    },
+    // Update stock status
+    updateStockStatus(product.inStock);
     
-    // Update color dropdown
-    updateColorOptions: function(colors) {
-        const colorSelect = document.getElementById('color');
-        if (!colorSelect || !colors) return;
-        
-        colorSelect.innerHTML = colors.map(color => 
-            `<option value="${color}">${color.charAt(0).toUpperCase() + color.slice(1)}</option>`
-        ).join('');
-        
-        // Select first color by default
-        if (colors.length > 0) {
-            colorSelect.value = colors[0];
-        }
-    },
+    // Update rating
+    updateRating(product.rating, product.reviewCount);
     
-    // Update product details list
-    updateProductDetails: function(details) {
-        const detailsList = document.querySelector('.product-details ul');
-        if (!detailsList || !details) return;
-        
-        detailsList.innerHTML = Object.entries(details).map(([key, value]) => 
-            `<li><strong>${this.formatKey(key)}:</strong> ${value}</li>`
-        ).join('');
-    },
+    // Update size options
+    updateSizeOptions(product.sizes);
     
-    // Format object keys for display
-    formatKey: function(key) {
-        return key.split('_').map(word => 
-            word.charAt(0).toUpperCase() + word.slice(1)
-        ).join(' ');
-    },
+    // Update color options
+    updateColorOptions(product.colors);
     
-    // Update slideshow images
-    updateProductImages: function(images) {
-        console.log('Updating product images...');
-        
-        const slideshowContainer = document.querySelector('.slideshow-container');
-        const thumbnailsContainer = document.querySelector('.product-thumbnails');
-        
-        if (!slideshowContainer || !thumbnailsContainer || !images) {
-            console.error('Missing containers or images');
-            return;
-        }
-        
-        console.log('Product images:', images);
-        
-        // Clear existing
-        slideshowContainer.innerHTML = '';
-        thumbnailsContainer.innerHTML = '';
-        
-        // Create new slides
-        images.forEach((image, index) => {
-            const imgSrc = `images/${image}`;
-            
-            console.log(`Creating slide ${index}: ${imgSrc}`);
-            
-            // Create slide
-            const slide = document.createElement('div');
-            slide.className = `product-slide ${index === 0 ? 'active' : ''}`;
-            
-            const img = document.createElement('img');
-            img.src = imgSrc;
-            img.alt = `${this.currentProduct.name} - View ${index + 1}`;
-            img.loading = 'lazy';
-            img.onerror = function() {
-                console.warn(`Image failed to load: ${imgSrc}`);
-                this.style.display = 'none';
-            };
-            
-            slide.appendChild(img);
-            slideshowContainer.appendChild(slide);
-            
-            // Create thumbnail
-            const thumbnail = document.createElement('div');
-            thumbnail.className = `thumbnail ${index === 0 ? 'active' : ''}`;
-            thumbnail.setAttribute('data-slide', index);
-            
-            const thumbImg = document.createElement('img');
-            thumbImg.src = imgSrc;
-            thumbImg.alt = `Thumbnail ${index + 1}`;
-            thumbImg.onerror = function() {
-                console.warn(`Thumbnail failed to load: ${imgSrc}`);
-                this.style.display = 'none';
-            };
-            
-            thumbnail.appendChild(thumbImg);
-            thumbnailsContainer.appendChild(thumbnail);
-        });
-        
-        // Add navigation arrows if they don't exist
-        if (!document.querySelector('.slideshow-prev')) {
-            const prevBtn = document.createElement('button');
-            prevBtn.className = 'slideshow-prev';
-            prevBtn.innerHTML = '❮';
-            prevBtn.setAttribute('aria-label', 'Previous image');
-            slideshowContainer.appendChild(prevBtn);
-        }
-        
-        if (!document.querySelector('.slideshow-next')) {
-            const nextBtn = document.createElement('button');
-            nextBtn.className = 'slideshow-next';
-            nextBtn.innerHTML = '❯';
-            nextBtn.setAttribute('aria-label', 'Next image');
-            slideshowContainer.appendChild(nextBtn);
-        }
-        
-        // Wait a bit for DOM to update, then initialize slideshow
-        setTimeout(() => {
-            this.initSlideshow();
-        }, 100);
-    },
+    // Update product details
+    updateProductDetails(product.details);
     
-    // Initialize slideshow functionality
-    initSlideshow: function() {
-        console.log('Initializing slideshow...');
+    // Update images in slideshow
+    updateProductImages(product.images, product.name);
+    
+    // Load related products
+    loadRelatedProducts(product);
+}
+
+// Update individual element
+function updateElement(selector, content) {
+    const element = document.querySelector(selector);
+    if (element) element.textContent = content;
+}
+
+// Update stock status display
+function updateStockStatus(inStock) {
+    const stockStatus = document.querySelector('.stock-status');
+    if (!stockStatus) return;
+    
+    if (inStock) {
+        stockStatus.innerHTML = '<span>✓</span> In Stock';
+        stockStatus.classList.remove('out-of-stock');
+    } else {
+        stockStatus.innerHTML = '<span>✗</span> Out of Stock';
+        stockStatus.classList.add('out-of-stock');
+    }
+}
+
+// Update rating display
+function updateRating(rating, reviewCount) {
+    const ratingElem = document.querySelector('.rating-stars');
+    const ratingCountElem = document.querySelector('.rating-count');
+    
+    if (ratingElem && ratingCountElem) {
+        ratingCountElem.textContent = `(${rating} • ${reviewCount} reviews)`;
+    }
+}
+
+// Update size dropdown
+function updateSizeOptions(sizes) {
+    const sizeSelect = document.getElementById('size');
+    if (!sizeSelect || !sizes) return;
+    
+    sizeSelect.innerHTML = sizes.map(size => 
+        `<option value="${size}">${size}</option>`
+    ).join('');
+    
+    // Select first size by default
+    if (sizes.length > 0) {
+        sizeSelect.value = sizes[0];
+    }
+}
+
+// Update color dropdown
+function updateColorOptions(colors) {
+    const colorSelect = document.getElementById('color');
+    if (!colorSelect || !colors) return;
+    
+    colorSelect.innerHTML = colors.map(color => 
+        `<option value="${color}">${color.charAt(0).toUpperCase() + color.slice(1)}</option>`
+    ).join('');
+    
+    // Select first color by default
+    if (colors.length > 0) {
+        colorSelect.value = colors[0];
+    }
+}
+
+// Update product details list
+function updateProductDetails(details) {
+    const detailsList = document.querySelector('.product-details ul');
+    if (!detailsList || !details) return;
+    
+    detailsList.innerHTML = Object.entries(details).map(([key, value]) => 
+        `<li><strong>${formatKey(key)}:</strong> ${value}</li>`
+    ).join('');
+}
+
+// Format object keys for display
+function formatKey(key) {
+    return key.split('_').map(word => 
+        word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
+}
+
+// Update product images in slideshow
+function updateProductImages(imageFiles, productName) {
+    console.log('Updating product images:', imageFiles);
+    
+    const slideshowContainer = document.querySelector('.slideshow-container');
+    const thumbnailsContainer = document.querySelector('.product-thumbnails');
+    
+    if (!slideshowContainer || !thumbnailsContainer) {
+        console.error('Slideshow containers not found');
+        return;
+    }
+    
+    // Clear existing
+    slideshowContainer.innerHTML = '';
+    thumbnailsContainer.innerHTML = '';
+    
+    // Create slides and thumbnails
+    imageFiles.forEach((imageFile, index) => {
+        const imagePath = `images/${imageFile}`;
         
-        const slides = document.querySelectorAll('.product-slide');
-        const thumbnails = document.querySelectorAll('.thumbnail');
-        const nextBtn = document.querySelector('.slideshow-next');
-        const prevBtn = document.querySelector('.slideshow-prev');
+        // Create slide
+        const slide = document.createElement('div');
+        slide.className = 'product-slide';
+        if (index === 0) slide.classList.add('active');
         
-        console.log('Found slides:', slides.length);
-        console.log('Found thumbnails:', thumbnails.length);
-        
-        if (!slides.length) {
-            console.warn('No slides found for slideshow');
-            return;
-        }
-        
-        let currentSlide = 0;
-        
-        const showSlide = (n) => {
-            console.log('Showing slide:', n);
-            
-            // Hide all slides
-            slides.forEach(slide => {
-                slide.classList.remove('active');
-            });
-            
-            // Remove active class from all thumbnails
-            thumbnails.forEach(thumb => {
-                thumb.classList.remove('active');
-            });
-            
-            // Show current slide
-            if (slides[n]) {
-                slides[n].classList.add('active');
-            }
-            
-            // Highlight current thumbnail
-            if (thumbnails[n]) {
-                thumbnails[n].classList.add('active');
-            }
-            
-            currentSlide = n;
+        const img = document.createElement('img');
+        img.src = imagePath;
+        img.alt = `${productName} - View ${index + 1}`;
+        img.loading = 'lazy';
+        img.onerror = function() {
+            console.warn(`Image failed to load: ${imagePath}`);
+            this.style.display = 'none';
         };
         
-        const nextSlide = () => {
-            console.log('Next slide clicked');
-            let next = currentSlide + 1;
-            if (next >= slides.length) next = 0;
-            showSlide(next);
+        slide.appendChild(img);
+        slideshowContainer.appendChild(slide);
+        
+        // Create thumbnail
+        const thumbnail = document.createElement('div');
+        thumbnail.className = 'thumbnail';
+        if (index === 0) thumbnail.classList.add('active');
+        thumbnail.dataset.index = index;
+        
+        const thumbImg = document.createElement('img');
+        thumbImg.src = imagePath;
+        thumbImg.alt = `Thumbnail ${index + 1}`;
+        thumbImg.onerror = function() {
+            console.warn(`Thumbnail failed to load: ${imagePath}`);
+            this.style.display = 'none';
         };
         
-        const prevSlide = () => {
-            console.log('Prev slide clicked');
-            let prev = currentSlide - 1;
-            if (prev < 0) prev = slides.length - 1;
-            showSlide(prev);
-        };
-        
-        // Remove existing event listeners first by cloning
-        if (nextBtn) {
-            const newNextBtn = nextBtn.cloneNode(true);
-            nextBtn.parentNode.replaceChild(newNextBtn, nextBtn);
-        }
-        
-        if (prevBtn) {
-            const newPrevBtn = prevBtn.cloneNode(true);
-            prevBtn.parentNode.replaceChild(newPrevBtn, prevBtn);
-        }
-        
-        // Get fresh references after cloning
-        const freshNextBtn = document.querySelector('.slideshow-next');
-        const freshPrevBtn = document.querySelector('.slideshow-prev');
-        
-        // Add new event listeners
-        if (freshNextBtn) {
-            freshNextBtn.addEventListener('click', nextSlide);
-            console.log('Next button listener added');
-        }
-        
-        if (freshPrevBtn) {
-            freshPrevBtn.addEventListener('click', prevSlide);
-            console.log('Prev button listener added');
-        }
-        
-        // Thumbnail click events - remove and re-add
-        thumbnails.forEach((thumbnail, index) => {
-            const newThumb = thumbnail.cloneNode(true);
-            thumbnail.parentNode.replaceChild(newThumb, thumbnail);
-        });
-        
-        // Get fresh thumbnails references
-        const freshThumbnails = document.querySelectorAll('.thumbnail');
-        freshThumbnails.forEach((thumbnail, index) => {
-            thumbnail.addEventListener('click', () => {
-                console.log('Thumbnail clicked:', index);
-                showSlide(index);
-            });
-        });
-        
-        console.log('Thumbnail listeners added:', freshThumbnails.length);
-        
-        // Initialize first slide
-        showSlide(0);
-    },
+        thumbnail.appendChild(thumbImg);
+        thumbnailsContainer.appendChild(thumbnail);
+    });
     
-    // Initialize event listeners
-    initEventListeners: function() {
-        // Add to Cart button
-        const addToCartBtn = document.getElementById('addtocart-btn');
-        if (addToCartBtn) {
-            addToCartBtn.addEventListener('click', () => this.addToCart());
-        }
-        
-        // Buy Now button
-        const buyNowBtn = document.getElementById('buy-btn');
-        if (buyNowBtn) {
-            buyNowBtn.addEventListener('click', () => this.buyNow());
-        }
-        
-        // Wishlist button
-        const wishlistBtn = document.getElementById('wishlist-btn');
-        if (wishlistBtn) {
-            wishlistBtn.addEventListener('click', () => this.toggleWishlist());
-        }
-        
-        // Quantity input validation
-        const qtyInput = document.getElementById('qty');
-        if (qtyInput) {
-            qtyInput.addEventListener('input', (e) => {
-                let value = parseInt(e.target.value);
-                if (isNaN(value) || value < 1) e.target.value = 1;
-                if (value > 10) e.target.value = 10;
-            });
-        }
-    },
+    // Add navigation arrows
+    const prevBtn = document.createElement('button');
+    prevBtn.className = 'slideshow-prev';
+    prevBtn.innerHTML = '❮';
+    prevBtn.setAttribute('aria-label', 'Previous image');
+    slideshowContainer.appendChild(prevBtn);
     
-    // Quantity control functions
-    increaseQuantity: function() {
-        const qtyInput = document.getElementById('qty');
-        if (qtyInput) {
-            let currentQty = parseInt(qtyInput.value) || 1;
-            if (currentQty < 10) {
-                qtyInput.value = currentQty + 1;
-            }
-        }
-    },
+    const nextBtn = document.createElement('button');
+    nextBtn.className = 'slideshow-next';
+    nextBtn.innerHTML = '❯';
+    nextBtn.setAttribute('aria-label', 'Next image');
+    slideshowContainer.appendChild(nextBtn);
     
-    decreaseQuantity: function() {
-        const qtyInput = document.getElementById('qty');
-        if (qtyInput) {
-            let currentQty = parseInt(qtyInput.value) || 1;
-            if (currentQty > 1) {
-                qtyInput.value = currentQty - 1;
-            }
-        }
-    },
+    // Initialize slideshow
+    initSlideshow();
+}
+
+// Initialize slideshow functionality - SIMPLE WORKING VERSION
+function initSlideshow() {
+    console.log('Initializing slideshow...');
     
-    // Add to cart functionality
-    addToCart: function() {
-        if (!this.currentProduct) return;
-        
-        const qty = parseInt(document.getElementById('qty').value) || 1;
-        const size = document.getElementById('size').value;
-        const color = document.getElementById('color').value;
-        
-        // Call global addToCart function (from script.js)
-        if (typeof addToCart === 'function') {
-            for (let i = 0; i < qty; i++) {
-                addToCart(
-                    this.currentProduct.name,
-                    this.currentProduct.price,
-                    `images/${this.currentProduct.images[0]}`,
-                    size,
-                    color
-                );
-            }
-            
-            // Show notification
-            this.showNotification(`✅ ${qty} ${this.currentProduct.name} added to cart!`, 'success');
-        } else {
-            console.error('addToCart function not found!');
-        }
-    },
+    // Get all slides and thumbnails
+    slides = document.querySelectorAll('.product-slide');
+    thumbnails = document.querySelectorAll('.thumbnail');
     
-    // Buy now functionality
-    buyNow: function() {
-        this.addToCart();
-        window.location.href = 'cart.html';
-    },
+    console.log(`Found ${slides.length} slides and ${thumbnails.length} thumbnails`);
     
-    // Toggle wishlist
-    toggleWishlist: function() {
-        if (!this.currentProduct) return;
-        
-        const wishlistBtn = document.getElementById('wishlist-btn');
-        const wasAdded = this.addToWishlist();
-        
-        if (wasAdded) {
-            wishlistBtn.innerHTML = '<span class="wishlist-icon">❤️</span> In Wishlist';
-            wishlistBtn.style.background = '#ff6b6b';
-            wishlistBtn.style.color = 'white';
-            wishlistBtn.style.border = 'none';
-            this.showNotification(`❤️ ${this.currentProduct.name} added to wishlist!`, 'success');
-        } else {
-            wishlistBtn.innerHTML = '<span class="wishlist-icon">🤍</span> Add to Wishlist';
-            wishlistBtn.style.background = 'transparent';
-            wishlistBtn.style.color = '#111';
-            wishlistBtn.style.border = '2px solid #111';
-            this.showNotification(`💔 ${this.currentProduct.name} removed from wishlist!`, 'info');
-        }
-    },
+    if (slides.length === 0) {
+        console.warn('No slides found');
+        return;
+    }
     
-    // Add to wishlist helper
-    addToWishlist: function() {
-        if (!this.currentProduct) return false;
-        
-        if (typeof addToWishlist === 'function') {
-            return addToWishlist(
-                this.currentProduct.id,
-                this.currentProduct.name,
-                this.currentProduct.price,
-                `images/${this.currentProduct.images[0]}`
-            );
-        }
-        return false;
-    },
+    // Reset to first slide
+    currentSlide = 0;
+    updateSlideDisplay();
     
-    // Check if current product is in wishlist
-    checkWishlistState: function() {
-        const wishlistBtn = document.getElementById('wishlist-btn');
-        if (!wishlistBtn || !this.currentProduct) return;
-        
-        const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-        const isInWishlist = wishlist.some(item => item.id == this.currentProduct.id);
-        
-        if (isInWishlist) {
-            wishlistBtn.innerHTML = '<span class="wishlist-icon">❤️</span> In Wishlist';
-            wishlistBtn.style.background = '#ff6b6b';
-            wishlistBtn.style.color = 'white';
-            wishlistBtn.style.border = 'none';
-        }
-    },
+    // Setup navigation buttons
+    const nextBtn = document.querySelector('.slideshow-next');
+    const prevBtn = document.querySelector('.slideshow-prev');
     
-    // Load related products from database
-    loadRelatedProducts: function() {
-        const relatedGrid = document.querySelector('.related-products .product-grid');
-        if (!relatedGrid || !this.currentProduct) return;
-        
-        // Get products from same category (excluding current product)
-        const relatedProducts = Object.values(productDatabase)
-            .filter(product => 
-                product.id !== this.currentProduct.id && 
-                product.category === this.currentProduct.category
-            )
-            .slice(0, 4); // Limit to 4 products
-        
-        // If not enough same-category products, get random ones
-        if (relatedProducts.length < 2) {
-            const allProducts = Object.values(productDatabase)
-                .filter(product => product.id !== this.currentProduct.id);
-            relatedProducts.push(...allProducts.slice(0, 4 - relatedProducts.length));
-        }
-        
-        // Generate HTML for related products
-        relatedGrid.innerHTML = relatedProducts.map(product => `
-            <div class="product-card" data-category="${product.category}">
-                <button class="wishlist-btn" onclick="ProductPage.addToWishlistById(${product.id})" aria-label="Add to wishlist">
-                    🤍
-                </button>
-                <img src="images/${product.images[0]}" alt="${product.name}" loading="lazy">
-                <h3>${product.name}</h3>
-                <p class="price">₹${product.price}</p>
-                <button class="btn" onclick="ProductPage.addRelatedToCart(${product.id})">Add to Cart</button>
-                <a class="small-link" href="product.html?id=${product.id}">View Details</a>
-            </div>
-        `).join('');
-    },
+    if (nextBtn) {
+        // Remove old event listener and add new one
+        nextBtn.onclick = nextSlide;
+        console.log('Next button setup complete');
+    }
     
-    // Helper function for related products wishlist
-    addToWishlistById: function(productId) {
-        const product = productDatabase[productId];
-        if (product && typeof addToWishlist === 'function') {
-            addToWishlist(product.id, product.name, product.price, `images/${product.images[0]}`);
-            this.showNotification(`❤️ ${product.name} added to wishlist!`, 'success');
-        }
-    },
+    if (prevBtn) {
+        prevBtn.onclick = prevSlide;
+        console.log('Prev button setup complete');
+    }
     
-    // Helper function for adding related products to cart
-    addRelatedToCart: function(productId) {
-        const product = productDatabase[productId];
-        if (product && typeof addToCart === 'function') {
-            addToCart(product.name, product.price, `images/${product.images[0]}`);
-            this.showNotification(`✅ ${product.name} added to cart!`, 'success');
-        }
-    },
+    // Setup thumbnail click events
+    thumbnails.forEach((thumbnail, index) => {
+        thumbnail.onclick = () => goToSlide(index);
+    });
     
-    // Show notification
-    showNotification: function(message, type = 'info') {
-        // Check if global notification function exists
-        if (typeof showNotification === 'function') {
-            showNotification(message, type);
-        } else {
-            // Fallback notification
-            alert(message);
+    console.log('Slideshow initialized successfully');
+}
+
+// Show specific slide
+function goToSlide(index) {
+    console.log('Going to slide:', index);
+    if (index >= 0 && index < slides.length) {
+        currentSlide = index;
+        updateSlideDisplay();
+    }
+}
+
+// Go to next slide
+function nextSlide() {
+    console.log('Next slide clicked');
+    currentSlide = (currentSlide + 1) % slides.length;
+    updateSlideDisplay();
+}
+
+// Go to previous slide
+function prevSlide() {
+    console.log('Prev slide clicked');
+    currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+    updateSlideDisplay();
+}
+
+// Update the display to show current slide
+function updateSlideDisplay() {
+    console.log(`Updating to slide ${currentSlide + 1}/${slides.length}`);
+    
+    // Hide all slides
+    slides.forEach(slide => {
+        slide.classList.remove('active');
+        slide.style.opacity = '0';
+        slide.style.zIndex = '1';
+    });
+    
+    // Remove active class from all thumbnails
+    thumbnails.forEach(thumb => {
+        thumb.classList.remove('active');
+        thumb.style.borderColor = 'transparent';
+        thumb.style.opacity = '0.7';
+    });
+    
+    // Show current slide
+    if (slides[currentSlide]) {
+        slides[currentSlide].classList.add('active');
+        slides[currentSlide].style.opacity = '1';
+        slides[currentSlide].style.zIndex = '2';
+    }
+    
+    // Highlight current thumbnail
+    if (thumbnails[currentSlide]) {
+        thumbnails[currentSlide].classList.add('active');
+        thumbnails[currentSlide].style.borderColor = '#111';
+        thumbnails[currentSlide].style.opacity = '1';
+    }
+}
+
+// Quantity functions
+window.increaseQuantity = function() {
+    const qtyInput = document.getElementById('qty');
+    if (qtyInput) {
+        let currentQty = parseInt(qtyInput.value) || 1;
+        if (currentQty < 10) {
+            qtyInput.value = currentQty + 1;
         }
     }
 };
 
-// Make functions globally available for inline onclick handlers
-window.increaseQuantity = () => ProductPage.increaseQuantity();
-window.decreaseQuantity = () => ProductPage.decreaseQuantity();
-window.addToWishlistProduct = () => ProductPage.toggleWishlist();
+window.decreaseQuantity = function() {
+    const qtyInput = document.getElementById('qty');
+    if (qtyInput) {
+        let currentQty = parseInt(qtyInput.value) || 1;
+        if (currentQty > 1) {
+            qtyInput.value = currentQty - 1;
+        }
+    }
+};
+
+// Setup event listeners
+function setupEventListeners() {
+    // Add to Cart button
+    const addToCartBtn = document.getElementById('addtocart-btn');
+    if (addToCartBtn) {
+        addToCartBtn.addEventListener('click', addToCartFromProductPage);
+    }
+    
+    // Buy Now button
+    const buyNowBtn = document.getElementById('buy-btn');
+    if (buyNowBtn) {
+        buyNowBtn.addEventListener('click', buyNow);
+    }
+    
+    // Wishlist button
+    const wishlistBtn = document.getElementById('wishlist-btn');
+    if (wishlistBtn) {
+        wishlistBtn.addEventListener('click', toggleWishlist);
+    }
+    
+    // Quantity input validation
+    const qtyInput = document.getElementById('qty');
+    if (qtyInput) {
+        qtyInput.addEventListener('input', function(e) {
+            let value = parseInt(e.target.value);
+            if (isNaN(value) || value < 1) e.target.value = 1;
+            if (value > 10) e.target.value = 10;
+        });
+    }
+}
+
+// Add to cart from product page
+function addToCartFromProductPage() {
+    if (!window.currentProduct) {
+        alert('Product not loaded!');
+        return;
+    }
+    
+    const qty = parseInt(document.getElementById('qty').value) || 1;
+    const size = document.getElementById('size').value;
+    const color = document.getElementById('color').value;
+    
+    if (typeof addToCart === 'function') {
+        for (let i = 0; i < qty; i++) {
+            addToCart(
+                window.currentProduct.name,
+                window.currentProduct.price,
+                `images/${window.currentProduct.images[0]}`,
+                size,
+                color
+            );
+        }
+        
+        if (typeof showNotification === 'function') {
+            showNotification(`✅ ${qty} ${window.currentProduct.name} added to cart!`, 'success');
+        } else {
+            alert(`✅ ${qty} ${window.currentProduct.name} added to cart!`);
+        }
+    } else {
+        console.error('addToCart function not found!');
+        alert('Unable to add to cart. Please refresh the page.');
+    }
+}
+
+// Buy now function
+function buyNow() {
+    addToCartFromProductPage();
+    setTimeout(() => {
+        window.location.href = 'cart.html';
+    }, 500);
+}
+
+// Toggle wishlist
+function toggleWishlist() {
+    if (!window.currentProduct) return;
+    
+    const added = (typeof addToWishlist === 'function') ? 
+        addToWishlist(
+            window.currentProduct.id, 
+            window.currentProduct.name, 
+            window.currentProduct.price, 
+            `images/${window.currentProduct.images[0]}`
+        ) : false;
+    
+    const wishlistBtn = document.getElementById('wishlist-btn');
+    
+    if (added) {
+        wishlistBtn.innerHTML = '<span class="wishlist-icon">❤️</span> In Wishlist';
+        wishlistBtn.style.background = '#ff6b6b';
+        wishlistBtn.style.color = 'white';
+        wishlistBtn.style.border = 'none';
+        
+        if (typeof showNotification === 'function') {
+            showNotification(`❤️ ${window.currentProduct.name} added to wishlist!`, 'success');
+        }
+    } else {
+        wishlistBtn.innerHTML = '<span class="wishlist-icon">🤍</span> Add to Wishlist';
+        wishlistBtn.style.background = 'transparent';
+        wishlistBtn.style.color = '#111';
+        wishlistBtn.style.border = '2px solid #111';
+        
+        if (typeof showNotification === 'function') {
+            showNotification(`💔 ${window.currentProduct.name} removed from wishlist!`, 'info');
+        }
+    }
+}
+
+// Check if current product is in wishlist
+function checkWishlistState() {
+    const wishlistBtn = document.getElementById('wishlist-btn');
+    if (!wishlistBtn || !window.currentProduct) return;
+    
+    const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+    const isInWishlist = wishlist.some(item => item.id == window.currentProduct.id);
+    
+    if (isInWishlist) {
+        wishlistBtn.innerHTML = '<span class="wishlist-icon">❤️</span> In Wishlist';
+        wishlistBtn.style.background = '#ff6b6b';
+        wishlistBtn.style.color = 'white';
+        wishlistBtn.style.border = 'none';
+    }
+}
+
+// Global wishlist function for onclick handlers
+window.addToWishlistProduct = toggleWishlist;
+
+// Load related products
+function loadRelatedProducts(currentProduct) {
+    const relatedGrid = document.querySelector('.related-products .product-grid');
+    if (!relatedGrid || !currentProduct) return;
+    
+    // Get all products except current one
+    const allProducts = Object.values(productDatabase);
+    const otherProducts = allProducts.filter(p => p.id !== currentProduct.id);
+    
+    // Take up to 4 products
+    const relatedProducts = [];
+    for (let i = 0; i < Math.min(4, otherProducts.length); i++) {
+        relatedProducts.push(otherProducts[i]);
+    }
+    
+    // Generate HTML
+    relatedGrid.innerHTML = relatedProducts.map(product => `
+        <div class="product-card">
+            <button class="wishlist-btn" onclick="addToWishlist(${product.id}, '${product.name.replace(/'/g, "\\'")}', ${product.price}, 'images/${product.images[0]}')" aria-label="Add to wishlist">
+                🤍
+            </button>
+            <img src="images/${product.images[0]}" alt="${product.name}" loading="lazy">
+            <h3>${product.name}</h3>
+            <p class="price">₹${product.price}</p>
+            <button class="btn" onclick="addToCart('${product.name.replace(/'/g, "\\'")}', ${product.price}, 'images/${product.images[0]}')">Add to Cart</button>
+            <a class="small-link" href="product.html?id=${product.id}">View Details</a>
+        </div>
+    `).join('');
+}
 
 // Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    ProductPage.init();
-});
+document.addEventListener('DOMContentLoaded', initProductPage);
