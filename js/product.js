@@ -150,33 +150,142 @@ const ProductPage = {
     },
     
     // Update slideshow images
-    updateProductImages: function(images) {
-        if (!images || !images.length) return;
+   // Update product images in slideshow
+function updateProductImages(product) {
+    console.log('Updating product images for:', product.name);
+    
+    const slideshowContainer = document.querySelector('.slideshow-container');
+    const thumbnailsContainer = document.querySelector('.product-thumbnails');
+    
+    if (!slideshowContainer || !thumbnailsContainer || !product.images) {
+        console.error('Missing containers or images');
+        return;
+    }
+    
+    console.log('Product images:', product.images);
+    
+    // Clear existing
+    slideshowContainer.innerHTML = '';
+    thumbnailsContainer.innerHTML = '';
+    
+    // Create new slides
+    product.images.forEach((image, index) => {
+        // Check if image exists (fallback to first image if not)
+        const imgSrc = `images/${image}`;
         
-        const slideshowContainer = document.querySelector('.slideshow-container');
-        const thumbnailsContainer = document.querySelector('.product-thumbnails');
+        console.log(`Creating slide ${index}: ${imgSrc}`);
         
-        if (!slideshowContainer || !thumbnailsContainer) return;
+        // Create slide
+        const slide = document.createElement('div');
+        slide.className = `product-slide ${index === 0 ? 'active' : ''}`;
+        slide.style.position = 'absolute';
+        slide.style.top = '0';
+        slide.style.left = '0';
+        slide.style.width = '100%';
+        slide.style.height = '100%';
+        slide.style.opacity = index === 0 ? '1' : '0';
+        slide.style.transition = 'opacity 0.3s ease-in-out';
+        slide.style.pointerEvents = index === 0 ? 'auto' : 'none';
+        slide.style.zIndex = index === 0 ? '2' : '1';
         
-        // Clear existing content
-        slideshowContainer.innerHTML = '';
-        thumbnailsContainer.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = imgSrc;
+        img.alt = `${product.name} - View ${index + 1}`;
+        img.loading = 'lazy';
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.style.objectFit = 'cover';
+        img.style.borderRadius = '12px';
+        img.onerror = function() {
+            console.warn(`Image failed to load: ${imgSrc}`);
+            this.style.display = 'none';
+        };
         
-        // Create slides
-        images.forEach((image, index) => {
-            // Create slide
-            const slide = document.createElement('div');
-            slide.className = `product-slide ${index === 0 ? 'active' : ''}`;
-            slide.innerHTML = `<img src="images/${image}" alt="${this.currentProduct.name} - View ${index + 1}" loading="lazy" onerror="this.style.display='none'">`;
-            slideshowContainer.appendChild(slide);
-            
-            // Create thumbnail
-            const thumbnail = document.createElement('div');
-            thumbnail.className = `thumbnail ${index === 0 ? 'active' : ''}`;
-            thumbnail.setAttribute('data-slide', index);
-            thumbnail.innerHTML = `<img src="images/${image}" alt="Thumbnail ${index + 1}" loading="lazy">`;
-            thumbnailsContainer.appendChild(thumbnail);
-        });
+        slide.appendChild(img);
+        slideshowContainer.appendChild(slide);
+        
+        // Create thumbnail
+        const thumbnail = document.createElement('div');
+        thumbnail.className = `thumbnail ${index === 0 ? 'active' : ''}`;
+        thumbnail.setAttribute('data-slide', index);
+        thumbnail.style.width = '80px';
+        thumbnail.style.height = '80px';
+        thumbnail.style.borderRadius = '8px';
+        thumbnail.style.overflow = 'hidden';
+        thumbnail.style.cursor = 'pointer';
+        thumbnail.style.border = index === 0 ? '3px solid #111' : '3px solid transparent';
+        thumbnail.style.opacity = index === 0 ? '1' : '0.7';
+        thumbnail.style.transition = 'all 0.3s ease';
+        
+        const thumbImg = document.createElement('img');
+        thumbImg.src = imgSrc;
+        thumbImg.alt = `Thumbnail ${index + 1}`;
+        thumbImg.style.width = '100%';
+        thumbImg.style.height = '100%';
+        thumbImg.style.objectFit = 'cover';
+        thumbImg.onerror = function() {
+            console.warn(`Thumbnail failed to load: ${imgSrc}`);
+            this.style.display = 'none';
+        };
+        
+        thumbnail.appendChild(thumbImg);
+        thumbnailsContainer.appendChild(thumbnail);
+    });
+    
+    // Add navigation arrows if they don't exist
+    if (!document.querySelector('.slideshow-prev')) {
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'slideshow-prev';
+        prevBtn.innerHTML = '❮';
+        prevBtn.setAttribute('aria-label', 'Previous image');
+        prevBtn.style.position = 'absolute';
+        prevBtn.style.top = '50%';
+        prevBtn.style.left = '20px';
+        prevBtn.style.transform = 'translateY(-50%)';
+        prevBtn.style.background = 'rgba(255, 255, 255, 0.9)';
+        prevBtn.style.border = 'none';
+        prevBtn.style.borderRadius = '50%';
+        prevBtn.style.width = '50px';
+        prevBtn.style.height = '50px';
+        prevBtn.style.fontSize = '20px';
+        prevBtn.style.cursor = 'pointer';
+        prevBtn.style.zIndex = '10';
+        prevBtn.style.display = 'flex';
+        prevBtn.style.alignItems = 'center';
+        prevBtn.style.justifyContent = 'center';
+        
+        slideshowContainer.appendChild(prevBtn);
+    }
+    
+    if (!document.querySelector('.slideshow-next')) {
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'slideshow-next';
+        nextBtn.innerHTML = '❯';
+        nextBtn.setAttribute('aria-label', 'Next image');
+        nextBtn.style.position = 'absolute';
+        nextBtn.style.top = '50%';
+        nextBtn.style.right = '20px';
+        nextBtn.style.transform = 'translateY(-50%)';
+        nextBtn.style.background = 'rgba(255, 255, 255, 0.9)';
+        nextBtn.style.border = 'none';
+        nextBtn.style.borderRadius = '50%';
+        nextBtn.style.width = '50px';
+        nextBtn.style.height = '50px';
+        nextBtn.style.fontSize = '20px';
+        nextBtn.style.cursor = 'pointer';
+        nextBtn.style.zIndex = '10';
+        nextBtn.style.display = 'flex';
+        nextBtn.style.alignItems = 'center';
+        nextBtn.style.justifyContent = 'center';
+        
+        slideshowContainer.appendChild(nextBtn);
+    }
+    
+    // Wait a bit for DOM to update, then initialize slideshow
+    setTimeout(() => {
+        initSlideshow();
+    }, 100);
+}
         
         // Reinitialize slideshow
         this.initSlideshow();
