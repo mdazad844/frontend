@@ -786,8 +786,5 @@ img {
     }
     
     .add-to-cart-btn,
-    .wishlist-btn {
-        padding: 12px 15px !important;
-        font-size: 0.95rem !important;
-    }
+    
 }
