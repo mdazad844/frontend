@@ -9,8 +9,7 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
   
-  <!-- SIMPLIFIED HERO SLIDER STYLES - NO ARROWS, JUST DOTS -->
-   <!-- SIMPLIFIED HERO SLIDER STYLES - NO ARROWS, JUST DOTS -->
+    <!-- SIMPLIFIED HERO SLIDER STYLES - FIXED FOR FULL SCREEN -->
   <style>
     /* RESET HERO SLIDER TO AVOID CONFLICTS */
     .hero-section {
@@ -47,27 +46,27 @@
     }
     
     .hero-slides-container {
-      display: flex;
-      width: 300%;
+      position: relative;
+      width: 100%;
       height: 100%;
-      transition: transform 0.5s ease-in-out;
     }
     
     .hero-slide {
-      width: 33.3333%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
       height: 100%;
-      position: relative;
-      flex-shrink: 0;
-      /* ADD THIS: Hide all slides by default */
       opacity: 0;
-      transition: opacity 0.5s ease-in-out;
+      transition: opacity 0.8s ease-in-out;
       pointer-events: none;
     }
     
-    /* ADD THIS: Show only active slide */
+    /* Show only active slide */
     .hero-slide.active {
       opacity: 1;
       pointer-events: auto;
+      z-index: 2;
     }
     
     .hero-slide-link {
@@ -92,6 +91,7 @@
       color: white;
       text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
       max-width: 600px;
+      z-index: 3;
     }
     
     @media (max-width: 768px) {
@@ -110,12 +110,14 @@
       font-size: 3rem;
       font-weight: 700;
       margin-bottom: 15px;
+      line-height: 1.2;
     }
     
     .hero-slide-content p {
       font-size: 1.2rem;
       margin-bottom: 20px;
       opacity: 0.9;
+      line-height: 1.5;
     }
     
     @media (max-width: 768px) {
@@ -149,6 +151,9 @@
       font-weight: 600;
       text-decoration: none;
       transition: background 0.3s;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
     }
     
     .hero-slide-btn:hover {
@@ -433,10 +438,9 @@
     </div>
   </footer>
 
-  <!-- SIMPLIFIED HERO SLIDER JAVASCRIPT -->
     <!-- SIMPLIFIED HERO SLIDER JAVASCRIPT - FIXED -->
   <script>
-    // SIMPLE HERO SLIDER - USING OPACITY
+    // SIMPLE HERO SLIDER - USING OPACITY WITH ABSOLUTE POSITIONING
     document.addEventListener('DOMContentLoaded', function() {
       console.log('🚀 Initializing hero slider...');
       
@@ -456,13 +460,22 @@
       
       // Function to show a specific slide
       function showSlide(index) {
+        console.log(`Showing slide ${index + 1}/${totalSlides}`);
+        
         // Remove active class from all slides and dots
-        slides.forEach(slide => slide.classList.remove('active'));
+        slides.forEach(slide => {
+          slide.classList.remove('active');
+          slide.style.opacity = '0';
+          slide.style.zIndex = '1';
+        });
+        
         dots.forEach(dot => dot.classList.remove('active'));
         
         // Add active class to current slide and dot
         if (slides[index]) {
           slides[index].classList.add('active');
+          slides[index].style.opacity = '1';
+          slides[index].style.zIndex = '2';
         }
         
         if (dots[index]) {
@@ -470,7 +483,6 @@
         }
         
         currentIndex = index;
-        console.log(`Showing slide ${index + 1}/${totalSlides}`);
       }
       
       // Next slide function
@@ -562,15 +574,27 @@
       });
       
       console.log('✅ Hero slider initialized successfully!');
+      
+      // Debug: Log slider dimensions
+      setTimeout(() => {
+        const firstSlide = document.querySelector('.hero-slide');
+        if (firstSlide) {
+          console.log('Slide dimensions:', {
+            width: firstSlide.offsetWidth,
+            height: firstSlide.offsetHeight,
+            containerWidth: sliderWrapper ? sliderWrapper.offsetWidth : 'N/A'
+          });
+        }
+      }, 1000);
     });
   </script>
-
   <!-- SCRIPT ORDER IS CRITICAL -->
   <script src="js/mobile-menu.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/script.js"></script>
 </body>
 </html>
+
 
 
 
