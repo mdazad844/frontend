@@ -1,231 +1,143 @@
-// PRODUCT PAGE FUNCTIONALITY - SIMPLIFIED WORKING VERSION
+// PRODUCT PAGE FUNCTIONALITY - MINIMAL WORKING VERSION
+console.log('Product page script loaded');
 
 // Check if database is loaded
 if (typeof productDatabase === 'undefined') {
-    console.error('productDatabase not found! Make sure products-database.js is loaded first.');
+    console.error('Product database not found!');
 }
 
-// Global variables for slideshow
+// Global variables
 let currentSlide = 0;
 let slides = [];
 let thumbnails = [];
 
-// Initialize the page
+// Initialize everything
 function initProductPage() {
-    console.log('🛍️ Product page initialized');
+    console.log('Initializing product page...');
     
+    // Load product from URL
     loadProductFromURL();
+    
+    // Initialize the hardcoded slideshow (from HTML)
+    initHardcodedSlideshow();
+    
+    // Setup other event listeners
     setupEventListeners();
-    checkWishlistState();
 }
 
-// Load product based on URL parameter
+// Load product from URL
 function loadProductFromURL() {
     const params = new URLSearchParams(window.location.search);
     const productId = params.get('id') || '1';
     
-    // Get product from database
+    console.log('Loading product ID:', productId);
+    
+    if (!productDatabase) {
+        console.error('Database not available');
+        return;
+    }
+    
     const product = productDatabase[productId];
     
     if (!product) {
-        console.warn(`Product with ID ${productId} not found, showing first product`);
-        product = productDatabase['1'];
+        console.error(`Product ${productId} not found`);
+        return;
     }
     
+    console.log('Found product:', product.name);
+    
+    // Update product info
+    updateProductInfo(product);
+    
+    // Store globally
     window.currentProduct = product;
-    updateProductDisplay(product);
 }
 
-// Update all product information on the page
-function updateProductDisplay(product) {
-    if (!product) return;
-    
+// Update product information
+function updateProductInfo(product) {
     // Update basic info
-    updateElement('#product-title', product.name);
-    updateElement('#product-price', `₹${product.price}`);
-    updateElement('#product-desc', product.description);
+    document.getElementById('product-title').textContent = product.name;
+    document.getElementById('product-price').textContent = `₹${product.price}`;
+    document.getElementById('product-desc').textContent = product.description;
     document.title = `${product.name} - MyBrand`;
     
-    // Update meta description
-    const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) {
-        metaDesc.content = `${product.name} - ${product.description.substring(0, 150)}...`;
-    }
-    
     // Update stock status
-    updateStockStatus(product.inStock);
-    
-    // Update rating
-    updateRating(product.rating, product.reviewCount);
-    
-    // Update size options
-    updateSizeOptions(product.sizes);
-    
-    // Update color options
-    updateColorOptions(product.colors);
-    
-    // Update product details
-    updateProductDetails(product.details);
-    
-    // Update images in slideshow
-    updateProductImages(product.images, product.name);
-    
-    // Load related products
-    loadRelatedProducts(product);
-}
-
-// Update individual element
-function updateElement(selector, content) {
-    const element = document.querySelector(selector);
-    if (element) element.textContent = content;
-}
-
-// Update stock status display
-function updateStockStatus(inStock) {
     const stockStatus = document.querySelector('.stock-status');
-    if (!stockStatus) return;
-    
-    if (inStock) {
+    if (product.inStock) {
         stockStatus.innerHTML = '<span>✓</span> In Stock';
         stockStatus.classList.remove('out-of-stock');
     } else {
         stockStatus.innerHTML = '<span>✗</span> Out of Stock';
         stockStatus.classList.add('out-of-stock');
     }
-}
-
-// Update rating display
-function updateRating(rating, reviewCount) {
-    const ratingElem = document.querySelector('.rating-stars');
+    
+    // Update rating
     const ratingCountElem = document.querySelector('.rating-count');
-    
-    if (ratingElem && ratingCountElem) {
-        ratingCountElem.textContent = `(${rating} • ${reviewCount} reviews)`;
+    if (ratingCountElem) {
+        ratingCountElem.textContent = `(${product.rating} • ${product.reviewCount} reviews)`;
     }
-}
-
-// Update size dropdown
-function updateSizeOptions(sizes) {
+    
+    // Update size options
     const sizeSelect = document.getElementById('size');
-    if (!sizeSelect || !sizes) return;
-    
-    sizeSelect.innerHTML = sizes.map(size => 
-        `<option value="${size}">${size}</option>`
-    ).join('');
-    
-    // Select first size by default
-    if (sizes.length > 0) {
-        sizeSelect.value = sizes[0];
+    if (sizeSelect && product.sizes) {
+        sizeSelect.innerHTML = product.sizes.map(size => 
+            `<option value="${size}">${size}</option>`
+        ).join('');
     }
-}
-
-// Update color dropdown
-function updateColorOptions(colors) {
+    
+    // Update color options
     const colorSelect = document.getElementById('color');
-    if (!colorSelect || !colors) return;
-    
-    colorSelect.innerHTML = colors.map(color => 
-        `<option value="${color}">${color.charAt(0).toUpperCase() + color.slice(1)}</option>`
-    ).join('');
-    
-    // Select first color by default
-    if (colors.length > 0) {
-        colorSelect.value = colors[0];
+    if (colorSelect && product.colors) {
+        colorSelect.innerHTML = product.colors.map(color => 
+            `<option value="${color}">${color.charAt(0).toUpperCase() + color.slice(1)}</option>`
+        ).join('');
     }
-}
-
-// Update product details list
-function updateProductDetails(details) {
-    const detailsList = document.querySelector('.product-details ul');
-    if (!detailsList || !details) return;
     
-    detailsList.innerHTML = Object.entries(details).map(([key, value]) => 
-        `<li><strong>${formatKey(key)}:</strong> ${value}</li>`
-    ).join('');
+    // Update product details
+    const detailsList = document.querySelector('.product-details ul');
+    if (detailsList && product.details) {
+        detailsList.innerHTML = Object.entries(product.details).map(([key, value]) => 
+            `<li><strong>${formatKey(key)}:</strong> ${value}</li>`
+        ).join('');
+    }
+    
+    // Update images (but keep slideshow functionality)
+    updateProductImages(product);
 }
 
-// Format object keys for display
+// Format key for display
 function formatKey(key) {
     return key.split('_').map(word => 
         word.charAt(0).toUpperCase() + word.slice(1)
     ).join(' ');
 }
 
-// Update product images in slideshow
-function updateProductImages(imageFiles, productName) {
-    console.log('Updating product images:', imageFiles);
+// Update product images (only update src, not structure)
+function updateProductImages(product) {
+    console.log('Updating images for:', product.name);
     
-    const slideshowContainer = document.querySelector('.slideshow-container');
-    const thumbnailsContainer = document.querySelector('.product-thumbnails');
+    // Get existing slides
+    const slideImages = document.querySelectorAll('.product-slide img');
+    const thumbnailImages = document.querySelectorAll('.thumbnail img');
     
-    if (!slideshowContainer || !thumbnailsContainer) {
-        console.error('Slideshow containers not found');
-        return;
+    // Update main slides
+    if (product.images && product.images.length > 0) {
+        product.images.forEach((image, index) => {
+            if (slideImages[index]) {
+                slideImages[index].src = `images/${image}`;
+                slideImages[index].alt = `${product.name} - View ${index + 1}`;
+            }
+            if (thumbnailImages[index]) {
+                thumbnailImages[index].src = `images/${image}`;
+                thumbnailImages[index].alt = `Thumbnail ${index + 1}`;
+            }
+        });
     }
-    
-    // Clear existing
-    slideshowContainer.innerHTML = '';
-    thumbnailsContainer.innerHTML = '';
-    
-    // Create slides and thumbnails
-    imageFiles.forEach((imageFile, index) => {
-        const imagePath = `images/${imageFile}`;
-        
-        // Create slide
-        const slide = document.createElement('div');
-        slide.className = 'product-slide';
-        if (index === 0) slide.classList.add('active');
-        
-        const img = document.createElement('img');
-        img.src = imagePath;
-        img.alt = `${productName} - View ${index + 1}`;
-        img.loading = 'lazy';
-        img.onerror = function() {
-            console.warn(`Image failed to load: ${imagePath}`);
-            this.style.display = 'none';
-        };
-        
-        slide.appendChild(img);
-        slideshowContainer.appendChild(slide);
-        
-        // Create thumbnail
-        const thumbnail = document.createElement('div');
-        thumbnail.className = 'thumbnail';
-        if (index === 0) thumbnail.classList.add('active');
-        thumbnail.dataset.index = index;
-        
-        const thumbImg = document.createElement('img');
-        thumbImg.src = imagePath;
-        thumbImg.alt = `Thumbnail ${index + 1}`;
-        thumbImg.onerror = function() {
-            console.warn(`Thumbnail failed to load: ${imagePath}`);
-            this.style.display = 'none';
-        };
-        
-        thumbnail.appendChild(thumbImg);
-        thumbnailsContainer.appendChild(thumbnail);
-    });
-    
-    // Add navigation arrows
-    const prevBtn = document.createElement('button');
-    prevBtn.className = 'slideshow-prev';
-    prevBtn.innerHTML = '❮';
-    prevBtn.setAttribute('aria-label', 'Previous image');
-    slideshowContainer.appendChild(prevBtn);
-    
-    const nextBtn = document.createElement('button');
-    nextBtn.className = 'slideshow-next';
-    nextBtn.innerHTML = '❯';
-    nextBtn.setAttribute('aria-label', 'Next image');
-    slideshowContainer.appendChild(nextBtn);
-    
-    // Initialize slideshow
-    initSlideshow();
 }
 
-// Initialize slideshow functionality - SIMPLE WORKING VERSION
-function initSlideshow() {
-    console.log('Initializing slideshow...');
+// Initialize the hardcoded slideshow
+function initHardcodedSlideshow() {
+    console.log('Initializing hardcoded slideshow...');
     
     // Get all slides and thumbnails
     slides = document.querySelectorAll('.product-slide');
@@ -234,35 +146,58 @@ function initSlideshow() {
     console.log(`Found ${slides.length} slides and ${thumbnails.length} thumbnails`);
     
     if (slides.length === 0) {
-        console.warn('No slides found');
+        console.error('No slides found!');
         return;
     }
-    
-    // Reset to first slide
-    currentSlide = 0;
-    updateSlideDisplay();
     
     // Setup navigation buttons
     const nextBtn = document.querySelector('.slideshow-next');
     const prevBtn = document.querySelector('.slideshow-prev');
     
+    // Remove any existing event listeners by cloning
     if (nextBtn) {
-        // Remove old event listener and add new one
-        nextBtn.onclick = nextSlide;
-        console.log('Next button setup complete');
+        const newNextBtn = nextBtn.cloneNode(true);
+        nextBtn.parentNode.replaceChild(newNextBtn, nextBtn);
     }
     
     if (prevBtn) {
-        prevBtn.onclick = prevSlide;
-        console.log('Prev button setup complete');
+        const newPrevBtn = prevBtn.cloneNode(true);
+        prevBtn.parentNode.replaceChild(newPrevBtn, prevBtn);
+    }
+    
+    // Get fresh references
+    const freshNextBtn = document.querySelector('.slideshow-next');
+    const freshPrevBtn = document.querySelector('.slideshow-prev');
+    
+    // Add click handlers
+    if (freshNextBtn) {
+        freshNextBtn.addEventListener('click', nextSlide);
+        console.log('Next button handler added');
+    }
+    
+    if (freshPrevBtn) {
+        freshPrevBtn.addEventListener('click', prevSlide);
+        console.log('Prev button handler added');
     }
     
     // Setup thumbnail click events
     thumbnails.forEach((thumbnail, index) => {
-        thumbnail.onclick = () => goToSlide(index);
+        // Clone to remove old listeners
+        const newThumb = thumbnail.cloneNode(true);
+        thumbnail.parentNode.replaceChild(newThumb, thumbnail);
     });
     
-    console.log('Slideshow initialized successfully');
+    // Get fresh thumbnails
+    const freshThumbnails = document.querySelectorAll('.thumbnail');
+    freshThumbnails.forEach((thumbnail, index) => {
+        thumbnail.addEventListener('click', () => {
+            console.log('Thumbnail clicked:', index);
+            goToSlide(index);
+        });
+    });
+    
+    console.log('Slideshow initialized');
+    showSlide(0);
 }
 
 // Show specific slide
@@ -270,7 +205,7 @@ function goToSlide(index) {
     console.log('Going to slide:', index);
     if (index >= 0 && index < slides.length) {
         currentSlide = index;
-        updateSlideDisplay();
+        showSlide(currentSlide);
     }
 }
 
@@ -278,19 +213,19 @@ function goToSlide(index) {
 function nextSlide() {
     console.log('Next slide clicked');
     currentSlide = (currentSlide + 1) % slides.length;
-    updateSlideDisplay();
+    showSlide(currentSlide);
 }
 
 // Go to previous slide
 function prevSlide() {
-    console.log('Prev slide clicked');
+    console.log('Previous slide clicked');
     currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-    updateSlideDisplay();
+    showSlide(currentSlide);
 }
 
-// Update the display to show current slide
-function updateSlideDisplay() {
-    console.log(`Updating to slide ${currentSlide + 1}/${slides.length}`);
+// Show the current slide
+function showSlide(index) {
+    console.log(`Showing slide ${index + 1}/${slides.length}`);
     
     // Hide all slides
     slides.forEach(slide => {
@@ -299,25 +234,21 @@ function updateSlideDisplay() {
         slide.style.zIndex = '1';
     });
     
-    // Remove active class from all thumbnails
+    // Remove active from all thumbnails
     thumbnails.forEach(thumb => {
         thumb.classList.remove('active');
-        thumb.style.borderColor = 'transparent';
-        thumb.style.opacity = '0.7';
     });
     
     // Show current slide
-    if (slides[currentSlide]) {
-        slides[currentSlide].classList.add('active');
-        slides[currentSlide].style.opacity = '1';
-        slides[currentSlide].style.zIndex = '2';
+    if (slides[index]) {
+        slides[index].classList.add('active');
+        slides[index].style.opacity = '1';
+        slides[index].style.zIndex = '2';
     }
     
     // Highlight current thumbnail
-    if (thumbnails[currentSlide]) {
-        thumbnails[currentSlide].classList.add('active');
-        thumbnails[currentSlide].style.borderColor = '#111';
-        thumbnails[currentSlide].style.opacity = '1';
+    if (thumbnails[index]) {
+        thumbnails[index].classList.add('active');
     }
 }
 
@@ -361,19 +292,9 @@ function setupEventListeners() {
     if (wishlistBtn) {
         wishlistBtn.addEventListener('click', toggleWishlist);
     }
-    
-    // Quantity input validation
-    const qtyInput = document.getElementById('qty');
-    if (qtyInput) {
-        qtyInput.addEventListener('input', function(e) {
-            let value = parseInt(e.target.value);
-            if (isNaN(value) || value < 1) e.target.value = 1;
-            if (value > 10) e.target.value = 10;
-        });
-    }
 }
 
-// Add to cart from product page
+// Add to cart
 function addToCartFromProductPage() {
     if (!window.currentProduct) {
         alert('Product not loaded!');
@@ -395,18 +316,11 @@ function addToCartFromProductPage() {
             );
         }
         
-        if (typeof showNotification === 'function') {
-            showNotification(`✅ ${qty} ${window.currentProduct.name} added to cart!`, 'success');
-        } else {
-            alert(`✅ ${qty} ${window.currentProduct.name} added to cart!`);
-        }
-    } else {
-        console.error('addToCart function not found!');
-        alert('Unable to add to cart. Please refresh the page.');
+        alert(`✅ ${qty} ${window.currentProduct.name} added to cart!`);
     }
 }
 
-// Buy now function
+// Buy now
 function buyNow() {
     addToCartFromProductPage();
     setTimeout(() => {
@@ -433,70 +347,18 @@ function toggleWishlist() {
         wishlistBtn.style.background = '#ff6b6b';
         wishlistBtn.style.color = 'white';
         wishlistBtn.style.border = 'none';
-        
-        if (typeof showNotification === 'function') {
-            showNotification(`❤️ ${window.currentProduct.name} added to wishlist!`, 'success');
-        }
+        alert(`❤️ ${window.currentProduct.name} added to wishlist!`);
     } else {
         wishlistBtn.innerHTML = '<span class="wishlist-icon">🤍</span> Add to Wishlist';
         wishlistBtn.style.background = 'transparent';
         wishlistBtn.style.color = '#111';
         wishlistBtn.style.border = '2px solid #111';
-        
-        if (typeof showNotification === 'function') {
-            showNotification(`💔 ${window.currentProduct.name} removed from wishlist!`, 'info');
-        }
+        alert(`💔 ${window.currentProduct.name} removed from wishlist!`);
     }
 }
 
-// Check if current product is in wishlist
-function checkWishlistState() {
-    const wishlistBtn = document.getElementById('wishlist-btn');
-    if (!wishlistBtn || !window.currentProduct) return;
-    
-    const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-    const isInWishlist = wishlist.some(item => item.id == window.currentProduct.id);
-    
-    if (isInWishlist) {
-        wishlistBtn.innerHTML = '<span class="wishlist-icon">❤️</span> In Wishlist';
-        wishlistBtn.style.background = '#ff6b6b';
-        wishlistBtn.style.color = 'white';
-        wishlistBtn.style.border = 'none';
-    }
-}
-
-// Global wishlist function for onclick handlers
+// Global function for onclick
 window.addToWishlistProduct = toggleWishlist;
 
-// Load related products
-function loadRelatedProducts(currentProduct) {
-    const relatedGrid = document.querySelector('.related-products .product-grid');
-    if (!relatedGrid || !currentProduct) return;
-    
-    // Get all products except current one
-    const allProducts = Object.values(productDatabase);
-    const otherProducts = allProducts.filter(p => p.id !== currentProduct.id);
-    
-    // Take up to 4 products
-    const relatedProducts = [];
-    for (let i = 0; i < Math.min(4, otherProducts.length); i++) {
-        relatedProducts.push(otherProducts[i]);
-    }
-    
-    // Generate HTML
-    relatedGrid.innerHTML = relatedProducts.map(product => `
-        <div class="product-card">
-            <button class="wishlist-btn" onclick="addToWishlist(${product.id}, '${product.name.replace(/'/g, "\\'")}', ${product.price}, 'images/${product.images[0]}')" aria-label="Add to wishlist">
-                🤍
-            </button>
-            <img src="images/${product.images[0]}" alt="${product.name}" loading="lazy">
-            <h3>${product.name}</h3>
-            <p class="price">₹${product.price}</p>
-            <button class="btn" onclick="addToCart('${product.name.replace(/'/g, "\\'")}', ${product.price}, 'images/${product.images[0]}')">Add to Cart</button>
-            <a class="small-link" href="product.html?id=${product.id}">View Details</a>
-        </div>
-    `).join('');
-}
-
-// Initialize when DOM is loaded
+// Initialize on load
 document.addEventListener('DOMContentLoaded', initProductPage);
