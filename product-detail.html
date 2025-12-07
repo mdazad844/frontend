@@ -464,6 +464,241 @@
         }
 
 
+
+/* ====== OVERRIDE STYLE.CSS CONFLICTS ====== */
+/* Reset ALL gallery elements to prevent style.css interference */
+.product-gallery,
+.product-gallery * {
+    box-sizing: border-box !important;
+}
+
+/* Fix main image container */
+.main-image {
+    position: relative !important;
+    width: 100% !important;
+    height: 500px !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+    background: #f8f9fa !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* Fix main image */
+.main-image img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    border-radius: 10px !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+/* Fix navigation arrows */
+.slideshow-prev,
+.slideshow-next {
+    position: absolute !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: none !important;
+    border-radius: 50% !important;
+    width: 50px !important;
+    height: 50px !important;
+    font-size: 20px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
+    z-index: 10 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    color: #333 !important;
+    text-decoration: none !important;
+}
+
+.slideshow-prev:hover,
+.slideshow-next:hover {
+    background: white !important;
+    transform: translateY(-50%) scale(1.1) !important;
+}
+
+.slideshow-prev {
+    left: 20px !important;
+}
+
+.slideshow-next {
+    right: 20px !important;
+}
+
+/* Fix thumbnail gallery */
+.thumbnail-gallery {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 10px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+}
+
+/* Fix thumbnails */
+.thumbnail {
+    width: 100% !important;
+    height: 80px !important;
+    border-radius: 5px !important;
+    cursor: pointer !important;
+    border: 2px solid transparent !important;
+    transition: all 0.3s ease !important;
+    display: block !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: relative !important;
+    background: transparent !important;
+}
+
+.thumbnail:hover,
+.thumbnail.active {
+    border-color: #007bff !important;
+}
+
+/* Fix thumbnail images */
+.thumbnail img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    border-radius: 3px !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+}
+
+/* Fix product selection controls */
+#productDetailColorOptionsOnly,
+#productDetailSizeOptionsOnly,
+#productDetailQuantityControls {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+/* Fix color circles */
+.product-detail-color-circle {
+    width: 45px !important;
+    height: 45px !important;
+    border-radius: 50% !important;
+    cursor: pointer !important;
+    border: 3px solid #ddd !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+    display: block !important;
+    flex-shrink: 0 !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Fix size boxes */
+.product-detail-size-box {
+    padding: 12px 8px !important;
+    border: 2px solid #ddd !important;
+    border-radius: 6px !important;
+    text-align: center !important;
+    cursor: pointer !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+    background: white !important;
+    color: #333 !important;
+    font-size: 14px !important;
+    min-width: 50px !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+}
+
+/* Fix quantity controls */
+.product-detail-quantity-btn {
+    width: 40px !important;
+    height: 40px !important;
+    border: 2px solid #ddd !important;
+    background: white !important;
+    border-radius: 6px !important;
+    font-size: 1.2rem !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-weight: bold !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.product-detail-quantity-input {
+    width: 80px !important;
+    height: 40px !important;
+    border: 2px solid #ddd !important;
+    border-radius: 6px !important;
+    text-align: center !important;
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    background: #f8f9fa !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Reset all button styles in product detail */
+.product-detail .btn,
+.product-detail .add-to-cart-btn,
+.product-detail .wishlist-btn {
+    all: unset;
+    cursor: pointer;
+    padding: 15px 30px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.product-detail .add-to-cart-btn {
+    background: #007bff;
+    color: white;
+}
+
+.product-detail .add-to-cart-btn:hover {
+    background: #0056b3;
+}
+
+.product-detail .wishlist-btn {
+    background: white;
+    color: #333;
+    border: 2px solid #ddd;
+}
+
+.product-detail .wishlist-btn:hover {
+    border-color: #007bff;
+    color: #007bff;
+}
+
+
+		
+
 /* ====== ADD THESE RESPONSIVE STYLES ====== */
 
 /* Tablet Devices (768px - 1024px) */
@@ -1710,5 +1945,6 @@
 	
 </body>
 </html>
+
 
 
