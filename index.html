@@ -159,51 +159,61 @@
       background: #333;
     }
     
-    /* SIMPLE DOTS NAVIGATION - SAME SIZE ON ALL DEVICES */
+    /* SIMPLE DOTS NAVIGATION - FIXED VISIBILITY */
     .hero-dots-container {
       position: absolute;
       bottom: 30px;
       left: 0;
       right: 0;
-      z-index: 10;
-      display: flex;
+      z-index: 100; /* HIGHER z-index to ensure visibility */
+      display: flex !important; /* Force display */
       justify-content: center;
       align-items: center;
       width: 100%;
+      height: auto;
+      pointer-events: none; /* Allow clicks through container */
     }
     
     .hero-dots {
-      display: flex;
+      display: flex !important; /* Force display */
       gap: 12px;
+      pointer-events: auto; /* Enable clicks on dots */
+      background: rgba(0, 0, 0, 0.3); /* Make dots more visible */
+      padding: 8px 12px;
+      border-radius: 20px;
+      backdrop-filter: blur(2px);
     }
     
-    /* SAME DOT SIZE ON ALL DEVICES */
+    /* SAME DOT SIZE ON ALL DEVICES - WITH VISIBILITY FIX */
     .hero-dot {
-      width: 10px; /* Same size on all devices */
-      height: 10px; /* Same size on all devices */
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.5);
-      cursor: pointer;
-      transition: all 0.3s;
-      border: none;
-      padding: 0;
+      width: 10px !important; /* Force size with !important */
+      height: 10px !important; /* Force size with !important */
+      border-radius: 50% !important;
+      background: rgba(255, 255, 255, 0.5) !important;
+      cursor: pointer !important;
+      transition: all 0.3s !important;
+      border: none !important;
+      padding: 0 !important;
+      display: block !important; /* Ensure dots are visible */
+      opacity: 1 !important; /* Ensure full opacity */
+      visibility: visible !important; /* Ensure visibility */
     }
     
     .hero-dot.active {
-      background: white;
-      transform: scale(1.2);
+      background: white !important;
+      transform: scale(1.2) !important;
     }
     
-    /* Adjust only position for mobile, NOT size */
+    /* Adjust only position for mobile */
     @media (max-width: 768px) {
       .hero-dots-container {
-        bottom: 20px; /* Only position changes, not size */
+        bottom: 20px !important;
       }
     }
     
     @media (max-width: 480px) {
       .hero-dots-container {
-        bottom: 15px; /* Only position changes, not size */
+        bottom: 15px !important;
       }
     }
     
@@ -595,6 +605,7 @@
   <script src="js/script.js"></script>
 </body>
 </html>
+
 
 
 
