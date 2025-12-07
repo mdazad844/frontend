@@ -721,7 +721,7 @@
     </div>
   </footer>
 
-  <script>
+    <script>
     // Enhanced Product Page Functionality
     document.addEventListener('DOMContentLoaded', function() {
       console.log('Product page initialized');
@@ -739,7 +739,7 @@
       loadRelatedProducts();
     });
 
-    // Slideshow functionality - FIXED VERSION
+    // Slideshow functionality - SIMPLIFIED VERSION
     function initSlideshow() {
       const slides = document.querySelectorAll('.product-slide');
       const indicators = document.querySelectorAll('.indicator');
@@ -756,7 +756,7 @@
           slide.classList.remove('active');
         });
         
-        // Update indicators
+        // Update indicators (visual only, not clickable)
         indicators.forEach(indicator => indicator.classList.remove('active'));
         thumbnails.forEach(thumbnail => thumbnail.classList.remove('active'));
         
@@ -786,28 +786,13 @@
         showSlide(prev);
       }
 
-      function goToSlide(n) {
-        if (n >= 0 && n < totalSlides) {
-          showSlide(n);
-        }
-      }
-
-      // Event listeners
+      // Event listeners for arrows only
       if (nextBtn) nextBtn.addEventListener('click', nextSlide);
       if (prevBtn) prevBtn.addEventListener('click', prevSlide);
 
-      indicators.forEach((indicator, index) => {
-        indicator.addEventListener('click', () => goToSlide(index));
-      });
-
+      // Thumbnail click functionality
       thumbnails.forEach((thumbnail, index) => {
-        thumbnail.addEventListener('click', () => goToSlide(index));
-      });
-
-      // Keyboard navigation
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowLeft') prevSlide();
-        if (e.key === 'ArrowRight') nextSlide();
+        thumbnail.addEventListener('click', () => showSlide(index));
       });
 
       // Initialize first slide
@@ -1033,5 +1018,6 @@
  
 </body>
 </html>
+
 
 
