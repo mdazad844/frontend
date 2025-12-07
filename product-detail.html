@@ -613,23 +613,23 @@
     </div>
 
 <script>
-    // COMPLETE PRODUCT DATABASE (keep your existing database)
+    // COMPLETE PRODUCT DATABASE - SIMPLIFIED FOR TESTING
     const productDatabase = {
         "1001": {
             id: 1001,
             name: "Premium Cotton T-Shirt",
             basePrice: 199,
-            description: "100% premium cotton t-shirt, pre-shrunk for perfect fit. Comfortable, breathable, and perfect for everyday wear.",
+            description: "100% premium cotton t-shirt, pre-shrunk for perfect fit.",
             colors: [
                 {
                     name: "white",
                     displayName: "White",
                     code: "#ffffff",
                     images: [
-                        "images/tshirt-white-1.jpg",
-                        "images/tshirt-white-2.jpg",
-                        "images/tshirt-white-3.jpg",
-                        "images/tshirt-white-4.jpg"
+                        "https://via.placeholder.com/500x500/ffffff/000000?text=White+T-Shirt+1",
+                        "https://via.placeholder.com/500x500/ffffff/000000?text=White+T-Shirt+2",
+                        "https://via.placeholder.com/500x500/ffffff/000000?text=White+T-Shirt+3",
+                        "https://via.placeholder.com/500x500/ffffff/000000?text=White+T-Shirt+4"
                     ]
                 },
                 {
@@ -637,131 +637,10 @@
                     displayName: "Black",
                     code: "#000000",
                     images: [
-                        "images/tshirt-black-1.jpg",
-                        "images/tshirt-black-2.jpg",
-                        "images/tshirt-black-3.jpg",
-                        "images/tshirt-black-4.jpg"
-                    ]
-                },
-                {
-                    name: "blue",
-                    displayName: "Blue",
-                    code: "#151B54",
-                    images: [
-                        "images/tshirt-blue-1.jpg",
-                        "images/tshirt-blue-2.jpg",
-                        "images/tshirt-blue-3.jpg",
-                        "images/tshirt-blue-4.jpg"
-                    ]
-                },
-                {
-                    name: "red",
-                    displayName: "Red",
-                    code: "#dc3545",
-                    images: [
-                        "images/tshirt-red-1.jpg",
-                        "images/tshirt-red-2.jpg",
-                        "images/tshirt-red-3.jpg",
-                        "images/tshirt-red-4.jpg"
-                    ]
-                },
-                {
-                    name: "green",
-                    displayName: "Green",
-                    code: "#28a745",
-                    images: [
-                        "images/tshirt-green-1.jpg",
-                        "images/tshirt-green-2.jpg",
-                        "images/tshirt-green-3.jpg",
-                        "images/tshirt-green-4.jpg"
-                    ]
-                },
-                {
-                    name: "orange",
-                    displayName: "Orange",
-                    code: "#FFA500",
-                    images: [
-                        "images/tshirt-orange-1.jpg",
-                        "images/tshirt-orange-2.jpg",
-                        "images/tshirt-orange-3.jpg",
-                        "images/tshirt-orange-4.jpg"
-                    ]
-                },
-                {
-                    name: "sky blue",
-                    displayName: "Sky Blue",
-                    code: "#82CAFF",
-                    images: [
-                        "images/tshirt-skyblue-1.jpg",
-                        "images/tshirt-skyblue-2.jpg",
-                        "images/tshirt-skyblue-3.jpg",
-                        "images/tshirt-skyblue-4.jpg"
-                    ]
-                },
-                {
-                    name: "mustard yellow",
-                    displayName: "Mustard Yellow",
-                    code: "#FFDB58",
-                    images: [
-                        "images/tshirt-mustardyellow-1.jpg",
-                        "images/tshirt-mustardyellow-2.jpg",
-                        "images/tshirt-mustardyellow-3.jpg",
-                        "images/tshirt-mustardyellow-4.jpg"
-                    ]
-                },
-                {
-                    name: "lavender",
-                    displayName: "Lavender",
-                    code: "#BC8BC2",
-                    images: [
-                        "images/tshirt-lavender-1.jpg",
-                        "images/tshirt-lavender-2.jpg",
-                        "images/tshirt-lavender-3.jpg",
-                        "images/tshirt-lavender-4.jpg"
-                    ]
-                },
-                {
-                    name: "royal blue",
-                    displayName: "Royal Blue",
-                    code: "#305CDE",
-                    images: [
-                        "images/tshirt-royalblue-1.jpg",
-                        "images/tshirt-royalblue-2.jpg",
-                        "images/tshirt-royalblue-3.jpg",
-                        "images/tshirt-royalblue-4.jpg"
-                    ]
-                },
-                {
-                    name: "beige",
-                    displayName: "Beige",
-                    code: "#D9BB9B",
-                    images: [
-                        "images/tshirt-beige-1.jpg",
-                        "images/tshirt-beige-2.jpg",
-                        "images/tshirt-beige-3.jpg",
-                        "images/tshirt-beige-4.jpg"
-                    ]
-                },
-                {
-                    name: "marron",
-                    displayName: "Marron",
-                    code: "#800000",
-                    images: [
-                        "images/tshirt-marron-1.jpg",
-                        "images/tshirt-marron-2.jpg",
-                        "images/tshirt-marron-3.jpg",
-                        "images/tshirt-marron-4.jpg"
-                    ]
-                },
-                {
-                    name: "gray",
-                    displayName: "Gray",
-                    code: "#6c757d",
-                    images: [
-                        "images/tshirt-gray-1.jpg",
-                        "images/tshirt-gray-2.jpg",
-                        "images/tshirt-gray-3.jpg",
-                        "images/tshirt-gray-4.jpg"
+                        "https://via.placeholder.com/500x500/000000/ffffff?text=Black+T-Shirt+1",
+                        "https://via.placeholder.com/500x500/000000/ffffff?text=Black+T-Shirt+2",
+                        "https://via.placeholder.com/500x500/000000/ffffff?text=Black+T-Shirt+3",
+                        "https://via.placeholder.com/500x500/000000/ffffff?text=Black+T-Shirt+4"
                     ]
                 }
             ],
@@ -786,8 +665,7 @@
                 care: "Machine washable",
                 neck: "Ribbed collar"
             }
-        },
-        // ... keep your other products (1002, 1003, 1004) as they are ...
+        }
     };
 
     // Global variables
@@ -800,24 +678,25 @@
     // Get product ID from URL
     function getProductIdFromURL() {
         const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get('id');
+        const productId = urlParams.get('id');
+        console.log('Product ID from URL:', productId);
+        return productId || "1001"; // Default to product 1001 if no ID
     }
 
     // Initialize the page
     function initializePage() {
         const productId = getProductIdFromURL();
-        
-        if (!productId) {
-            showError("No product selected");
-            return;
-        }
+        console.log('Initializing product:', productId);
         
         currentProduct = productDatabase[productId];
         
         if (!currentProduct) {
+            console.error('Product not found:', productId);
             showError(`Product ${productId} not found`);
             return;
         }
+        
+        console.log('Product loaded:', currentProduct.name);
         
         // Set defaults
         selectedColor = currentProduct.colors[0]?.name || '';
@@ -883,12 +762,7 @@
                 <strong>Weight:</strong> ${specs.weight || 'N/A'}<br>
                 <strong>Fit:</strong> ${specs.fit || 'N/A'}<br>
                 <strong>Care:</strong> ${specs.care || 'N/A'}<br>
-                ${specs.neck ? `<strong>Neck:</strong> ${specs.neck}<br>` : ''}
-                ${specs.collar ? `<strong>Collar:</strong> ${specs.collar}<br>` : ''}
-                ${specs.placket ? `<strong>Placket:</strong> ${specs.placket}<br>` : ''}
-                ${specs.technology ? `<strong>Technology:</strong> ${specs.technology}<br>` : ''}
-                ${specs.stretch ? `<strong>Stretch:</strong> ${specs.stretch}<br>` : ''}
-                ${specs.certification ? `<strong>Certification:</strong> ${specs.certification}` : ''}</p>
+                ${specs.neck ? `<strong>Neck:</strong> ${specs.neck}<br>` : ''}</p>
             `;
         }
     }
@@ -897,6 +771,8 @@
     function generateColorOptions() {
         const colorContainer = document.getElementById('productDetailColorOptionsOnly');
         if (!colorContainer || !currentProduct) return;
+        
+        console.log('Generating color options for product:', currentProduct.name);
         
         colorContainer.innerHTML = currentProduct.colors
             .map(color => `
@@ -912,8 +788,9 @@
 
     // Select color
     function selectColor(colorName) {
+        console.log('Color selected:', colorName);
         selectedColor = colorName;
-        currentImageIndex = 0; // Reset image index when color changes
+        currentImageIndex = 0;
         
         // Update UI
         document.querySelectorAll('.product-detail-color-circle').forEach(circle => {
@@ -950,9 +827,9 @@
 
     // Select size
     function selectSize(size) {
+        console.log('Size selected:', size);
         selectedSize = size;
         
-        // Update UI
         document.querySelectorAll('.product-detail-size-box').forEach(box => {
             box.classList.remove('active-size');
             if (box.getAttribute('data-size') === size) {
@@ -963,81 +840,132 @@
 
     // Update images based on selected color
     function updateImages() {
-        if (!currentProduct) return;
+        if (!currentProduct) {
+            console.error('No current product');
+            return;
+        }
         
         const currentColor = currentProduct.colors.find(color => color.name === selectedColor);
+        if (!currentColor) {
+            console.error('No color found:', selectedColor);
+            return;
+        }
+        
+        console.log('Updating images for color:', currentColor.name);
+        
         const mainImage = document.getElementById('currentImage');
         const thumbnailGallery = document.getElementById('thumbnailGallery');
 
-        if (!mainImage || !thumbnailGallery) return;
+        if (!mainImage || !thumbnailGallery) {
+            console.error('Image elements not found');
+            return;
+        }
 
         // Update main image
-        if (currentColor && currentColor.images.length > 0) {
+        if (currentColor.images.length > 0) {
             mainImage.src = currentColor.images[currentImageIndex];
             mainImage.alt = `${currentProduct.name} - ${currentColor.displayName}`;
+            console.log('Main image updated to:', mainImage.src);
         }
 
         // Generate thumbnails
-        thumbnailGallery.innerHTML = currentColor?.images
+        thumbnailGallery.innerHTML = currentColor.images
             .map((image, index) => `
                 <div class="thumbnail ${index === currentImageIndex ? 'active' : ''}" 
-                     onclick="changeMainImage('${image}', this)">
+                     onclick="changeMainImage(${index})">
                     <img src="${image}" alt="${currentProduct.name} view ${index + 1}" 
                          onerror="this.src='images/placeholder.png'">
                 </div>
             `)
-            .join('') || '';
+            .join('');
+            
+        console.log('Generated', currentColor.images.length, 'thumbnails');
     }
 
     // Change main image
-    function changeMainImage(imageSrc, clickedThumbnail) {
-        const mainImage = document.getElementById('currentImage');
-        const thumbnails = document.querySelectorAll('.thumbnail');
-
-        if (!mainImage) return;
-
-        mainImage.src = imageSrc;
+    function changeMainImage(index) {
+        console.log('Changing to image index:', index);
         
-        // Update current index
+        if (!currentProduct) {
+            console.error('No current product');
+            return;
+        }
+        
         const currentColor = currentProduct.colors.find(color => color.name === selectedColor);
-        if (currentColor) {
-            currentImageIndex = currentColor.images.indexOf(imageSrc);
-            if (currentImageIndex < 0) currentImageIndex = 0;
+        if (!currentColor || !currentColor.images[index]) {
+            console.error('Image not found at index:', index);
+            return;
         }
         
-        thumbnails.forEach(thumb => thumb.classList.remove('active'));
-        if (clickedThumbnail) {
-            clickedThumbnail.classList.add('active');
+        const mainImage = document.getElementById('currentImage');
+        if (!mainImage) {
+            console.error('Main image element not found');
+            return;
         }
+        
+        // Update main image
+        mainImage.src = currentColor.images[index];
+        currentImageIndex = index;
+        
+        // Update active thumbnail
+        document.querySelectorAll('.thumbnail').forEach((thumb, i) => {
+            if (i === index) {
+                thumb.classList.add('active');
+            } else {
+                thumb.classList.remove('active');
+            }
+        });
+        
+        console.log('Image changed to index:', index);
     }
 
     // Navigation arrow functions
     function prevImage() {
-        const currentColor = currentProduct.colors.find(color => color.name === selectedColor);
-        if (!currentColor || !currentColor.images.length) return;
+        console.log('Previous image clicked');
         
-        currentImageIndex--;
-        if (currentImageIndex < 0) {
-            currentImageIndex = currentColor.images.length - 1;
+        if (!currentProduct) {
+            console.error('No current product');
+            return;
         }
         
-        const imageSrc = currentColor.images[currentImageIndex];
-        const thumbnail = document.querySelectorAll('.thumbnail')[currentImageIndex];
-        changeMainImage(imageSrc, thumbnail);
+        const currentColor = currentProduct.colors.find(color => color.name === selectedColor);
+        if (!currentColor || !currentColor.images.length) {
+            console.error('No images available');
+            return;
+        }
+        
+        // Calculate new index
+        let newIndex = currentImageIndex - 1;
+        if (newIndex < 0) {
+            newIndex = currentColor.images.length - 1;
+        }
+        
+        console.log('Moving from index', currentImageIndex, 'to', newIndex);
+        changeMainImage(newIndex);
     }
 
     function nextImage() {
-        const currentColor = currentProduct.colors.find(color => color.name === selectedColor);
-        if (!currentColor || !currentColor.images.length) return;
+        console.log('Next image clicked');
         
-        currentImageIndex++;
-        if (currentImageIndex >= currentColor.images.length) {
-            currentImageIndex = 0;
+        if (!currentProduct) {
+            console.error('No current product');
+            return;
         }
         
-        const imageSrc = currentColor.images[currentImageIndex];
-        const thumbnail = document.querySelectorAll('.thumbnail')[currentImageIndex];
-        changeMainImage(imageSrc, thumbnail);
+        const currentColor = currentProduct.colors.find(color => color.name === selectedColor);
+        if (!currentColor || !currentColor.images.length) {
+            console.error('No images available');
+            return;
+        }
+        
+        // Calculate new index
+        let newIndex = currentImageIndex + 1;
+        if (newIndex >= currentColor.images.length) {
+            newIndex = 0;
+        }
+        
+        console.log('Moving from index', currentImageIndex, 'to', newIndex);
+        changeMainImage(newIndex);
     }
 
     // Update quantity
@@ -1084,13 +1012,13 @@
     function addToCartWithDetails() {
         try {
             if (!currentProduct) {
-                showNotification('Product not loaded', 'error');
+                alert('Product not loaded');
                 return;
             }
             
             const quantityInput = document.getElementById('quantity');
             if (!quantityInput) {
-                showNotification('Quantity input not found', 'error');
+                alert('Quantity input not found');
                 return;
             }
             
@@ -1105,13 +1033,7 @@
             // Get product image
             const productImage = currentColor?.images[0] || 'images/placeholder.png';
             
-            console.log('Adding to cart:', {
-                name: productName,
-                unitPrice: unitPrice,
-                quantity: selectedQuantity,
-                size: selectedSize,
-                color: colorName
-            });
+            console.log('Adding to cart:', productName);
             
             // Get current cart
             let cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -1164,70 +1086,17 @@
             }
             
             // Show notification
-            showNotification(`✅ ${selectedQuantity} x "${currentProduct.name}" added to cart!`, 'success');
-            
-            // Animate cart icon
-            if (typeof window.animateCartIcon === 'function') {
-                window.animateCartIcon();
-            }
+            alert(`✅ ${selectedQuantity} x "${currentProduct.name}" added to cart!`);
             
         } catch (error) {
             console.error('Error adding to cart:', error);
-            showNotification('Error adding product to cart', 'error');
+            alert('Error adding product to cart');
         }
     }
 
     // Add to wishlist
     function addToWishlist() {
-        if (!currentProduct) {
-            showNotification('Product not loaded', 'error');
-            return;
-        }
-        
-        const unitPrice = getUnitPrice();
-        const currentColor = currentProduct.colors.find(color => color.name === selectedColor);
-        const colorName = currentColor?.displayName || selectedColor;
-        const productName = `${currentProduct.name} (${colorName}, ${selectedSize})`;
-        const productImage = currentColor?.images[0] || 'images/placeholder.png';
-        
-        if (typeof window.addToWishlist === 'function') {
-            window.addToWishlist(currentProduct.id, productName, unitPrice, productImage);
-        } else {
-            // Fallback
-            addToWishlistFallback(currentProduct.id, productName, unitPrice, productImage);
-        }
-    }
-
-    // Fallback wishlist
-    function addToWishlistFallback(productId, productName, productPrice, productImage) {
-        try {
-            let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-            
-            const existingItem = wishlist.find(item => item.id === productId);
-            
-            if (!existingItem) {
-                wishlist.push({
-                    id: productId,
-                    name: productName,
-                    price: productPrice,
-                    image: productImage,
-                    addedAt: new Date().toISOString()
-                });
-                localStorage.setItem('wishlist', JSON.stringify(wishlist));
-                
-                // Update wishlist count
-                if (typeof window.updateWishlistCount === 'function') {
-                    window.updateWishlistCount();
-                }
-                
-                showNotification(`❤️ "${productName}" added to wishlist!`, 'success');
-            } else {
-                showNotification(`"${productName}" is already in your wishlist!`, 'info');
-            }
-        } catch (error) {
-            console.error('Error adding to wishlist:', error);
-            showNotification('Error adding to wishlist', 'error');
-        }
+        alert('Wishlist functionality would go here');
     }
 
     // Show error
@@ -1245,51 +1114,28 @@
 
     // Switch tabs
     function switchTab(tabName) {
-        // Update active tab
         document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-        const targetTab = document.querySelector(`.tab[onclick="switchTab('${tabName}')"]`);
-        if (targetTab) {
-            targetTab.classList.add('active');
-        }
-
-        // Update active content
         document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        
+        const targetTab = document.querySelector(`.tab[onclick="switchTab('${tabName}')"]`);
         const targetContent = document.getElementById(tabName);
-        if (targetContent) {
-            targetContent.classList.add('active');
-        }
-    }
-
-    // Initialize event listeners
-    function initializeEvents() {
-        // Quantity input
-        const quantityInput = document.getElementById('quantity');
-        if (quantityInput) {
-            quantityInput.addEventListener('change', function() {
-                let value = parseInt(this.value);
-                if (isNaN(value) || value < 1) value = 1;
-                if (value > 1000) value = 1000;
-                this.value = value;
-                quantity = value;
-                updatePrice();
-            });
-            
-            quantityInput.addEventListener('input', function() {
-                let value = parseInt(this.value);
-                if (!isNaN(value) && value >= 1 && value <= 1000) {
-                    quantity = value;
-                    updatePrice();
-                }
-            });
-        }
+        
+        if (targetTab) targetTab.classList.add('active');
+        if (targetContent) targetContent.classList.add('active');
     }
 
     // Initialize when page loads
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('=== PRODUCT DETAIL PAGE INITIALIZED ===');
+        console.log('=== PRODUCT DETAIL PAGE LOADING ===');
+        
+        // Test if JavaScript is working
+        console.log('JavaScript is working!');
         
         initializePage();
-        initializeEvents();
+        
+        // Add click event listeners for testing
+        const arrows = document.querySelectorAll('.slideshow-prev, .slideshow-next');
+        console.log('Found', arrows.length, 'arrow buttons');
         
         // Update counts
         if (typeof window.updateCartCount === 'function') {
@@ -1300,12 +1146,17 @@
         }
         
         console.log('=== PRODUCT DETAIL PAGE READY ===');
+        
+        // Force initial image display
+        setTimeout(() => {
+            updateImages();
+        }, 100);
     });
 </script>
-
 <!-- Load scripts in correct order -->
 <script src="js/auth.js"></script>
 <script src="js/script.js"></script>
 	
 </body>
 </html>
+
