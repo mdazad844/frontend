@@ -282,36 +282,7 @@
       right: 20px;
     }
 
-    .slideshow-indicators {
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 10px;
-      z-index: 10;
-    }
-
-    .indicator {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.5);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      border: 2px solid transparent;
-    }
-
-    .indicator.active {
-      background: white;
-      transform: scale(1.2);
-      border-color: #111;
-    }
-
-    .indicator:hover {
-      background: white;
-      transform: scale(1.1);
-    }
+    
 
     .product-thumbnails {
       display: flex;
@@ -543,13 +514,7 @@
           <button class="slideshow-prev" aria-label="Previous image">❮</button>
           <button class="slideshow-next" aria-label="Next image">❯</button>
           
-          <!-- Slide Indicators -->
-          <div class="slideshow-indicators">
-            <span class="indicator active" data-slide="0" aria-label="Go to slide 1"></span>
-            <span class="indicator" data-slide="1" aria-label="Go to slide 2"></span>
-            <span class="indicator" data-slide="2" aria-label="Go to slide 3"></span>
-            <span class="indicator" data-slide="3" aria-label="Go to slide 4"></span>
-          </div>
+        
         </div>
 
         <!-- Thumbnail Gallery -->
@@ -1018,6 +983,7 @@
  
 </body>
 </html>
+
 
 
 
