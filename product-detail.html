@@ -1343,7 +1343,11 @@
     }
 
     // Add to wishlist
-    function addToWishlist() {
+   // ... your existing addToCartWithDetails function ...
+
+// Add to wishlist with details - NEW FUNCTION
+function addToWishlistWithDetails() {
+    try {
         if (!currentProduct) {
             showNotification('Product not loaded', 'error');
             return;
@@ -1355,45 +1359,57 @@
         const productName = `${currentProduct.name} (${colorName}, ${selectedSize})`;
         const productImage = currentColor?.images[0] || 'images/placeholder.png';
         
-        if (typeof window.addToWishlist === 'function') {
-            window.addToWishlist(currentProduct.id, productName, unitPrice, productImage);
-        } else {
-            // Fallback
-            addToWishlistFallback(currentProduct.id, productName, unitPrice, productImage);
-        }
-    }
-
-    // Fallback wishlist
-    function addToWishlistFallback(productId, productName, productPrice, productImage) {
-        try {
-            let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+        // Get current wishlist
+        let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+        
+        // Create unique identifier
+        const productIdentifier = `${currentProduct.id}-${selectedSize}-${selectedColor}`;
+        
+        // Check if item exists
+        const existingItem = wishlist.find(item => {
+            const itemIdentifier = `${item.productId || item.id}-${item.size || ''}-${item.color || ''}`;
+            return itemIdentifier === productIdentifier;
+        });
+        
+        if (!existingItem) {
+            // Add new item
+            wishlist.push({
+                id: Date.now() + Math.random(),
+                productId: currentProduct.id,
+                name: productName,
+                price: unitPrice,
+                image: productImage,
+                size: selectedSize,
+                color: colorName,
+                addedAt: new Date().toISOString()
+            });
             
-            const existingItem = wishlist.find(item => item.id === productId);
+            // Update wishlist
+            localStorage.setItem('wishlist', JSON.stringify(wishlist));
             
-            if (!existingItem) {
-                wishlist.push({
-                    id: productId,
-                    name: productName,
-                    price: productPrice,
-                    image: productImage,
-                    addedAt: new Date().toISOString()
-                });
-                localStorage.setItem('wishlist', JSON.stringify(wishlist));
-                
-                // Update wishlist count
-                if (typeof window.updateWishlistCount === 'function') {
-                    window.updateWishlistCount();
-                }
-                
-                showNotification(`❤️ "${productName}" added to wishlist!`, 'success');
-            } else {
-                showNotification(`"${productName}" is already in your wishlist!`, 'info');
+            // Trigger updates
+            if (typeof window.AppState !== 'undefined') {
+                window.AppState.loadWishlist();
             }
-        } catch (error) {
-            console.error('Error adding to wishlist:', error);
-            showNotification('Error adding to wishlist', 'error');
+            
+            if (typeof window.updateWishlistCount === 'function') {
+                window.updateWishlistCount();
+            }
+            
+            // Show notification
+            showNotification(`❤️ "${productName}" added to wishlist!`, 'success');
+            
+        } else {
+            showNotification(`"${productName}" is already in your wishlist!`, 'info');
         }
+        
+    } catch (error) {
+        console.error('Error adding to wishlist:', error);
+        showNotification('Error adding product to wishlist', 'error');
     }
+}
+
+// ... rest of your existing JavaScript ...
 
     // Show error
     function showError(message) {
@@ -1474,6 +1490,7 @@
 <script src="js/script.js"></script>
 </body>
 </html>
+
 
 
 
