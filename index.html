@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="css/responsive.css">
   
     <!-- SIMPLIFIED HERO SLIDER STYLES - FIXED FOR FULL SCREEN -->
+   <!-- SIMPLIFIED HERO SLIDER STYLES - FIXED DOTS RESPONSIVENESS -->
   <style>
     /* RESET HERO SLIDER TO AVOID CONFLICTS */
     .hero-section {
@@ -160,21 +161,28 @@
       background: #333;
     }
     
-    /* SIMPLE DOTS NAVIGATION - NO ARROWS */
-    .hero-dots {
+    /* SIMPLE DOTS NAVIGATION - PROPERLY RESPONSIVE */
+    .hero-dots-container {
       position: absolute;
-      bottom: 20px;
+      bottom: 30px;
       left: 0;
       right: 0;
+      z-index: 10;
       display: flex;
       justify-content: center;
-      gap: 10px;
-      z-index: 10;
+      align-items: center;
+      width: 100%;
+    }
+    
+    /* Desktop: Smaller dots */
+    .hero-dots {
+      display: flex;
+      gap: 12px;
     }
     
     .hero-dot {
-      width: 12px;
-      height: 12px;
+      width: 10px; /* Small on desktop */
+      height: 10px; /* Small on desktop */
       border-radius: 50%;
       background: rgba(255, 255, 255, 0.5);
       cursor: pointer;
@@ -183,20 +191,61 @@
       padding: 0;
     }
     
-    @media (max-width: 768px) {
-      .hero-dots {
-        bottom: 10px;
-      }
-      
-      .hero-dot {
-        width: 10px;
-        height: 10px;
-      }
-    }
-    
     .hero-dot.active {
       background: white;
       transform: scale(1.2);
+    }
+    
+    /* Tablet: Medium dots */
+    @media (max-width: 1024px) {
+      .hero-dots-container {
+        bottom: 25px;
+      }
+      
+      .hero-dot {
+        width: 12px;
+        height: 12px;
+      }
+    }
+    
+    /* Mobile: Larger dots for touch */
+    @media (max-width: 768px) {
+      .hero-dots-container {
+        bottom: 20px;
+      }
+      
+      .hero-dots {
+        gap: 15px;
+      }
+      
+      .hero-dot {
+        width: 14px; /* Larger on mobile for touch */
+        height: 14px; /* Larger on mobile for touch */
+      }
+      
+      .hero-dot.active {
+        transform: scale(1.3);
+      }
+    }
+    
+    /* Small mobile: Even larger dots */
+    @media (max-width: 480px) {
+      .hero-dots-container {
+        bottom: 15px;
+      }
+      
+      .hero-dots {
+        gap: 18px;
+      }
+      
+      .hero-dot {
+        width: 16px; /* Even larger for small mobile */
+        height: 16px; /* Even larger for small mobile */
+      }
+      
+      .hero-dot.active {
+        transform: scale(1.4);
+      }
     }
     
     /* OVERRIDE ANY style.css CONFLICTS */
@@ -594,6 +643,7 @@
   <script src="js/script.js"></script>
 </body>
 </html>
+
 
 
 
