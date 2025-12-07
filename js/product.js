@@ -183,53 +183,120 @@ const ProductPage = {
     },
     
     // Initialize slideshow functionality
-    initSlideshow: function() {
-        const slides = document.querySelectorAll('.product-slide');
-        const thumbnails = document.querySelectorAll('.thumbnail');
-        const nextBtn = document.querySelector('.slideshow-next');
-        const prevBtn = document.querySelector('.slideshow-prev');
+// Slideshow functionality - UPDATED VERSION
+function initSlideshow() {
+    console.log('Initializing slideshow...');
+    
+    const slides = document.querySelectorAll('.product-slide');
+    const thumbnails = document.querySelectorAll('.thumbnail');
+    const nextBtn = document.querySelector('.slideshow-next');
+    const prevBtn = document.querySelector('.slideshow-prev');
+    
+    console.log('Found slides:', slides.length);
+    console.log('Found thumbnails:', thumbnails.length);
+    
+    if (!slides.length) {
+        console.warn('No slides found for slideshow');
+        return;
+    }
+    
+    let currentSlide = 0;
+    
+    function showSlide(n) {
+        console.log('Showing slide:', n);
         
-        if (!slides.length || !thumbnails.length) return;
-        
-        let currentSlide = 0;
-        const totalSlides = slides.length;
-        
-        const showSlide = (n) => {
-            // Hide all slides
-            slides.forEach(slide => slide.classList.remove('active'));
-            thumbnails.forEach(thumb => thumb.classList.remove('active'));
-            
-            // Show current slide
-            if (slides[n]) slides[n].classList.add('active');
-            if (thumbnails[n]) thumbnails[n].classList.add('active');
-            
-            currentSlide = n;
-        };
-        
-        const nextSlide = () => {
-            let next = currentSlide + 1;
-            if (next >= totalSlides) next = 0;
-            showSlide(next);
-        };
-        
-        const prevSlide = () => {
-            let prev = currentSlide - 1;
-            if (prev < 0) prev = totalSlides - 1;
-            showSlide(prev);
-        };
-        
-        // Event listeners for navigation
-        if (nextBtn) nextBtn.onclick = nextSlide;
-        if (prevBtn) prevBtn.onclick = prevSlide;
-        
-        // Thumbnail click events
-        thumbnails.forEach((thumbnail, index) => {
-            thumbnail.onclick = () => showSlide(index);
+        // Hide all slides
+        slides.forEach(slide => {
+            slide.classList.remove('active');
+            slide.style.opacity = '0';
+            slide.style.pointerEvents = 'none';
+            slide.style.zIndex = '1';
         });
         
-        // Initialize first slide
-        showSlide(0);
-    },
+        // Remove active class from all thumbnails
+        thumbnails.forEach(thumb => {
+            thumb.classList.remove('active');
+        });
+        
+        // Show current slide
+        if (slides[n]) {
+            slides[n].classList.add('active');
+            slides[n].style.opacity = '1';
+            slides[n].style.pointerEvents = 'auto';
+            slides[n].style.zIndex = '2';
+        }
+        
+        // Highlight current thumbnail
+        if (thumbnails[n]) {
+            thumbnails[n].classList.add('active');
+        }
+        
+        currentSlide = n;
+    }
+    
+    function nextSlide() {
+        console.log('Next slide clicked');
+        let next = currentSlide + 1;
+        if (next >= slides.length) next = 0;
+        showSlide(next);
+    }
+    
+    function prevSlide() {
+        console.log('Prev slide clicked');
+        let prev = currentSlide - 1;
+        if (prev < 0) prev = slides.length - 1;
+        showSlide(prev);
+    }
+    
+    // Remove existing event listeners first
+    if (nextBtn) {
+        nextBtn.replaceWith(nextBtn.cloneNode(true));
+    }
+    if (prevBtn) {
+        prevBtn.replaceWith(prevBtn.cloneNode(true));
+    }
+    
+    // Get fresh references after cloning
+    const freshNextBtn = document.querySelector('.slideshow-next');
+    const freshPrevBtn = document.querySelector('.slideshow-prev');
+    
+    // Add new event listeners
+    if (freshNextBtn) {
+        freshNextBtn.addEventListener('click', nextSlide);
+        freshNextBtn.style.cursor = 'pointer';
+        console.log('Next button listener added');
+    }
+    
+    if (freshPrevBtn) {
+        freshPrevBtn.addEventListener('click', prevSlide);
+        freshPrevBtn.style.cursor = 'pointer';
+        console.log('Prev button listener added');
+    }
+    
+    // Thumbnail click events
+    thumbnails.forEach((thumbnail, index) => {
+        // Remove existing event listeners
+        thumbnail.replaceWith(thumbnail.cloneNode(true));
+    });
+    
+    // Get fresh thumbnails references
+    const freshThumbnails = document.querySelectorAll('.thumbnail');
+    freshThumbnails.forEach((thumbnail, index) => {
+        thumbnail.addEventListener('click', () => {
+            console.log('Thumbnail clicked:', index);
+            showSlide(index);
+        });
+        thumbnail.style.cursor = 'pointer';
+    });
+    
+    console.log('Thumbnail listeners added:', freshThumbnails.length);
+    
+    // Initialize first slide
+    showSlide(0);
+    
+    // Auto-advance slides (optional)
+    // setInterval(nextSlide, 5000);
+}
     
     // Initialize event listeners
     initEventListeners: function() {
