@@ -2,224 +2,261 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <!-- CRITICAL FIX: Use correct viewport tag -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
   <title>MyBrand - Clothing Store</title>
   
   <!-- CSS MUST BE IN THIS ORDER -->
   <link rel="stylesheet" href="css/style.css">
-  
   <link rel="stylesheet" href="css/responsive.css">
   
-  <!-- HERO SLIDER STYLES -->
+  <!-- HERO SLIDER STYLES - WITH HIGH SPECIFICITY TO OVERRIDE style.css -->
   <style>
-    /* HERO SLIDER STYLES - RESPONSIVE */
+    /* HERO SLIDER STYLES - RESPONSIVE WITH !important TO OVERRIDE CONFLICTS */
     .hero {
-      width: 100%;
-      position: relative;
-      overflow: hidden;
+      width: 100% !important;
+      position: relative !important;
+      overflow: hidden !important;
+      margin: 0 !important;
+      padding: 0 !important;
     }
     
     .hero-slider {
-      width: 100%;
-      position: relative;
+      width: 100% !important;
+      position: relative !important;
+      margin: 0 !important;
+      padding: 0 !important;
     }
     
     .slider-container {
-      position: relative;
-      width: 100%;
-      height: 70vh;
-      min-height: 500px;
-      max-height: 700px;
-      overflow: hidden;
+      position: relative !important;
+      width: 100% !important;
+      height: 70vh !important;
+      min-height: 500px !important;
+      max-height: 700px !important;
+      overflow: hidden !important;
+      margin: 0 !important;
+      padding: 0 !important;
     }
     
     @media (max-width: 768px) {
       .slider-container {
-        height: 50vh;
-        min-height: 300px;
-        max-height: 400px;
+        height: 50vh !important;
+        min-height: 300px !important;
+        max-height: 400px !important;
       }
     }
     
     @media (max-width: 480px) {
       .slider-container {
-        height: 40vh;
-        min-height: 250px;
-        max-height: 300px;
+        height: 40vh !important;
+        min-height: 250px !important;
+        max-height: 300px !important;
       }
     }
     
     .slider {
-      display: flex;
-      width: 300%; /* 3 slides = 300% */
-      height: 100%;
-      transition: transform 0.5s ease-in-out;
+      display: flex !important;
+      width: 300% !important; /* 3 slides = 300% */
+      height: 100% !important;
+      transition: transform 0.5s ease-in-out !important;
+      margin: 0 !important;
+      padding: 0 !important;
     }
     
     .slide {
-      width: 33.333%; /* Each slide takes 1/3 of the slider width */
-      height: 100%;
-      position: relative;
-      flex-shrink: 0;
+      width: 33.333% !important; /* Each slide takes 1/3 of the slider width */
+      height: 100% !important;
+      position: relative !important;
+      flex-shrink: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
     }
     
     .slide-link {
-      display: block;
-      width: 100%;
-      height: 100%;
-      text-decoration: none;
-      color: inherit;
+      display: block !important;
+      width: 100% !important;
+      height: 100% !important;
+      text-decoration: none !important;
+      color: inherit !important;
     }
     
     .slide img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      display: block !important;
     }
     
     .slide-content {
-      position: absolute;
-      bottom: 15%;
-      left: 10%;
-      right: 10%;
-      color: white;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-      max-width: 600px;
+      position: absolute !important;
+      bottom: 15% !important;
+      left: 10% !important;
+      right: 10% !important;
+      color: white !important;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5) !important;
+      max-width: 600px !important;
+      z-index: 2 !important;
     }
     
     @media (max-width: 768px) {
       .slide-content {
-        bottom: 10%;
-        left: 5%;
-        right: 5%;
-        text-align: center;
-        padding: 15px;
-        background: rgba(0,0,0,0.5);
-        border-radius: 8px;
+        bottom: 10% !important;
+        left: 5% !important;
+        right: 5% !important;
+        text-align: center !important;
+        padding: 15px !important;
+        background: rgba(0,0,0,0.5) !important;
+        border-radius: 8px !important;
       }
     }
     
     .slide-content h1 {
-      font-size: 3rem;
-      font-weight: 700;
-      margin-bottom: 15px;
+      font-size: 3rem !important;
+      font-weight: 700 !important;
+      margin-bottom: 15px !important;
+      color: white !important;
     }
     
     .slide-content p {
-      font-size: 1.2rem;
-      margin-bottom: 20px;
-      opacity: 0.9;
+      font-size: 1.2rem !important;
+      margin-bottom: 20px !important;
+      opacity: 0.9 !important;
+      color: white !important;
     }
     
     @media (max-width: 768px) {
       .slide-content h1 {
-        font-size: 1.8rem;
-        margin-bottom: 10px;
+        font-size: 1.8rem !important;
+        margin-bottom: 10px !important;
       }
       
       .slide-content p {
-        font-size: 1rem;
-        margin-bottom: 15px;
+        font-size: 1rem !important;
+        margin-bottom: 15px !important;
       }
     }
     
     @media (max-width: 480px) {
       .slide-content h1 {
-        font-size: 1.5rem;
+        font-size: 1.5rem !important;
       }
       
       .slide-content p {
-        font-size: 0.9rem;
+        font-size: 0.9rem !important;
       }
     }
     
     .slide-content .btn {
-      display: inline-block;
-      background: #111;
-      color: white;
-      padding: 12px 25px;
-      border-radius: 4px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: background 0.3s;
+      display: inline-block !important;
+      background: #111 !important;
+      color: white !important;
+      padding: 12px 25px !important;
+      border-radius: 4px !important;
+      font-weight: 600 !important;
+      text-decoration: none !important;
+      transition: background 0.3s !important;
+      border: none !important;
+      cursor: pointer !important;
     }
     
     .slide-content .btn:hover {
-      background: #333;
+      background: #333 !important;
     }
     
     .slider-nav {
-      position: absolute;
-      bottom: 30px;
-      left: 0;
-      right: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 20px;
-      z-index: 10;
+      position: absolute !important;
+      bottom: 30px !important;
+      left: 0 !important;
+      right: 0 !important;
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center !important;
+      gap: 20px !important;
+      z-index: 10 !important;
     }
     
     @media (max-width: 768px) {
       .slider-nav {
-        bottom: 15px;
-        gap: 10px;
+        bottom: 15px !important;
+        gap: 10px !important;
       }
     }
     
     .prev-btn, .next-btn {
-      background: rgba(255, 255, 255, 0.8);
-      border: none;
-      border-radius: 50%;
-      width: 45px;
-      height: 45px;
-      font-size: 18px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s;
+      background: rgba(255, 255, 255, 0.8) !important;
+      border: none !important;
+      border-radius: 50% !important;
+      width: 45px !important;
+      height: 45px !important;
+      font-size: 18px !important;
+      cursor: pointer !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      transition: all 0.3s !important;
+      color: #333 !important;
     }
     
     @media (max-width: 768px) {
       .prev-btn, .next-btn {
-        width: 35px;
-        height: 35px;
-        font-size: 14px;
+        width: 35px !important;
+        height: 35px !important;
+        font-size: 14px !important;
       }
     }
     
     .prev-btn:hover, .next-btn:hover {
-      background: white;
-      transform: scale(1.1);
+      background: white !important;
+      transform: scale(1.1) !important;
     }
     
     .dots {
-      display: flex;
-      gap: 10px;
+      display: flex !important;
+      gap: 10px !important;
     }
     
     .dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.5);
-      cursor: pointer;
-      transition: background 0.3s;
+      width: 12px !important;
+      height: 12px !important;
+      border-radius: 50% !important;
+      background: rgba(255, 255, 255, 0.5) !important;
+      cursor: pointer !important;
+      transition: background 0.3s !important;
+      border: none !important;
     }
     
     @media (max-width: 768px) {
       .dot {
-        width: 10px;
-        height: 10px;
+        width: 10px !important;
+        height: 10px !important;
       }
     }
     
     .dot.active {
-      background: white;
-      transform: scale(1.2);
+      background: white !important;
+      transform: scale(1.2) !important;
+    }
+    
+    /* RESET ANY POTENTIAL CONFLICTS FROM style.css */
+    .hero *,
+    .hero-slider *,
+    .slider-container *,
+    .slider *,
+    .slide * {
+      box-sizing: border-box !important;
+    }
+    
+    /* Ensure no padding/margin from parent elements */
+    body > .hero {
+      margin-top: 0 !important;
+    }
+    
+    /* Override any container styles from style.css */
+    .hero .container,
+    .hero-slider .container {
+      max-width: 100% !important;
+      padding: 0 !important;
+      margin: 0 !important;
     }
   </style>
 </head>
@@ -310,6 +347,7 @@
     </div>
   </section>
 
+  <!-- Rest of your HTML remains the same... -->
   <!-- CATEGORIES SECTION -->
   <section class="categories">
     <div class="container">
@@ -603,5 +641,3 @@
   <script src="js/script.js"></script>
 </body>
 </html>
-
-
