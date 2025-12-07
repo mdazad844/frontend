@@ -316,6 +316,56 @@
       object-fit: cover;
     }
 
+
+
+
+
+/* Fix thumbnail gallery */
+.thumbnail-gallery {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 10px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+}
+
+/* Fix thumbnails */
+.thumbnail {
+    width: 100% !important;
+    height: 80px !important;
+    border-radius: 5px !important;
+    cursor: pointer !important;
+    border: 2px solid transparent !important;
+    transition: all 0.3s ease !important;
+    display: block !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: relative !important;
+    background: transparent !important;
+}
+
+.thumbnail:hover,
+.thumbnail.active {
+    border-color: #007bff !important;
+}
+
+/* Fix thumbnail images */
+.thumbnail img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    border-radius: 3px !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+}
+
+
+
+    
     /* Related Products */
     .related-products {
       margin-top: 60px;
@@ -984,6 +1034,7 @@
  
 </body>
 </html>
+
 
 
 
