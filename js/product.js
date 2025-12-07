@@ -1,4 +1,3 @@
-
 // PRODUCT PAGE FUNCTIONALITY WITH DATABASE INTEGRATION
 
 // Import product database (make sure it's loaded before this script)
@@ -150,295 +149,223 @@ const ProductPage = {
     },
     
     // Update slideshow images
-   // Update product images in slideshow
-function updateProductImages(product) {
-    console.log('Updating product images for:', product.name);
-    
-    const slideshowContainer = document.querySelector('.slideshow-container');
-    const thumbnailsContainer = document.querySelector('.product-thumbnails');
-    
-    if (!slideshowContainer || !thumbnailsContainer || !product.images) {
-        console.error('Missing containers or images');
-        return;
-    }
-    
-    console.log('Product images:', product.images);
-    
-    // Clear existing
-    slideshowContainer.innerHTML = '';
-    thumbnailsContainer.innerHTML = '';
-    
-    // Create new slides
-    product.images.forEach((image, index) => {
-        // Check if image exists (fallback to first image if not)
-        const imgSrc = `images/${image}`;
+    updateProductImages: function(images) {
+        console.log('Updating product images...');
         
-        console.log(`Creating slide ${index}: ${imgSrc}`);
+        const slideshowContainer = document.querySelector('.slideshow-container');
+        const thumbnailsContainer = document.querySelector('.product-thumbnails');
         
-        // Create slide
-        const slide = document.createElement('div');
-        slide.className = `product-slide ${index === 0 ? 'active' : ''}`;
-        slide.style.position = 'absolute';
-        slide.style.top = '0';
-        slide.style.left = '0';
-        slide.style.width = '100%';
-        slide.style.height = '100%';
-        slide.style.opacity = index === 0 ? '1' : '0';
-        slide.style.transition = 'opacity 0.3s ease-in-out';
-        slide.style.pointerEvents = index === 0 ? 'auto' : 'none';
-        slide.style.zIndex = index === 0 ? '2' : '1';
+        if (!slideshowContainer || !thumbnailsContainer || !images) {
+            console.error('Missing containers or images');
+            return;
+        }
         
-        const img = document.createElement('img');
-        img.src = imgSrc;
-        img.alt = `${product.name} - View ${index + 1}`;
-        img.loading = 'lazy';
-        img.style.width = '100%';
-        img.style.height = '100%';
-        img.style.objectFit = 'cover';
-        img.style.borderRadius = '12px';
-        img.onerror = function() {
-            console.warn(`Image failed to load: ${imgSrc}`);
-            this.style.display = 'none';
-        };
+        console.log('Product images:', images);
         
-        slide.appendChild(img);
-        slideshowContainer.appendChild(slide);
+        // Clear existing
+        slideshowContainer.innerHTML = '';
+        thumbnailsContainer.innerHTML = '';
         
-        // Create thumbnail
-        const thumbnail = document.createElement('div');
-        thumbnail.className = `thumbnail ${index === 0 ? 'active' : ''}`;
-        thumbnail.setAttribute('data-slide', index);
-        thumbnail.style.width = '80px';
-        thumbnail.style.height = '80px';
-        thumbnail.style.borderRadius = '8px';
-        thumbnail.style.overflow = 'hidden';
-        thumbnail.style.cursor = 'pointer';
-        thumbnail.style.border = index === 0 ? '3px solid #111' : '3px solid transparent';
-        thumbnail.style.opacity = index === 0 ? '1' : '0.7';
-        thumbnail.style.transition = 'all 0.3s ease';
+        // Create new slides
+        images.forEach((image, index) => {
+            const imgSrc = `images/${image}`;
+            
+            console.log(`Creating slide ${index}: ${imgSrc}`);
+            
+            // Create slide
+            const slide = document.createElement('div');
+            slide.className = `product-slide ${index === 0 ? 'active' : ''}`;
+            
+            const img = document.createElement('img');
+            img.src = imgSrc;
+            img.alt = `${this.currentProduct.name} - View ${index + 1}`;
+            img.loading = 'lazy';
+            img.onerror = function() {
+                console.warn(`Image failed to load: ${imgSrc}`);
+                this.style.display = 'none';
+            };
+            
+            slide.appendChild(img);
+            slideshowContainer.appendChild(slide);
+            
+            // Create thumbnail
+            const thumbnail = document.createElement('div');
+            thumbnail.className = `thumbnail ${index === 0 ? 'active' : ''}`;
+            thumbnail.setAttribute('data-slide', index);
+            
+            const thumbImg = document.createElement('img');
+            thumbImg.src = imgSrc;
+            thumbImg.alt = `Thumbnail ${index + 1}`;
+            thumbImg.onerror = function() {
+                console.warn(`Thumbnail failed to load: ${imgSrc}`);
+                this.style.display = 'none';
+            };
+            
+            thumbnail.appendChild(thumbImg);
+            thumbnailsContainer.appendChild(thumbnail);
+        });
         
-        const thumbImg = document.createElement('img');
-        thumbImg.src = imgSrc;
-        thumbImg.alt = `Thumbnail ${index + 1}`;
-        thumbImg.style.width = '100%';
-        thumbImg.style.height = '100%';
-        thumbImg.style.objectFit = 'cover';
-        thumbImg.onerror = function() {
-            console.warn(`Thumbnail failed to load: ${imgSrc}`);
-            this.style.display = 'none';
-        };
+        // Add navigation arrows if they don't exist
+        if (!document.querySelector('.slideshow-prev')) {
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'slideshow-prev';
+            prevBtn.innerHTML = '❮';
+            prevBtn.setAttribute('aria-label', 'Previous image');
+            slideshowContainer.appendChild(prevBtn);
+        }
         
-        thumbnail.appendChild(thumbImg);
-        thumbnailsContainer.appendChild(thumbnail);
-    });
-    
-    // Add navigation arrows if they don't exist
-    if (!document.querySelector('.slideshow-prev')) {
-        const prevBtn = document.createElement('button');
-        prevBtn.className = 'slideshow-prev';
-        prevBtn.innerHTML = '❮';
-        prevBtn.setAttribute('aria-label', 'Previous image');
-        prevBtn.style.position = 'absolute';
-        prevBtn.style.top = '50%';
-        prevBtn.style.left = '20px';
-        prevBtn.style.transform = 'translateY(-50%)';
-        prevBtn.style.background = 'rgba(255, 255, 255, 0.9)';
-        prevBtn.style.border = 'none';
-        prevBtn.style.borderRadius = '50%';
-        prevBtn.style.width = '50px';
-        prevBtn.style.height = '50px';
-        prevBtn.style.fontSize = '20px';
-        prevBtn.style.cursor = 'pointer';
-        prevBtn.style.zIndex = '10';
-        prevBtn.style.display = 'flex';
-        prevBtn.style.alignItems = 'center';
-        prevBtn.style.justifyContent = 'center';
+        if (!document.querySelector('.slideshow-next')) {
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'slideshow-next';
+            nextBtn.innerHTML = '❯';
+            nextBtn.setAttribute('aria-label', 'Next image');
+            slideshowContainer.appendChild(nextBtn);
+        }
         
-        slideshowContainer.appendChild(prevBtn);
-    }
-    
-    if (!document.querySelector('.slideshow-next')) {
-        const nextBtn = document.createElement('button');
-        nextBtn.className = 'slideshow-next';
-        nextBtn.innerHTML = '❯';
-        nextBtn.setAttribute('aria-label', 'Next image');
-        nextBtn.style.position = 'absolute';
-        nextBtn.style.top = '50%';
-        nextBtn.style.right = '20px';
-        nextBtn.style.transform = 'translateY(-50%)';
-        nextBtn.style.background = 'rgba(255, 255, 255, 0.9)';
-        nextBtn.style.border = 'none';
-        nextBtn.style.borderRadius = '50%';
-        nextBtn.style.width = '50px';
-        nextBtn.style.height = '50px';
-        nextBtn.style.fontSize = '20px';
-        nextBtn.style.cursor = 'pointer';
-        nextBtn.style.zIndex = '10';
-        nextBtn.style.display = 'flex';
-        nextBtn.style.alignItems = 'center';
-        nextBtn.style.justifyContent = 'center';
-        
-        slideshowContainer.appendChild(nextBtn);
-    }
-    
-    // Wait a bit for DOM to update, then initialize slideshow
-    setTimeout(() => {
-        initSlideshow();
-    }, 100);
-}
-        
-        // Reinitialize slideshow
-        this.initSlideshow();
+        // Wait a bit for DOM to update, then initialize slideshow
+        setTimeout(() => {
+            this.initSlideshow();
+        }, 100);
     },
     
     // Initialize slideshow functionality
-// Slideshow functionality - UPDATED VERSION
-function initSlideshow() {
-    console.log('Initializing slideshow...');
-    
-    const slides = document.querySelectorAll('.product-slide');
-    const thumbnails = document.querySelectorAll('.thumbnail');
-    const nextBtn = document.querySelector('.slideshow-next');
-    const prevBtn = document.querySelector('.slideshow-prev');
-    
-    console.log('Found slides:', slides.length);
-    console.log('Found thumbnails:', thumbnails.length);
-    
-    if (!slides.length) {
-        console.warn('No slides found for slideshow');
-        return;
-    }
-    
-    let currentSlide = 0;
-    
-    function showSlide(n) {
-        console.log('Showing slide:', n);
+    initSlideshow: function() {
+        console.log('Initializing slideshow...');
         
-        // Hide all slides
-        slides.forEach(slide => {
-            slide.classList.remove('active');
-            slide.style.opacity = '0';
-            slide.style.pointerEvents = 'none';
-            slide.style.zIndex = '1';
-        });
+        const slides = document.querySelectorAll('.product-slide');
+        const thumbnails = document.querySelectorAll('.thumbnail');
+        const nextBtn = document.querySelector('.slideshow-next');
+        const prevBtn = document.querySelector('.slideshow-prev');
         
-        // Remove active class from all thumbnails
-        thumbnails.forEach(thumb => {
-            thumb.classList.remove('active');
-        });
+        console.log('Found slides:', slides.length);
+        console.log('Found thumbnails:', thumbnails.length);
         
-        // Show current slide
-        if (slides[n]) {
-            slides[n].classList.add('active');
-            slides[n].style.opacity = '1';
-            slides[n].style.pointerEvents = 'auto';
-            slides[n].style.zIndex = '2';
+        if (!slides.length) {
+            console.warn('No slides found for slideshow');
+            return;
         }
         
-        // Highlight current thumbnail
-        if (thumbnails[n]) {
-            thumbnails[n].classList.add('active');
+        let currentSlide = 0;
+        
+        const showSlide = (n) => {
+            console.log('Showing slide:', n);
+            
+            // Hide all slides
+            slides.forEach(slide => {
+                slide.classList.remove('active');
+            });
+            
+            // Remove active class from all thumbnails
+            thumbnails.forEach(thumb => {
+                thumb.classList.remove('active');
+            });
+            
+            // Show current slide
+            if (slides[n]) {
+                slides[n].classList.add('active');
+            }
+            
+            // Highlight current thumbnail
+            if (thumbnails[n]) {
+                thumbnails[n].classList.add('active');
+            }
+            
+            currentSlide = n;
+        };
+        
+        const nextSlide = () => {
+            console.log('Next slide clicked');
+            let next = currentSlide + 1;
+            if (next >= slides.length) next = 0;
+            showSlide(next);
+        };
+        
+        const prevSlide = () => {
+            console.log('Prev slide clicked');
+            let prev = currentSlide - 1;
+            if (prev < 0) prev = slides.length - 1;
+            showSlide(prev);
+        };
+        
+        // Remove existing event listeners first by cloning
+        if (nextBtn) {
+            const newNextBtn = nextBtn.cloneNode(true);
+            nextBtn.parentNode.replaceChild(newNextBtn, nextBtn);
         }
         
-        currentSlide = n;
-    }
-    
-    function nextSlide() {
-        console.log('Next slide clicked');
-        let next = currentSlide + 1;
-        if (next >= slides.length) next = 0;
-        showSlide(next);
-    }
-    
-    function prevSlide() {
-        console.log('Prev slide clicked');
-        let prev = currentSlide - 1;
-        if (prev < 0) prev = slides.length - 1;
-        showSlide(prev);
-    }
-    
-    // Remove existing event listeners first
-    if (nextBtn) {
-        nextBtn.replaceWith(nextBtn.cloneNode(true));
-    }
-    if (prevBtn) {
-        prevBtn.replaceWith(prevBtn.cloneNode(true));
-    }
-    
-    // Get fresh references after cloning
-    const freshNextBtn = document.querySelector('.slideshow-next');
-    const freshPrevBtn = document.querySelector('.slideshow-prev');
-    
-    // Add new event listeners
-    if (freshNextBtn) {
-        freshNextBtn.addEventListener('click', nextSlide);
-        freshNextBtn.style.cursor = 'pointer';
-        console.log('Next button listener added');
-    }
-    
-    if (freshPrevBtn) {
-        freshPrevBtn.addEventListener('click', prevSlide);
-        freshPrevBtn.style.cursor = 'pointer';
-        console.log('Prev button listener added');
-    }
-    
-    // Thumbnail click events
-    thumbnails.forEach((thumbnail, index) => {
-        // Remove existing event listeners
-        thumbnail.replaceWith(thumbnail.cloneNode(true));
-    });
-    
-    // Get fresh thumbnails references
-    const freshThumbnails = document.querySelectorAll('.thumbnail');
-    freshThumbnails.forEach((thumbnail, index) => {
-        thumbnail.addEventListener('click', () => {
-            console.log('Thumbnail clicked:', index);
-            showSlide(index);
+        if (prevBtn) {
+            const newPrevBtn = prevBtn.cloneNode(true);
+            prevBtn.parentNode.replaceChild(newPrevBtn, prevBtn);
+        }
+        
+        // Get fresh references after cloning
+        const freshNextBtn = document.querySelector('.slideshow-next');
+        const freshPrevBtn = document.querySelector('.slideshow-prev');
+        
+        // Add new event listeners
+        if (freshNextBtn) {
+            freshNextBtn.addEventListener('click', nextSlide);
+            console.log('Next button listener added');
+        }
+        
+        if (freshPrevBtn) {
+            freshPrevBtn.addEventListener('click', prevSlide);
+            console.log('Prev button listener added');
+        }
+        
+        // Thumbnail click events - remove and re-add
+        thumbnails.forEach((thumbnail, index) => {
+            const newThumb = thumbnail.cloneNode(true);
+            thumbnail.parentNode.replaceChild(newThumb, thumbnail);
         });
-        thumbnail.style.cursor = 'pointer';
-    });
-    
-    console.log('Thumbnail listeners added:', freshThumbnails.length);
-    
-    // Initialize first slide
-    showSlide(0);
-    
-    // Auto-advance slides (optional)
-    // setInterval(nextSlide, 5000);
-}
+        
+        // Get fresh thumbnails references
+        const freshThumbnails = document.querySelectorAll('.thumbnail');
+        freshThumbnails.forEach((thumbnail, index) => {
+            thumbnail.addEventListener('click', () => {
+                console.log('Thumbnail clicked:', index);
+                showSlide(index);
+            });
+        });
+        
+        console.log('Thumbnail listeners added:', freshThumbnails.length);
+        
+        // Initialize first slide
+        showSlide(0);
+    },
     
     // Initialize event listeners
     initEventListeners: function() {
         // Add to Cart button
         const addToCartBtn = document.getElementById('addtocart-btn');
         if (addToCartBtn) {
-            addToCartBtn.onclick = () => this.addToCart();
+            addToCartBtn.addEventListener('click', () => this.addToCart());
         }
         
         // Buy Now button
         const buyNowBtn = document.getElementById('buy-btn');
         if (buyNowBtn) {
-            buyNowBtn.onclick = () => this.buyNow();
+            buyNowBtn.addEventListener('click', () => this.buyNow());
         }
         
         // Wishlist button
         const wishlistBtn = document.getElementById('wishlist-btn');
         if (wishlistBtn) {
-            wishlistBtn.onclick = () => this.toggleWishlist();
+            wishlistBtn.addEventListener('click', () => this.toggleWishlist());
         }
         
-        // Quantity buttons
+        // Quantity input validation
         const qtyInput = document.getElementById('qty');
         if (qtyInput) {
-            qtyInput.oninput = (e) => {
+            qtyInput.addEventListener('input', (e) => {
                 let value = parseInt(e.target.value);
                 if (isNaN(value) || value < 1) e.target.value = 1;
                 if (value > 10) e.target.value = 10;
-            };
+            });
         }
     },
     
-    // Quantity control functions (keep these global for onclick handlers)
+    // Quantity control functions
     increaseQuantity: function() {
         const qtyInput = document.getElementById('qty');
         if (qtyInput) {
@@ -616,8 +543,6 @@ window.decreaseQuantity = () => ProductPage.decreaseQuantity();
 window.addToWishlistProduct = () => ProductPage.toggleWishlist();
 
 // Initialize when DOM is loaded
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => ProductPage.init());
-} else {
+document.addEventListener('DOMContentLoaded', function() {
     ProductPage.init();
-}
+});
