@@ -62,7 +62,7 @@ const productDatabase = {
             origin: 'Made in India'
         },
         sizes: ['M', 'L', 'XL', 'XXL'],
-        colors: ['white', 'blue', 'light-blue'],
+        colors: [' Navy blue'],
         category: 'men',
         rating: 4.7,
         reviewCount: 156,
