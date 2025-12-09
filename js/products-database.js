@@ -28,7 +28,7 @@ const productDatabase = {
         id: 2,
         name: 'Black Oversized T-Shirt',
         price: 239,
-        images: ['product2.jpg', 'product2-back.jpg', 'product2-detail.jpg'],
+        images: ['product2.jpg', 'product2-back.jpg', 'product2-detail.jpg', 'product2-side.jpg'],
         description: 'Trendy oversized black t-shirt with a relaxed fit. Perfect for casual outings.',
         details: {
             material: '100% Cotton, Biowash',
@@ -50,7 +50,7 @@ const productDatabase = {
         id: 3,
         name: 'Premium Navy Polo T-shirt',
         price: 289,
-        images: ['product3.jpg', 'product3-back.jpg', 'product3-detail.jpg', 'product3-fit.jpg'],
+        images: ['product3.jpg', 'product3-back.jpg', 'product3-detail.jpg', 'product3-side.jpg'],
         description: 'Premium cotton  polo T-shirt with excellent breathability and professional look.',
         details: {
             material: '100% Premium Cotton',
@@ -94,7 +94,7 @@ const productDatabase = {
         id: 5,
         name: 'Premium Black Polo T-shirt',
         price: 289,
-        images: ['product5.jpg', 'product5-back.jpg', 'product5-detail.jpg'],
+        images: ['product5.jpg', 'product5-back.jpg', 'product5-detail.jpg', 'product5-side.jpg'],
         description: 'Premium cotton  polo T-shirt with excellent breathability and professional look.',
         details: {
             material: '100% Premium Cotton',
@@ -140,7 +140,7 @@ const productDatabase = {
         id: 7,
         name: 'Premium Marron Polo T-shirt',
         price: 289,
-        images: ['product7.jpg', 'product7-back.jpg', 'product7-detail.jpg'],
+        images: ['product7.jpg', 'product7-back.jpg', 'product7-detail.jpg', 'product7-side.jpg'],
         description: 'Premium cotton  polo T-shirt with excellent breathability and professional look.',
         details: {
             material: '100% Premium Cotton',
@@ -162,7 +162,7 @@ const productDatabase = {
         id: 8,
         name: 'White regular Fit T-shirt',
         price: 189,
-        images: ['product8.jpg', 'product8-back.jpg', 'product8-detail.jpg'],
+        images: ['product8.jpg', 'product8-back.jpg', 'product8-detail.jpg', 'product8-side.jpg'],
         description: 'Regular fit T-shirt crafted with soft, breathable fabric for all-day comfort and a clean everyday look.',
         details: {
             material: '100% Cotton, Biowash',
@@ -184,7 +184,7 @@ const productDatabase = {
         id: 9,
         name: 'Black regular Fit T-shirt',
         price: 189,
-        images: ['product9.jpg', 'product9-back.jpg', 'product9-detail.jpg'],
+        images: ['product9.jpg', 'product9-back.jpg', 'product9-detail.jpg', 'product9-side.jpg'],
         description: 'Regular fit T-shirt crafted with soft, breathable fabric for all-day comfort and a clean everyday look.',
         details: {
             material: '100% Cotton, Biowash',
@@ -206,7 +206,7 @@ const productDatabase = {
         id: 10,
         name: 'Beige regular Fit T-shirt',
         price: 189,
-        images: ['product10.jpg', 'product10-back.jpg', 'product10-detail.jpg', 'product10-dupatta.jpg'],
+        images: ['product10.jpg', 'product10-back.jpg', 'product10-detail.jpg', 'product10-side.jpg'],
         description: 'Regular fit T-shirt crafted with soft, breathable fabric for all-day comfort and a clean everyday look.',
         details: {
             material: '100% Cotton, Biowash',
@@ -230,7 +230,7 @@ const productDatabase = {
         id: 11,
         name: 'Blue regular Fit T-shirt',
         price: 189,
-        images: ['product11.jpg', 'product11-back.jpg'],
+        images: ['product11.jpg', 'product11-back.jpg', 'product11-detail.jpg', 'product11-side.jpg'],
         description: 'Regular fit T-shirt crafted with soft, breathable fabric for all-day comfort and a clean everyday look.',
         details: {
             material: '100% Cotton, Biowash',
@@ -252,7 +252,7 @@ const productDatabase = {
         id: 12,
         name: 'Grey regular Fit T-shirt',
         price: 189,
-        images: ['product12.jpg', 'product12-back.jpg', 'product12-detail.jpg'],
+        images: ['product12.jpg', 'product12-back.jpg', 'product12-detail.jpg', 'product12-side.jpg'],
         description: 'Regular fit T-shirt crafted with soft, breathable fabric for all-day comfort and a clean everyday look.',
         details: {
             material: '100% Cotton, Biowash',
@@ -274,7 +274,7 @@ const productDatabase = {
         id: 13,
         name: 'Lavender regular Fit T-shirt',
         price: 189,
-        images: ['product13.jpg', 'product13-back.jpg', 'product13-detail.jpg'],
+        images: ['product13.jpg', 'product13-back.jpg', 'product13-detail.jpg', 'product13-side.jpg'],
         description: 'Regular fit T-shirt crafted with soft, breathable fabric for all-day comfort and a clean everyday look.',
         details: {
             material: '100% Cotton, Biowash',
@@ -296,7 +296,7 @@ const productDatabase = {
         id: 14,
         name: 'Orange regular Fit T-shirt',
         price: 189,
-        images: ['product14.jpg', 'product14-back.jpg'],
+        images: ['product14.jpg', 'product14-back.jpg', 'product14-detail.jpg', 'product14-side.jpg'],
         description: 'Regular fit T-shirt crafted with soft, breathable fabric for all-day comfort and a clean everyday look.',
         details: {
             material: '100% Cotton, Biowash',
@@ -318,7 +318,7 @@ const productDatabase = {
         id: 15,
         name: 'Sky blue regular Fit T-shirt',
         price: 189,
-        images: ['product15.jpg', 'product15-back.jpg', 'product15-detail.jpg'],
+        images: ['product15.jpg', 'product15-back.jpg', 'product15-detail.jpg', 'product15-side.jpg'],
         description: 'Regular fit T-shirt crafted with soft, breathable fabric for all-day comfort and a clean everyday look.',
         details: {
             material: '100% Cotton, Biowash',
@@ -342,7 +342,7 @@ const productDatabase = {
         id: 16,
         name: 'White Oversized T-shirt',
         price: 239,
-        images: ['product16.jpg', 'product16-side.jpg', 'product16-bottom.jpg', 'product16-back.jpg'],
+        images: ['product16.jpg', 'product16-back.jpg', 'product16-detail.jpg', 'product16-side.jpg'],
         description: 'Trendy oversized black t-shirt with a relaxed fit. Perfect for casual outings.',
         details: {
             material: '100% Cotton, Biowash',
@@ -364,7 +364,7 @@ const productDatabase = {
         id: 17,
         name: 'Marron Oversized T-shirt',
         price: 239,
-        images: ['product17.jpg', 'product17-side.jpg', 'product17-back.jpg'],
+        images: ['product17.jpg', 'product17-back.jpg', 'product17-detail.jpg', 'product17-side.jpg'],
        description: 'Trendy oversized black t-shirt with a relaxed fit. Perfect for casual outings.',
         details: {
             material: '100% Cotton, Biowash',
@@ -386,7 +386,7 @@ const productDatabase = {
         id: 18,
         name: 'Beige Oversized T-shirt',
         price: 239,
-        images: ['product18.jpg', 'product18-side.jpg', 'product18-bottom.jpg'],
+        images: ['product18.jpg', 'product18-back.jpg', 'product18-detail.jpg','product18-side.jpg'],
         description: 'Trendy oversized black t-shirt with a relaxed fit. Perfect for casual outings.',
         details: {
             material: '100% Cotton, Biowash',
@@ -408,7 +408,7 @@ const productDatabase = {
         id: 19,
         name: 'Lavender Oversized T-shirt',
         price: 239,
-        images: ['product19.jpg', 'product19-side.jpg', 'product19-back.jpg'],
+        images: ['product19.jpg', 'product19-back.jpg', 'product19-detail.jpg', 'product19-side.jpg'],
        description: 'Trendy oversized black t-shirt with a relaxed fit. Perfect for casual outings.',
         details: {
             material: '100% Cotton, Biowash',
@@ -430,7 +430,7 @@ const productDatabase = {
         id: 20,
         name: 'Black Sweatshirt',
         price: 299,
-        images: ['product20.jpg', 'product20-side.jpg', 'product20-back.jpg'],
+        images: ['product20.jpg', 'product20-back.jpg', 'product20-detail.jpg', 'product20-side.jpg'],
         description: 'Round-neck men’s pullover sweatshirt designed for ultimate winter comfort.',
         details: {
             material: '88% Cotton, 12% Polyester',
@@ -454,7 +454,7 @@ const productDatabase = {
         id: 21,
         name: 'Grey Sweatshirt',
         price: 299,
-        images: ['product21.jpg', 'product21-open.jpg', 'product21-detail.jpg'],
+        images: ['product21.jpg', 'product21-back.jpg', 'product21-detail.jpg', 'product21-side.jpg'],
         description: 'Round-neck men’s pullover sweatshirt designed for ultimate winter comfort.',
         details: {
             material: '88% Cotton, 12% Polyester',
@@ -476,7 +476,7 @@ const productDatabase = {
         id: 22,
         name: 'Navy Blue Sweatshirt',
         price: 299,
-        images: ['product22.jpg', 'product22-folded.jpg', 'product22-detail.jpg'],
+        images: ['product22.jpg', 'product22-back.jpg', 'product22-detail.jpg', 'product22-side.jpg'],
         description: 'Round-neck men’s pullover sweatshirt designed for ultimate winter comfort.',
         details: {
             material: '88% Cotton, 12% Polyester',
@@ -498,7 +498,7 @@ const productDatabase = {
         id: 23,
         name: 'Black Polo T-shirt',
         price: 249,
-        images: ['product23.jpg', 'product23-back.jpg', 'product23-open.jpg', 'product23-side.jpg'],
+        images: ['product23.jpg', 'product23-back.jpg', 'product23-detail.jpg', 'product23-side.jpg'],
         description: 'A versatile men polo T-shirt built for comfort, style, and long-lasting wear.',
         details: {
             material: '88% Cotton, 12% Polyester',
@@ -520,7 +520,7 @@ const productDatabase = {
         id: 24,
         name: 'White Polo T-shirt',
         price: 249,
-        images: ['product24.jpg', 'product24-side.jpg', 'product24-case.jpg'],
+        images: ['product24.jpg', 'product24-back.jpg', 'product24-detail.jpg', 'product24-side.jpg'],
         description: 'A versatile men polo T-shirt built for comfort, style, and long-lasting wear.',
         details: {
             material: '88% Cotton, 12% Polyester',
@@ -542,7 +542,7 @@ const productDatabase = {
         id: 25,
         name: 'Marron Polo T-shirt',
         price: 249,
-        images: ['product25.jpg', 'product25-back.jpg', 'product25-detail.jpg'],
+        images: ['product25.jpg', 'product25-back.jpg', 'product25-detail.jpg', 'product25-side.jpg'],
         description: 'A versatile men polo T-shirt built for comfort, style, and long-lasting wear.',
         details: {
             material: '88% Cotton, 12% Polyester',
