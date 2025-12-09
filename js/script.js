@@ -132,54 +132,182 @@ const AppState = {
 };
 
 /* ============================================
-   NEW: PRODUCT DETAIL PAGE COMPATIBILITY FUNCTIONS
+   NEW: PRODUCT DETAIL PAGE DATA EXTRACTION FUNCTIONS
    ============================================ */
+
+// Function to get product details from product-detail page
+function getProductDetailData() {
+    console.log('🔍 Getting product details from product-detail page...');
+    
+    try {
+        // Method 1: Try to get data from global variables (set by product-detail.html)
+        if (typeof window.currentProduct !== 'undefined') {
+            console.log('✅ Found currentProduct in window:', window.currentProduct);
+            return {
+                currentProduct: window.currentProduct,
+                selectedColor: window.selectedColor || '',
+                selectedSize: window.selectedSize || '',
+                quantity: window.quantity || 1
+            };
+        }
+        
+        // Method 2: Try to get data from DOM elements
+        const productTitle = document.querySelector('.product-title');
+        const productPrice = document.querySelector('.product-price');
+        const colorOptions = document.querySelectorAll('.product-detail-color-circle.active-color');
+        const sizeOptions = document.querySelectorAll('.product-detail-size-box.active-size');
+        const quantityInput = document.getElementById('quantity');
+        
+        if (productTitle && productPrice) {
+            console.log('✅ Found product details in DOM');
+            
+            // Extract price from text (remove ₹ symbol and any text)
+            const priceText = productPrice.textContent.replace(/[^0-9]/g, '');
+            const price = parseInt(priceText) || 0;
+            
+            // Get selected color
+            let selectedColor = '';
+            if (colorOptions.length > 0) {
+                selectedColor = colorOptions[0].getAttribute('data-color') || 
+                               colorOptions[0].getAttribute('title') || '';
+            }
+            
+            // Get selected size
+            let selectedSize = '';
+            if (sizeOptions.length > 0) {
+                selectedSize = sizeOptions[0].getAttribute('data-size') || 
+                             sizeOptions[0].textContent.trim() || '';
+            }
+            
+            // Get quantity
+            const quantity = quantityInput ? parseInt(quantityInput.value) || 1 : 1;
+            
+            // Get current image
+            const mainImage = document.getElementById('currentImage');
+            const productImage = mainImage ? mainImage.src : 'images/placeholder.png';
+            
+            // Create a simplified product object
+            const productData = {
+                id: parseInt(new URLSearchParams(window.location.search).get('id')) || Date.now(),
+                name: productTitle.textContent.trim(),
+                basePrice: price,
+                price: price,
+                image: productImage
+            };
+            
+            return {
+                currentProduct: productData,
+                selectedColor: selectedColor,
+                selectedSize: selectedSize,
+                quantity: quantity
+            };
+        }
+        
+        // Method 3: Check URL parameters for product ID
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+        
+        if (productId) {
+            console.log('✅ Found product ID in URL:', productId);
+            // You might have a product database in script.js too
+            const productDatabase = window.productDatabase || {};
+            const product = productDatabase[productId];
+            
+            if (product) {
+                return {
+                    currentProduct: product,
+                    selectedColor: product.colors?.[0]?.name || '',
+                    selectedSize: product.sizes?.[0] || '',
+                    quantity: 1
+                };
+            }
+        }
+        
+        console.warn('⚠️ Could not find product details on page');
+        return null;
+        
+    } catch (error) {
+        console.error('❌ Error getting product details:', error);
+        return null;
+    }
+}
 
 /* ENHANCED ADD TO CART FOR PRODUCT DETAIL PAGE */
 function addToCartWithDetails() {
     console.log('🛒 addToCartWithDetails called');
     
     try {
-        // Check if we're on product-detail page with the product database
-        if (typeof window.currentProduct !== 'undefined' && window.currentProduct) {
-            const quantityInput = document.getElementById('quantity');
-            const selectedQuantity = parseInt(quantityInput?.value) || 1;
-            
-            // Get selected color and size from product-detail page
-            const selectedColor = window.selectedColor || '';
-            const selectedSize = window.selectedSize || '';
-            const currentProduct = window.currentProduct;
-            
-            const currentColor = currentProduct.colors.find(color => color.name === selectedColor);
-            const colorName = currentColor?.displayName || selectedColor;
-            
-            // Create product name with details
-            const productName = `${currentProduct.name} (${colorName}, ${selectedSize})`;
-            const productImage = currentColor?.images[0] || 'images/placeholder.png';
-            
-            // Get unit price
-            let unitPrice = currentProduct.basePrice;
+        // Get product data from the page
+        const productData = getProductDetailData();
+        
+        if (!productData || !productData.currentProduct) {
+            console.error('❌ No product data found');
+            showNotification('Product details not available. Please refresh the page.', 'error');
+            return false;
+        }
+        
+        const { currentProduct, selectedColor, selectedSize, quantity } = productData;
+        
+        console.log('📦 Product details:', {
+            product: currentProduct.name,
+            color: selectedColor,
+            size: selectedSize,
+            quantity: quantity
+        });
+        
+        // Get color display name
+        let colorName = selectedColor;
+        if (currentProduct.colors && Array.isArray(currentProduct.colors)) {
+            const colorObj = currentProduct.colors.find(c => c.name === selectedColor);
+            if (colorObj) {
+                colorName = colorObj.displayName || colorObj.name;
+            }
+        }
+        
+        // Create product name with details
+        const productName = `${currentProduct.name}${colorName ? ` (${colorName}` : ''}${selectedSize ? `, ${selectedSize}` : ''}${colorName ? ')' : ''}`;
+        
+        // Get product image
+        let productImage = 'images/placeholder.png';
+        if (currentProduct.colors && Array.isArray(currentProduct.colors)) {
+            const colorObj = currentProduct.colors.find(c => c.name === selectedColor);
+            if (colorObj && colorObj.images && colorObj.images.length > 0) {
+                productImage = colorObj.images[0];
+            } else if (currentProduct.image) {
+                productImage = currentProduct.image;
+            }
+        } else if (currentProduct.image) {
+            productImage = currentProduct.image;
+        }
+        
+        // Get unit price
+        let unitPrice = currentProduct.price || currentProduct.basePrice || 0;
+        
+        // Check for pricing tiers if available
+        if (currentProduct.pricingTiers && Array.isArray(currentProduct.pricingTiers)) {
             for (const tier of currentProduct.pricingTiers) {
-                if (selectedQuantity >= tier.min && selectedQuantity <= tier.max) {
+                if (quantity >= tier.min && quantity <= tier.max) {
                     unitPrice = tier.price;
                     break;
                 }
             }
-            
-            console.log('📦 Adding product-detail item:', {
-                name: productName,
-                price: unitPrice,
-                image: productImage,
-                size: selectedSize,
-                color: colorName,
-                quantity: selectedQuantity
-            });
-            
-            // Add to cart using the standard function
-            const result = addToCart(productName, unitPrice, productImage, selectedSize, colorName);
-            
-            // If quantity > 1, update quantity in cart
-            if (result && selectedQuantity > 1) {
+        }
+        
+        console.log('💰 Final product details for cart:', {
+            name: productName,
+            price: unitPrice,
+            image: productImage,
+            size: selectedSize,
+            color: colorName,
+            quantity: quantity
+        });
+        
+        // Add to cart using the standard function
+        const result = addToCart(productName, unitPrice, productImage, selectedSize, colorName);
+        
+        // If quantity > 1, update quantity in cart
+        if (result && quantity > 1) {
+            setTimeout(() => {
                 const cart = AppState.getCart();
                 const itemIdentifier = `${productName}-${selectedSize}-${colorName}`.toLowerCase();
                 const existingItemIndex = cart.findIndex(item => {
@@ -188,19 +316,16 @@ function addToCartWithDetails() {
                 });
                 
                 if (existingItemIndex !== -1) {
-                    cart[existingItemIndex].quantity = selectedQuantity;
+                    cart[existingItemIndex].quantity = quantity;
                     AppState.updateCart(cart);
-                    console.log('📈 Updated quantity to:', selectedQuantity);
+                    console.log('📈 Updated quantity to:', quantity);
+                    showNotification(`✅ ${quantity} x "${currentProduct.name}" added to cart!`, 'success');
                 }
-            }
-            
-            return result;
-        } else {
-            // Fallback to standard addToCart if not on product-detail page
-            console.warn('⚠️ Not on product-detail page, falling back to standard addToCart');
-            showNotification('Product details not available', 'error');
-            return false;
+            }, 100);
         }
+        
+        return result;
+        
     } catch (error) {
         console.error('❌ Error in addToCartWithDetails:', error);
         showNotification('Error adding product to cart', 'error');
@@ -213,46 +338,58 @@ function addToWishlistWithDetails() {
     console.log('❤️ addToWishlistWithDetails called');
     
     try {
-        // Check if we're on product-detail page
-        if (typeof window.currentProduct !== 'undefined' && window.currentProduct) {
-            const selectedColor = window.selectedColor || '';
-            const selectedSize = window.selectedSize || '';
-            const currentProduct = window.currentProduct;
-            
-            const currentColor = currentProduct.colors.find(color => color.name === selectedColor);
-            const colorName = currentColor?.displayName || selectedColor;
-            const productName = `${currentProduct.name} (${colorName}, ${selectedSize})`;
-            const productImage = currentColor?.images[0] || 'images/placeholder.png';
-            
-            // Use the product ID from product-detail page
-            const productId = currentProduct.id;
-            
-            // Get unit price
-            let unitPrice = currentProduct.basePrice;
-            const quantityInput = document.getElementById('quantity');
-            const selectedQuantity = parseInt(quantityInput?.value) || 1;
-            
-            for (const tier of currentProduct.pricingTiers) {
-                if (selectedQuantity >= tier.min && selectedQuantity <= tier.max) {
-                    unitPrice = tier.price;
-                    break;
-                }
-            }
-            
-            console.log('💝 Adding to wishlist:', {
-                id: productId,
-                name: productName,
-                price: unitPrice,
-                image: productImage
-            });
-            
-            // Add to wishlist using the standard function
-            return addToWishlist(productId, productName, unitPrice, productImage);
-        } else {
-            console.warn('⚠️ Not on product-detail page');
-            showNotification('Product details not found', 'error');
+        // Get product data from the page
+        const productData = getProductDetailData();
+        
+        if (!productData || !productData.currentProduct) {
+            console.error('❌ No product data found for wishlist');
+            showNotification('Product details not available. Please refresh the page.', 'error');
             return false;
         }
+        
+        const { currentProduct, selectedColor, selectedSize } = productData;
+        
+        // Get color display name
+        let colorName = selectedColor;
+        if (currentProduct.colors && Array.isArray(currentProduct.colors)) {
+            const colorObj = currentProduct.colors.find(c => c.name === selectedColor);
+            if (colorObj) {
+                colorName = colorObj.displayName || colorObj.name;
+            }
+        }
+        
+        // Create product name with details
+        const productName = `${currentProduct.name}${colorName ? ` (${colorName}` : ''}${selectedSize ? `, ${selectedSize}` : ''}${colorName ? ')' : ''}`;
+        
+        // Get product image
+        let productImage = 'images/placeholder.png';
+        if (currentProduct.colors && Array.isArray(currentProduct.colors)) {
+            const colorObj = currentProduct.colors.find(c => c.name === selectedColor);
+            if (colorObj && colorObj.images && colorObj.images.length > 0) {
+                productImage = colorObj.images[0];
+            } else if (currentProduct.image) {
+                productImage = currentProduct.image;
+            }
+        } else if (currentProduct.image) {
+            productImage = currentProduct.image;
+        }
+        
+        // Get unit price
+        let unitPrice = currentProduct.price || currentProduct.basePrice || 0;
+        
+        // Use product ID or generate one
+        const productId = currentProduct.id || Date.now();
+        
+        console.log('💝 Adding to wishlist:', {
+            id: productId,
+            name: productName,
+            price: unitPrice,
+            image: productImage
+        });
+        
+        // Add to wishlist using the standard function
+        return addToWishlist(productId, productName, unitPrice, productImage);
+        
     } catch (error) {
         console.error('❌ Error in addToWishlistWithDetails:', error);
         showNotification('Error adding product to wishlist', 'error');
@@ -449,9 +586,10 @@ function addToCart(productName, productPrice, productImage, productSize = '', pr
 
         if (existingItemIndex !== -1) {
             cart[existingItemIndex].quantity += 1;
+            console.log('📈 Increased quantity for existing item');
         } else {
             const newItem = {
-                id: Date.now() + Math.random(), // KEEP Date.now() since we don't have productId
+                id: Date.now() + Math.random(),
                 name: productName.toString().trim(),
                 price: price,
                 image: productImage || 'images/placeholder.png',
@@ -461,6 +599,7 @@ function addToCart(productName, productPrice, productImage, productSize = '', pr
                 addedAt: new Date().toISOString()
             };
             cart.push(newItem);
+            console.log('➕ Added new item to cart:', newItem.name);
         }
         
         AppState.updateCart(cart);
@@ -552,7 +691,6 @@ function addToWishlist(productId, productName, productPrice, productImage) {
             return true;
         } else {
             // Remove from wishlist
-            const removedItem = wishlist[existingItemIndex];
             wishlist.splice(existingItemIndex, 1);
             AppState.updateWishlist(wishlist);
             showNotification(`💔 "${productName}" removed from wishlist!`, 'info');
@@ -568,8 +706,6 @@ function addToWishlist(productId, productName, productPrice, productImage) {
         return false;
     }
 }
-
-
 
 /* CROSS-PAGE SYNCHRONIZATION SYSTEM */
 window.addEventListener('storage', function(e) {
@@ -1111,19 +1247,13 @@ async function initializeApp() {
     
     // Load all data
     AppState.loadCart();
+    AppState.loadWishlist();
     AppState.loadUser();
     AppState.loadOrders();
     
-    // SPECIAL: Load wishlist but don't initialize buttons on product-detail page
-    if (!window.location.pathname.includes('product-detail.html')) {
-        AppState.loadWishlist();
-        updateWishlistCount();
-    } else {
-        console.log('📋 On product-detail page, skipping wishlist initialization');
-    }
-    
     // Update UI
     updateCartCount();
+    updateWishlistCount();
     
     // Initialize page-specific features
     if (window.location.pathname.includes('cart.html')) {
@@ -1170,6 +1300,7 @@ window.updateWishlistButtonState = updateWishlistButtonState;
 // NEW: Product-detail page compatibility functions
 window.addToCartWithDetails = addToCartWithDetails;
 window.addToWishlistWithDetails = addToWishlistWithDetails;
+window.getProductDetailData = getProductDetailData;
 
 // Debug functions
 window.debugCart = function() {
@@ -1186,6 +1317,20 @@ window.debugWishlist = function() {
     console.log('Wishlist items:', wishlist);
     console.log('Total items:', wishlist.length);
     updateWishlistCount();
+};
+
+// Also add a function to check if product-detail variables are accessible
+window.checkProductDetailVars = function() {
+    console.log('🔍 Checking product-detail variables:');
+    console.log('window.currentProduct:', window.currentProduct);
+    console.log('window.selectedColor:', window.selectedColor);
+    console.log('window.selectedSize:', window.selectedSize);
+    console.log('window.quantity:', window.quantity);
+    
+    const data = getProductDetailData();
+    console.log('getProductDetailData():', data);
+    
+    return data;
 };
 
 // INITIALIZE IMMEDIATELY
