@@ -48,7 +48,7 @@ const productDatabase = {
     },
     '3': {
         id: 3,
-        name: 'Premium Mulberry Polo T-shirt',
+        name: 'Premium Navy Polo T-shirt',
         price: 289,
         images: ['product3.jpg', 'product3-back.jpg', 'product3-detail.jpg', 'product3-fit.jpg'],
         description: 'Formal cotton shirt with excellent breathability and professional look.',
@@ -56,9 +56,9 @@ const productDatabase = {
             material: '100% Premium Cotton',
             fit: 'Slim Fit',
             care: 'Machine Washable',
-            style: 'Formal Shirt',
-            features: 'Single Cuff, Long Sleeves',
-            weight: '140 GSM',
+            style: 'Polor Collar',
+            features: 'Short, Regular Sleeves',
+            weight: '220 GSM',
             origin: 'Made in India'
         },
         sizes: ['M', 'L', 'XL', 'XXL'],
