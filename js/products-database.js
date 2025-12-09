@@ -5,7 +5,7 @@ const productDatabase = {
     '1': {
         id: 1,
         name: 'Classic White Hoodie',
-        price: 799,
+        price: 529,
         images: ['product1.jpg', 'product1-back.jpg', 'product1-detail.jpg', 'product1-side.jpg'],
         description: 'Premium cotton blend hoodie with a comfortable fit. Perfect for casual wear and everyday comfort.',
         details: {
@@ -27,7 +27,7 @@ const productDatabase = {
     '2': {
         id: 2,
         name: 'Black Oversized T-Shirt',
-        price: 299,
+        price: 239,
         images: ['product2.jpg', 'product2-back.jpg', 'product2-detail.jpg'],
         description: 'Trendy oversized black t-shirt with a relaxed fit. Perfect for casual outings.',
         details: {
@@ -49,7 +49,7 @@ const productDatabase = {
     '3': {
         id: 3,
         name: 'Premium Mulberry Polo T-shirt',
-        price: 599,
+        price: 289,
         images: ['product3.jpg', 'product3-back.jpg', 'product3-detail.jpg', 'product3-fit.jpg'],
         description: 'Formal cotton shirt with excellent breathability and professional look.',
         details: {
@@ -71,7 +71,7 @@ const productDatabase = {
     '4': {
         id: 4,
         name: 'Marron regular Fit T-Shirt',
-        price: 249,
+        price: 189,
         images: ['product4.jpg', 'product4-back.jpg', 'product4-detail.jpg', 'product4-side.jpg'],
         description: 'Classic denim jacket with a modern fit. Perfect for layering.',
         details: {
@@ -93,7 +93,7 @@ const productDatabase = {
     '5': {
         id: 5,
         name: 'Premium Black Polo T-shirt',
-        price: 599,
+        price: 289,
         images: ['product5.jpg', 'product5-back.jpg', 'product5-detail.jpg'],
         description: 'Utility cargo pants with multiple pockets. Comfortable and stylish.',
         details: {
@@ -117,7 +117,7 @@ const productDatabase = {
     '6': {
         id: 6,
         name: 'Premium White Polo T-shirt',
-        price: 599,
+        price: 289,
         images: ['product6.jpg', 'product6-back.jpg', 'product6-detail.jpg', 'product6-side.jpg'],
         description: 'Beautiful floral print summer dress perfect for casual outings.',
         details: {
@@ -139,7 +139,7 @@ const productDatabase = {
     '7': {
         id: 7,
         name: 'Premium Marron Polo T-shirt',
-        price: 599,
+        price: 289,
         images: ['product7.jpg', 'product7-back.jpg', 'product7-detail.jpg'],
         description: 'High-waisted yoga pants with four-way stretch for maximum comfort.',
         details: {
@@ -161,7 +161,7 @@ const productDatabase = {
     '8': {
         id: 8,
         name: 'White regular Fit T-shirt',
-        price: 249,
+        price: 189,
         images: ['product8.jpg', 'product8-back.jpg', 'product8-detail.jpg'],
         description: 'Elegant silk blouse perfect for office wear or special occasions.',
         details: {
@@ -183,7 +183,7 @@ const productDatabase = {
     '9': {
         id: 9,
         name: 'Black regular Fit T-shirt',
-        price: 249,
+        price: 189,
         images: ['product9.jpg', 'product9-back.jpg', 'product9-detail.jpg'],
         description: 'Classic denim skirt with modern cut. Versatile for any occasion.',
         details: {
@@ -205,7 +205,7 @@ const productDatabase = {
     '10': {
         id: 10,
         name: 'Beige regular Fit T-shirt',
-        price: 249,
+        price: 189,
         images: ['product10.jpg', 'product10-back.jpg', 'product10-detail.jpg', 'product10-dupatta.jpg'],
         description: 'Traditional Indian kurti set with embroidery work.',
         details: {
@@ -229,7 +229,7 @@ const productDatabase = {
     '11': {
         id: 11,
         name: 'Blue regular Fit T-shirt',
-        price: 249,
+        price: 189,
         images: ['product11.jpg', 'product11-back.jpg'],
         description: 'Colorful cartoon print t-shirt for kids. Soft and comfortable.',
         details: {
@@ -251,7 +251,7 @@ const productDatabase = {
     '12': {
         id: 12,
         name: 'Grey regular Fit T-shirt',
-        price: 249,
+        price: 189,
         images: ['product12.jpg', 'product12-back.jpg', 'product12-detail.jpg'],
         description: 'Mini version of classic denim jacket for kids.',
         details: {
@@ -273,7 +273,7 @@ const productDatabase = {
     '13': {
         id: 13,
         name: 'Lavender regular Fit T-shirt',
-        price: 249,
+        price: 189,
         images: ['product13.jpg', 'product13-back.jpg', 'product13-detail.jpg'],
         description: 'Beautiful party dress for special occasions.',
         details: {
@@ -295,7 +295,7 @@ const productDatabase = {
     '14': {
         id: 14,
         name: 'Orange regular Fit T-shirt',
-        price: 249,
+        price: 189,
         images: ['product14.jpg', 'product14-back.jpg'],
         description: 'Comfortable track pants for active kids.',
         details: {
@@ -317,7 +317,7 @@ const productDatabase = {
     '15': {
         id: 15,
         name: 'Sky blue regular Fit T-shirt',
-        price: 249,
+        price: 189,
         images: ['product15.jpg', 'product15-back.jpg', 'product15-detail.jpg'],
         description: 'Warm winter jacket with hood for cold weather.',
         details: {
@@ -341,7 +341,7 @@ const productDatabase = {
     '16': {
         id: 16,
         name: 'White Oversized T-shirt',
-        price: 299,
+        price: 239,
         images: ['product16.jpg', 'product16-side.jpg', 'product16-bottom.jpg', 'product16-back.jpg'],
         description: 'Lightweight running shoes with cushioning for maximum comfort.',
         details: {
@@ -363,7 +363,7 @@ const productDatabase = {
     '17': {
         id: 17,
         name: 'Marron Oversized T-shirt',
-        price: 299,
+        price: 239,
         images: ['product17.jpg', 'product17-side.jpg', 'product17-back.jpg'],
         description: 'Stylish casual sneakers for everyday wear.',
         details: {
@@ -385,7 +385,7 @@ const productDatabase = {
     '18': {
         id: 18,
         name: 'Beige Oversized T-shirt',
-        price: 299,
+        price: 239,
         images: ['product18.jpg', 'product18-side.jpg', 'product18-bottom.jpg'],
         description: 'Premium leather formal shoes for office and occasions.',
         details: {
@@ -407,7 +407,7 @@ const productDatabase = {
     '19': {
         id: 19,
         name: 'Lavender Oversized T-shirt',
-        price: 299,
+        price: 239,
         images: ['product19.jpg', 'product19-side.jpg', 'product19-back.jpg'],
         description: 'Elegant women\'s heels for parties and formal events.',
         details: {
@@ -429,7 +429,7 @@ const productDatabase = {
     '20': {
         id: 20,
         name: 'Black Sweatshirt',
-        price: 399,
+        price: 299,
         images: ['product20.jpg', 'product20-side.jpg', 'product20-back.jpg'],
         description: 'Durable school shoes for kids with comfortable fit.',
         details: {
@@ -453,7 +453,7 @@ const productDatabase = {
     '21': {
         id: 21,
         name: 'Grey Sweatshirt',
-        price: 399,
+        price: 299,
         images: ['product21.jpg', 'product21-open.jpg', 'product21-detail.jpg'],
         description: 'Genuine leather wallet with multiple card slots.',
         details: {
@@ -475,7 +475,7 @@ const productDatabase = {
     '22': {
         id: 22,
         name: 'Navy Blue Sweatshirt',
-        price: 399,
+        price: 299,
         images: ['product22.jpg', 'product22-folded.jpg', 'product22-detail.jpg'],
         description: 'Printed silk scarf perfect for any outfit.',
         details: {
@@ -496,8 +496,8 @@ const productDatabase = {
     },
     '23': {
         id: 23,
-        name: 'Matty Black Polo T-shirt',
-        price: 499,
+        name: 'Black Polo T-shirt',
+        price: 249,
         images: ['product23.jpg', 'product23-back.jpg', 'product23-open.jpg', 'product23-side.jpg'],
         description: 'Durable canvas backpack with laptop compartment.',
         details: {
@@ -518,8 +518,8 @@ const productDatabase = {
     },
     '24': {
         id: 24,
-        name: 'Matty Black Polo T-shirt',
-        price: 499,
+        name: 'Black Polo T-shirt',
+        price: 249,
         images: ['product24.jpg', 'product24-side.jpg', 'product24-case.jpg'],
         description: 'UV protected sunglasses with polarized lenses.',
         details: {
@@ -540,8 +540,8 @@ const productDatabase = {
     },
     '25': {
         id: 25,
-        name: 'Matty Marron Polo T-shirt',
-        price: 499,
+        name: 'Marron Polo T-shirt',
+        price: 249,
         images: ['product25.jpg', 'product25-back.jpg', 'product25-detail.jpg'],
         description: 'Warm winter gloves with touchscreen compatibility.',
         details: {
