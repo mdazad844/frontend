@@ -217,9 +217,21 @@ async function displayProducts() {
                 <h3>${product.name}</h3>
                 <p class="price">₹${product.price}</p>
                 ${product.originalPrice ? `<p class="original-price" style="text-decoration: line-through; color: #666; font-size: 0.9em;">₹${product.originalPrice}</p>` : ''}
-                <button class="btn" onclick="addToCart(${product.id}, '${product.name}', ${product.price}, '${product.images[0]}')"data-product-id="${product.id}">
+				
+				
+				
+                <button class="btn" onclick="addToCart('${product.name}', ${product.price}, '${product.images[0]}')" data-product-id="${product.id}">
                     Add to Cart
                 </button>
+				
+				
+
+
+
+
+				
+				
+				
                 <button class="wishlist-btn" 
                         onclick="addToWishlist(${product.id}, '${product.name}', ${product.price}, '${product.images[0]}')"
                         data-product-id="${product.id}">
