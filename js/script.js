@@ -131,6 +131,139 @@ const AppState = {
     }
 };
 
+/* ============================================
+   NEW: PRODUCT DETAIL PAGE COMPATIBILITY FUNCTIONS
+   ============================================ */
+
+/* ENHANCED ADD TO CART FOR PRODUCT DETAIL PAGE */
+function addToCartWithDetails() {
+    console.log('🛒 addToCartWithDetails called');
+    
+    try {
+        // Check if we're on product-detail page with the product database
+        if (typeof window.currentProduct !== 'undefined' && window.currentProduct) {
+            const quantityInput = document.getElementById('quantity');
+            const selectedQuantity = parseInt(quantityInput?.value) || 1;
+            
+            // Get selected color and size from product-detail page
+            const selectedColor = window.selectedColor || '';
+            const selectedSize = window.selectedSize || '';
+            const currentProduct = window.currentProduct;
+            
+            const currentColor = currentProduct.colors.find(color => color.name === selectedColor);
+            const colorName = currentColor?.displayName || selectedColor;
+            
+            // Create product name with details
+            const productName = `${currentProduct.name} (${colorName}, ${selectedSize})`;
+            const productImage = currentColor?.images[0] || 'images/placeholder.png';
+            
+            // Get unit price
+            let unitPrice = currentProduct.basePrice;
+            for (const tier of currentProduct.pricingTiers) {
+                if (selectedQuantity >= tier.min && selectedQuantity <= tier.max) {
+                    unitPrice = tier.price;
+                    break;
+                }
+            }
+            
+            console.log('📦 Adding product-detail item:', {
+                name: productName,
+                price: unitPrice,
+                image: productImage,
+                size: selectedSize,
+                color: colorName,
+                quantity: selectedQuantity
+            });
+            
+            // Add to cart using the standard function
+            const result = addToCart(productName, unitPrice, productImage, selectedSize, colorName);
+            
+            // If quantity > 1, update quantity in cart
+            if (result && selectedQuantity > 1) {
+                const cart = AppState.getCart();
+                const itemIdentifier = `${productName}-${selectedSize}-${colorName}`.toLowerCase();
+                const existingItemIndex = cart.findIndex(item => {
+                    const existingIdentifier = `${item.name}-${item.size || ''}-${item.color || ''}`.toLowerCase();
+                    return existingIdentifier === itemIdentifier;
+                });
+                
+                if (existingItemIndex !== -1) {
+                    cart[existingItemIndex].quantity = selectedQuantity;
+                    AppState.updateCart(cart);
+                    console.log('📈 Updated quantity to:', selectedQuantity);
+                }
+            }
+            
+            return result;
+        } else {
+            // Fallback to standard addToCart if not on product-detail page
+            console.warn('⚠️ Not on product-detail page, falling back to standard addToCart');
+            showNotification('Product details not available', 'error');
+            return false;
+        }
+    } catch (error) {
+        console.error('❌ Error in addToCartWithDetails:', error);
+        showNotification('Error adding product to cart', 'error');
+        return false;
+    }
+}
+
+/* ENHANCED ADD TO WISHLIST FOR PRODUCT DETAIL PAGE */
+function addToWishlistWithDetails() {
+    console.log('❤️ addToWishlistWithDetails called');
+    
+    try {
+        // Check if we're on product-detail page
+        if (typeof window.currentProduct !== 'undefined' && window.currentProduct) {
+            const selectedColor = window.selectedColor || '';
+            const selectedSize = window.selectedSize || '';
+            const currentProduct = window.currentProduct;
+            
+            const currentColor = currentProduct.colors.find(color => color.name === selectedColor);
+            const colorName = currentColor?.displayName || selectedColor;
+            const productName = `${currentProduct.name} (${colorName}, ${selectedSize})`;
+            const productImage = currentColor?.images[0] || 'images/placeholder.png';
+            
+            // Use the product ID from product-detail page
+            const productId = currentProduct.id;
+            
+            // Get unit price
+            let unitPrice = currentProduct.basePrice;
+            const quantityInput = document.getElementById('quantity');
+            const selectedQuantity = parseInt(quantityInput?.value) || 1;
+            
+            for (const tier of currentProduct.pricingTiers) {
+                if (selectedQuantity >= tier.min && selectedQuantity <= tier.max) {
+                    unitPrice = tier.price;
+                    break;
+                }
+            }
+            
+            console.log('💝 Adding to wishlist:', {
+                id: productId,
+                name: productName,
+                price: unitPrice,
+                image: productImage
+            });
+            
+            // Add to wishlist using the standard function
+            return addToWishlist(productId, productName, unitPrice, productImage);
+        } else {
+            console.warn('⚠️ Not on product-detail page');
+            showNotification('Product details not found', 'error');
+            return false;
+        }
+    } catch (error) {
+        console.error('❌ Error in addToWishlistWithDetails:', error);
+        showNotification('Error adding product to wishlist', 'error');
+        return false;
+    }
+}
+
+/* ============================================
+   EXISTING SCRIPT.JS FUNCTIONS CONTINUE BELOW
+   ============================================ */
+
 /* MOBILE MENU TOGGLE */
 const menuToggle = document.getElementById("menuToggle");
 const navLinks = document.getElementById("navLinks");
@@ -217,7 +350,7 @@ async function displayProducts() {
                 <h3>${product.name}</h3>
                 <p class="price">₹${product.price}</p>
                 ${product.originalPrice ? `<p class="original-price" style="text-decoration: line-through; color: #666; font-size: 0.9em;">₹${product.originalPrice}</p>` : ''}
-                <button class="btn" onclick="addToCart(${product.id}, '${product.name}', ${product.price}, '${product.images[0]}')"data-product-id="${product.id}">
+                <button class="btn" onclick="addToCart('${product.name}', ${product.price}, '${product.images[0]}')" data-product-id="${product.id}">
                     Add to Cart
                 </button>
                 <button class="wishlist-btn" 
@@ -306,29 +439,29 @@ function addToCart(productName, productPrice, productImage, productSize = '', pr
             return false;
         }
 
-const cart = AppState.getCart();
-const itemIdentifier = `${productName}-${productSize}-${productColor}`.toLowerCase();
+        const cart = AppState.getCart();
+        const itemIdentifier = `${productName}-${productSize}-${productColor}`.toLowerCase();
 
-const existingItemIndex = cart.findIndex(item => {
-    const existingIdentifier = `${item.name}-${item.size || ''}-${item.color || ''}`.toLowerCase();
-    return existingIdentifier === itemIdentifier;
-});
+        const existingItemIndex = cart.findIndex(item => {
+            const existingIdentifier = `${item.name}-${item.size || ''}-${item.color || ''}`.toLowerCase();
+            return existingIdentifier === itemIdentifier;
+        });
 
-if (existingItemIndex !== -1) {
-    cart[existingItemIndex].quantity += 1;
-} else {
-    const newItem = {
-        id: Date.now() + Math.random(), // KEEP Date.now() since we don't have productId
-        name: productName.toString().trim(),
-        price: price,
-        image: productImage || 'images/placeholder.png',
-        quantity: 1,
-        size: productSize,
-        color: productColor,
-        addedAt: new Date().toISOString()
-    };
-    cart.push(newItem);
-}
+        if (existingItemIndex !== -1) {
+            cart[existingItemIndex].quantity += 1;
+        } else {
+            const newItem = {
+                id: Date.now() + Math.random(), // KEEP Date.now() since we don't have productId
+                name: productName.toString().trim(),
+                price: price,
+                image: productImage || 'images/placeholder.png',
+                quantity: 1,
+                size: productSize,
+                color: productColor,
+                addedAt: new Date().toISOString()
+            };
+            cart.push(newItem);
+        }
         
         AppState.updateCart(cart);
         showNotification(`✅ "${productName}" added to cart!`, 'success');
@@ -393,8 +526,9 @@ function updateWishlistCount() {
     }
 }
 
+/* ENHANCED ADD TO WISHLIST FUNCTION */
 function addToWishlist(productId, productName, productPrice, productImage) {
-    console.log('❤️ addToWishlist called from page:', window.location.pathname);
+    console.log('❤️ addToWishlist called for product:', productId);
     
     try {
         const wishlist = AppState.getWishlist();
@@ -412,31 +546,20 @@ function addToWishlist(productId, productName, productPrice, productImage) {
             AppState.updateWishlist(wishlist);
             showNotification(`❤️ "${productName}" added to wishlist!`, 'success');
             animateWishlistIcon();
-			
-				
-			if (window.location.pathname.includes('wishlist.html')) {
-        displayWishlistItems();
-    }
-    updateWishlistCount();
-			
+            
+            // Update heart color and emoji immediately
+            updateWishlistButtonState(productId, true);
             return true;
-		
-
-			
         } else {
             // Remove from wishlist
+            const removedItem = wishlist[existingItemIndex];
             wishlist.splice(existingItemIndex, 1);
             AppState.updateWishlist(wishlist);
             showNotification(`💔 "${productName}" removed from wishlist!`, 'info');
-			
-			if (window.location.pathname.includes('wishlist.html')) {
-        displayWishlistItems();
-    }
-    updateWishlistCount();
-			
+            
+            // Update heart color and emoji immediately
+            updateWishlistButtonState(productId, false);
             return false;
-			
-			
         }
         
     } catch (error) {
@@ -823,49 +946,6 @@ function updateWishlistHearts() {
     }
 }
 
-/* ENHANCED ADD TO WISHLIST FUNCTION */
-function addToWishlist(productId, productName, productPrice, productImage) {
-    console.log('❤️ addToWishlist called for product:', productId);
-    
-    try {
-        const wishlist = AppState.getWishlist();
-        const existingItemIndex = wishlist.findIndex(item => item.id === productId);
-        
-        if (existingItemIndex === -1) {
-            // Add to wishlist
-            wishlist.push({
-                id: productId,
-                name: productName,
-                price: Number(productPrice) || 0,
-                image: productImage || 'images/placeholder.png',
-                addedAt: new Date().toISOString()
-            });
-            AppState.updateWishlist(wishlist);
-            showNotification(`❤️ "${productName}" added to wishlist!`, 'success');
-            animateWishlistIcon();
-            
-            // Update heart color and emoji immediately
-            updateWishlistButtonState(productId, true);
-            return true;
-        } else {
-            // Remove from wishlist
-            const removedItem = wishlist[existingItemIndex];
-            wishlist.splice(existingItemIndex, 1);
-            AppState.updateWishlist(wishlist);
-            showNotification(`💔 "${productName}" removed from wishlist!`, 'info');
-            
-            // Update heart color and emoji immediately
-            updateWishlistButtonState(productId, false);
-            return false;
-        }
-        
-    } catch (error) {
-        console.error('❌ Error in addToWishlist:', error);
-        showNotification('Error updating wishlist', 'error');
-        return false;
-    }
-} 
-
 /* UPDATE SINGLE WISHLIST BUTTON STATE */
 function updateWishlistButtonState(productId, isInWishlist) {
     try {
@@ -935,8 +1015,6 @@ function initializeWishlistButtons() {
     }
 }
 
-
-
 /* UPDATE WISHLIST EVENT LISTENERS */
 window.addEventListener('wishlistUpdated', function(e) {
     console.log('❤️ Wishlist custom event received');
@@ -968,8 +1046,6 @@ window.addEventListener('focus', function() {
     loadWishlist();
     updateWishlistHearts();
 });
-
-
 
 /* CHECKOUT FUNCTION - RESTORED */
 function checkout() {
@@ -1035,13 +1111,19 @@ async function initializeApp() {
     
     // Load all data
     AppState.loadCart();
-    AppState.loadWishlist();
     AppState.loadUser();
     AppState.loadOrders();
     
+    // SPECIAL: Load wishlist but don't initialize buttons on product-detail page
+    if (!window.location.pathname.includes('product-detail.html')) {
+        AppState.loadWishlist();
+        updateWishlistCount();
+    } else {
+        console.log('📋 On product-detail page, skipping wishlist initialization');
+    }
+    
     // Update UI
     updateCartCount();
-    updateWishlistCount();
     
     // Initialize page-specific features
     if (window.location.pathname.includes('cart.html')) {
@@ -1057,7 +1139,13 @@ async function initializeApp() {
     if (window.location.pathname.includes('wishlist.html')) {
         displayWishlistItems();
     }
-	
+    
+    // Load products for shop page
+    if (window.location.pathname.includes('shop.html') || 
+        window.location.pathname.includes('bulktshirts.html') ||
+        window.location.pathname.includes('index.html')) {
+        await displayProducts();
+    }
 
     console.log('✅ MyBrand initialized');
 }
@@ -1075,11 +1163,13 @@ window.decreaseQuantity = decreaseQuantity;
 window.removeItem = removeItem;
 window.moveToCartFromWishlist = moveToCartFromWishlist;
 window.checkout = checkout;
-
-
 window.updateWishlistHearts = updateWishlistHearts;
 window.initializeWishlistButtons = initializeWishlistButtons;
 window.updateWishlistButtonState = updateWishlistButtonState;
+
+// NEW: Product-detail page compatibility functions
+window.addToCartWithDetails = addToCartWithDetails;
+window.addToWishlistWithDetails = addToWishlistWithDetails;
 
 // Debug functions
 window.debugCart = function() {
