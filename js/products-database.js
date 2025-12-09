@@ -36,11 +36,11 @@ const productDatabase = {
             care: 'Machine Wash Cold',
             style: 'Round Neck',
             features: 'Breathable Fabric, Soft Finish',
-            weight: '180 GSM',
+            weight: '240 GSM',
             origin: 'Made in India'
         },
         sizes: ['S', 'M', 'L', 'XL'],
-        colors: ['black', 'white', 'gray'],
+        colors: ['black'],
         category: 'men',
         rating: 4.5,
         reviewCount: 89,
