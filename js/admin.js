@@ -609,6 +609,92 @@ class AdminPanel {
     }
 }
 
+
+
+// Add to AdminPanel constructor
+constructor() {
+    this.ADMIN_PASSWORD = "mybrand123"; // Change this!
+    this.showLoginIfNeeded();
+    this.init();
+}
+
+showLoginIfNeeded() {
+    const isLoggedIn = localStorage.getItem('adminLoggedIn') === 'true';
+    const isDebugMode = window.location.hash.includes('debug');
+    
+    if (!isLoggedIn && !isDebugMode) {
+        const loginDiv = document.createElement('div');
+        loginDiv.id = 'adminLoginOverlay';
+        loginDiv.innerHTML = `
+            <div style="
+                position: fixed;
+                top: 0; left: 0;
+                width: 100%; height: 100%;
+                background: rgba(0,0,0,0.9);
+                z-index: 10000;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            ">
+                <div style="
+                    background: white;
+                    padding: 40px;
+                    border-radius: 10px;
+                    text-align: center;
+                ">
+                    <h2 style="color: #2c3e50;">🔒 Admin Access</h2>
+                    <form id="adminLoginForm" style="margin: 20px 0;">
+                        <input type="password" 
+                               id="adminPasswordInput" 
+                               placeholder="Enter admin password"
+                               style="
+                                   padding: 12px;
+                                   width: 250px;
+                                   border: 1px solid #ddd;
+                                   border-radius: 4px;
+                                   margin-bottom: 15px;
+                               ">
+                        <br>
+                        <button type="submit" 
+                                style="
+                                    padding: 10px 30px;
+                                    background: #2c3e50;
+                                    color: white;
+                                    border: none;
+                                    border-radius: 4px;
+                                    cursor: pointer;
+                                ">
+                            Login
+                        </button>
+                    </form>
+                    <p style="color: #666; font-size: 12px;">
+                        Default password: mybrand123<br>
+                        <small>(Change this in admin.js!)</small>
+                    </p>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(loginDiv);
+        
+        document.getElementById('adminLoginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const password = document.getElementById('adminPasswordInput').value;
+            if (password === this.ADMIN_PASSWORD) {
+                localStorage.setItem('adminLoggedIn', 'true');
+                document.getElementById('adminLoginOverlay').remove();
+                this.init();
+            } else {
+                alert('❌ Incorrect password!');
+            }
+        });
+    } else {
+        this.init();
+    }
+}
+
+
+
+
 // Initialize admin panel when page loads
 document.addEventListener('DOMContentLoaded', function() {
     window.adminPanel = new AdminPanel();
