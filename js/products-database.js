@@ -429,7 +429,7 @@ const productDatabase = {
     '20': {
         id: 20,
         name: 'Black Sweatshirt',
-        price: 299,
+        price: 309,
         images: ['product20.jpg', 'product20-back.jpg', 'product20-detail.jpg', 'product20-side.jpg'],
         description: 'Round-neck men’s pullover sweatshirt designed for ultimate winter comfort.',
         details: {
@@ -453,7 +453,7 @@ const productDatabase = {
     '21': {
         id: 21,
         name: 'Grey Sweatshirt',
-        price: 299,
+        price: 309,
         images: ['product21.jpg', 'product21-back.jpg', 'product21-detail.jpg', 'product21-side.jpg'],
         description: 'Round-neck men’s pullover sweatshirt designed for ultimate winter comfort.',
         details: {
@@ -475,7 +475,7 @@ const productDatabase = {
     '22': {
         id: 22,
         name: 'Navy Blue Sweatshirt',
-        price: 299,
+        price: 309,
         images: ['product22.jpg', 'product22-back.jpg', 'product22-detail.jpg', 'product22-side.jpg'],
         description: 'Round-neck men’s pullover sweatshirt designed for ultimate winter comfort.',
         details: {
