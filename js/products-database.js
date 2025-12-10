@@ -18,7 +18,7 @@ const productDatabase = {
             origin: 'Made in India'
         },
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
-        colors: ['white', 'black', 'off-white', 'navy'],
+        colors: ['white'],   //['white', 'black', 'off-white', 'navy'],
         category: 'men',
         rating: 4.8,
         reviewCount: 127,
@@ -441,7 +441,7 @@ const productDatabase = {
             weight: '320 GSM',
             origin: 'Made in India'
         },
-        sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+        sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['black'],
         category: 'men',
         rating: 4.8,
@@ -465,7 +465,7 @@ const productDatabase = {
             weight: '320 GSM',
             origin: 'Made in India'
         },
-        sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+        sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['grey'],
         category: 'accessories',
         rating: 4.6,
@@ -487,7 +487,7 @@ const productDatabase = {
             weight: '320 GSM',
             origin: 'Made in India'
         },
-        sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+        sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['navy'],
         category: 'accessories',
         rating: 4.7,
@@ -509,7 +509,7 @@ const productDatabase = {
             capacity: '220 GSM',
             origin: 'Made in India'
         },
-        sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+        sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['black'],
         category: 'accessories',
         rating: 4.8,
@@ -531,7 +531,7 @@ const productDatabase = {
             weight: '220 GSM',
             origin: 'Made in India'
         },
-        sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+        sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['white'],
         category: 'accessories',
         rating: 4.5,
@@ -553,11 +553,80 @@ const productDatabase = {
             weight: '220 GSM',
             origin: 'Made in India'
         },
-        sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+        sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['marron'],
         category: 'accessories',
         rating: 4.6,
         reviewCount: 112,
+        inStock: true
+    },
+
+    '26': {
+        id: 24,
+        name: 'Classic Off-White Hoodie',
+        price: 529,
+        images: ['product26.jpg', 'product26-back.jpg', 'product26-detail.jpg', 'product26-side.jpg'],
+        description: 'Premium cotton blend hoodie with a comfortable fit. Perfect for casual wear and everyday comfort.',
+        details: {
+            material: '88% Cotton, 12% Polyester',
+            fit: 'Regular Fit',
+            care: 'Machine Washable',
+            style: 'Pullover with Front Pocket',
+            features: 'Adjustable Drawstrings, Ribbed Cuffs',
+            weight: '430 GSM',
+            origin: 'Made in India'
+        },
+        sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+        colors: ['off-white'],
+        category: 'accessories',
+        rating: 4.5,
+        reviewCount: 167,
+        inStock: true
+    },
+
+    '27': {
+        id: 24,
+        name: 'White Polo T-shirt',
+        price: 249,
+        images: ['product27.jpg', 'product27-back.jpg', 'product27-detail.jpg', 'product27-side.jpg'],
+       description: 'Premium cotton blend hoodie with a comfortable fit. Perfect for casual wear and everyday comfort.',
+        details: {
+            material: '88% Cotton, 12% Polyester',
+            fit: 'Regular Fit',
+            care: 'Machine Washable',
+            style: 'Pullover with Front Pocket',
+            features: 'Adjustable Drawstrings, Ribbed Cuffs',
+            weight: '430 GSM',
+            origin: 'Made in India'
+        },
+        sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+        colors: ['black'],
+        category: 'accessories',
+        rating: 4.5,
+        reviewCount: 167,
+        inStock: true
+    },
+
+    '28': {
+        id: 24,
+        name: 'White Polo T-shirt',
+        price: 249,
+        images: ['product28.jpg', 'product28-back.jpg', 'product28-detail.jpg', 'product28-side.jpg'],
+        description: 'Premium cotton blend hoodie with a comfortable fit. Perfect for casual wear and everyday comfort.',
+        details: {
+            material: '88% Cotton, 12% Polyester',
+            fit: 'Regular Fit',
+            care: 'Machine Washable',
+            style: 'Pullover with Front Pocket',
+            features: 'Adjustable Drawstrings, Ribbed Cuffs',
+            weight: '430 GSM',
+            origin: 'Made in India'
+        },
+        sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+        colors: ['navy'],
+        category: 'accessories',
+        rating: 4.5,
+        reviewCount: 167,
         inStock: true
     }
 };
