@@ -29,7 +29,7 @@ const productDatabase = {
         name: 'Black Oversized T-Shirt',
         price: 239,
         images: ['product2.jpg', 'product2-back.jpg', 'product2-detail.jpg', 'product2-side.jpg'],
-        description: 'Trendy oversized black t-shirt with a relaxed fit. Perfect for casual outings.',
+        description: 'Trendy oversized t-shirt with a relaxed fit. Perfect for casual outings.',
         details: {
             material: '100% Cotton, Biowash',
             fit: 'Oversized',
@@ -343,7 +343,7 @@ const productDatabase = {
         name: 'White Oversized T-shirt',
         price: 239,
         images: ['product16.jpg', 'product16-back.jpg', 'product16-detail.jpg', 'product16-side.jpg'],
-        description: 'Trendy oversized black t-shirt with a relaxed fit. Perfect for casual outings.',
+        description: 'Trendy oversized t-shirt with a relaxed fit. Perfect for casual outings.',
         details: {
             material: '100% Cotton, Biowash',
             fit: 'Oversized',
@@ -365,7 +365,7 @@ const productDatabase = {
         name: 'Marron Oversized T-shirt',
         price: 239,
         images: ['product17.jpg', 'product17-back.jpg', 'product17-detail.jpg', 'product17-side.jpg'],
-       description: 'Trendy oversized black t-shirt with a relaxed fit. Perfect for casual outings.',
+       description: 'Trendy oversized t-shirt with a relaxed fit. Perfect for casual outings.',
         details: {
             material: '100% Cotton, Biowash',
             fit: 'Oversized',
@@ -387,7 +387,7 @@ const productDatabase = {
         name: 'Beige Oversized T-shirt',
         price: 239,
         images: ['product18.jpg', 'product18-back.jpg', 'product18-detail.jpg','product18-side.jpg'],
-        description: 'Trendy oversized black t-shirt with a relaxed fit. Perfect for casual outings.',
+        description: 'Trendy oversized t-shirt with a relaxed fit. Perfect for casual outings.',
         details: {
             material: '100% Cotton, Biowash',
             fit: 'Oversized',
@@ -409,7 +409,7 @@ const productDatabase = {
         name: 'Lavender Oversized T-shirt',
         price: 239,
         images: ['product19.jpg', 'product19-back.jpg', 'product19-detail.jpg', 'product19-side.jpg'],
-       description: 'Trendy oversized black t-shirt with a relaxed fit. Perfect for casual outings.',
+       description: 'Trendy oversized t-shirt with a relaxed fit. Perfect for casual outings.',
         details: {
             material: '100% Cotton, Biowash',
             fit: 'Oversized',
