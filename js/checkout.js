@@ -254,7 +254,7 @@ async loadDeliveryOptions() {
 
         // Update all summary elements
         this.updateElement('subtotal', subtotal);
-        this.updateElement('taxAmount', Math.round(subtotal * 0.18));
+        this.updateElement('taxAmount', Math.round(subtotal * 0.05));
         this.updateElement('deliveryCharge', 0);
         this.updateElement('grandTotal', subtotal + Math.round(subtotal * 0.18));
         
@@ -437,16 +437,18 @@ async loadDeliveryOptions() {
 
     updateTotals() {
         const subtotal = this.calculateSubtotal();
-        const tax = Math.round(subtotal * 0.18);
+        const tax = Math.round(subtotal * 0.05);
         const deliveryCharge = this.selectedDelivery || 0;
         const grandTotal = subtotal + tax + deliveryCharge;
+        
+        console.log(`💰 Tax Calculation: ${subtotal} × 5% = ${tax}`);
 
         this.updateElement('subtotal', subtotal);
         this.updateElement('taxAmount', tax);
         document.getElementById('deliveryCharge').textContent = deliveryCharge === 0 ? 'FREE' : `₹${deliveryCharge}`;
         this.updateElement('grandTotal', grandTotal);
         
-        console.log('💰 Totals updated');
+        console.log('💰 Totals updated (5% GST applied)');
     }
 
     proceedToPayment(event) {
@@ -471,7 +473,7 @@ async loadDeliveryOptions() {
 
         // Create order
         const subtotal = this.calculateSubtotal();
-        const tax = Math.round(subtotal * 0.18);
+        const tax = Math.round(subtotal * 0.05);
         
         const pendingOrder = {
             orderId: 'MB' + Date.now(),
@@ -535,4 +537,5 @@ document.addEventListener('DOMContentLoaded', function() {
     window.checkoutManager = new CheckoutManager();
     window.checkoutManager.init();
 });
+
 
