@@ -35,9 +35,14 @@ class PaymentManager {
         `).join('');
       }
 
-      // Display totals
-      this.updateElement('paymentTotal', orderData.total || 0);
+ // ✅✅✅ ADD THESE 4 LINES - Update ALL total fields
+        this.updateElement('paymentSubtotal', orderData.subtotal || 0);
+        this.updateElement('paymentTax', orderData.taxAmount || orderData.tax || 0);
+        this.updateElement('paymentDelivery', orderData.deliveryCharge || orderData.delivery || 0);
+        this.updateElement('paymentTotal', orderData.total || 0);
 
+      
+   
     } catch (error) {
       console.error('❌ Failed to load order:', error);
       this.showError('Failed to load order details.');
@@ -210,3 +215,4 @@ document.addEventListener('DOMContentLoaded', () => {
     alert('Payment system not available. Please refresh the page.');
   }
 });
+
