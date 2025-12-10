@@ -3,11 +3,192 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Product - MyBrand</title>
+  <title>Contact Us - MyBrand</title>
   <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .contact-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      margin-top: 30px;
+    }
+    
+    .contact-info {
+      background: #f8f9fa;
+      padding: 30px;
+      border-radius: 10px;
+    }
+    
+    .contact-form {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .contact-details {
+      margin-top: 30px;
+    }
+    
+    .contact-item {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 25px;
+    }
+    
+    .contact-icon {
+      font-size: 24px;
+      margin-right: 15px;
+      color: #007bff;
+    }
+    
+    .contact-text h4 {
+      margin: 0 0 5px 0;
+      color: #333;
+    }
+    
+    .contact-text p {
+      margin: 0;
+      color: #666;
+      line-height: 1.6;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 16px;
+      transition: border 0.3s ease;
+    }
+    
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+    }
+    
+    .submit-btn {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 14px 30px;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      width: 100%;
+    }
+    
+    .submit-btn:hover {
+      background: #0056b3;
+    }
+    
+    .business-hours {
+      background: white;
+      padding: 25px;
+      border-radius: 8px;
+      margin-top: 30px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    }
+    
+    .business-hours h3 {
+      margin-top: 0;
+      color: #333;
+    }
+    
+    .hours-list {
+      list-style: none;
+      padding: 0;
+    }
+    
+    .hours-list li {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .hours-list li:last-child {
+      border-bottom: none;
+    }
+    
+    .day {
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .time {
+      color: #666;
+    }
+    
+    .owner-info {
+      background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+      color: white;
+      padding: 30px;
+      border-radius: 10px;
+      margin-top: 30px;
+    }
+    
+    .owner-info h3 {
+      margin-top: 0;
+      color: white;
+    }
+    
+    .owner-details p {
+      margin: 10px 0;
+      display: flex;
+      align-items: center;
+    }
+    
+    .owner-details i {
+      margin-right: 10px;
+      width: 20px;
+    }
+    
+    .success-message {
+      background: #d4edda;
+      color: #155724;
+      padding: 15px;
+      border-radius: 6px;
+      margin: 20px 0;
+      display: none;
+    }
+    
+    @media (max-width: 768px) {
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .contact-container {
+        padding: 20px 15px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <!-- In shop.html, cart.html, about.html, contact.html -->
 <header>
     <nav class="navbar">
         <div class="logo"><a href="index.html">MyBrand</a></div>
@@ -26,17 +207,222 @@
           </a>
         </li>
             <li><a href="about.html">About</a></li>
-            <li><a href="contact.html">Contact</a></li>
+            <li><a href="contact.html" class="active">Contact</a></li>
             <li><a href="profile.html">Profile</a></li>
             <li><a href="login.html" id="authLink">Login</a></li>
         </ul>
         <div class="menu-icon" id="menuToggle">☰</div>
     </nav>
 </header>
-<main style="padding:40px;"><h1>Contact</h1><form onsubmit="event.preventDefault(); alert('Form demo - integrate with backend');"><input placeholder="Your name"/><br/><input placeholder="Email"/><br/><textarea placeholder="Message"></textarea><br/><button class="btn">Send</button></form></main>
-<footer>...</footer>
+
+<main class="contact-container">
+  <h1 style="text-align: center; margin-bottom: 10px; color: #333;">Contact Us</h1>
+  <p style="text-align: center; color: #666; margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto;">
+    Have questions about our products, bulk orders, or need custom printing? We're here to help!
+  </p>
+  
+  <div class="success-message" id="successMessage">
+    ✅ Thank you for your message! We'll get back to you within 24 hours.
+  </div>
+  
+  <div class="contact-grid">
+    <!-- Contact Form -->
+    <div class="contact-form">
+      <h2 style="margin-top: 0; color: #333;">Send us a Message</h2>
+      <form id="contactForm">
+        <div class="form-group">
+          <label for="name">Full Name *</label>
+          <input type="text" id="name" name="name" required placeholder="Enter your full name">
+        </div>
+        
+        <div class="form-group">
+          <label for="email">Email Address *</label>
+          <input type="email" id="email" name="email" required placeholder="your.email@example.com">
+        </div>
+        
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input type="tel" id="phone" name="phone" placeholder="+91 9876543210">
+        </div>
+        
+        <div class="form-group">
+          <label for="subject">Subject *</label>
+          <select id="subject" name="subject" required>
+            <option value="">Select a subject</option>
+            <option value="bulk-order">Bulk Order Inquiry</option>
+            <option value="custom-printing">Custom Printing</option>
+            <option value="product-info">Product Information</option>
+            <option value="shipping">Shipping & Delivery</option>
+            <option value="returns">Returns & Exchanges</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="message">Your Message *</label>
+          <textarea id="message" name="message" rows="5" required placeholder="Tell us how we can help you..."></textarea>
+        </div>
+        
+        <button type="submit" class="submit-btn">
+          Send Message
+        </button>
+      </form>
+    </div>
+    
+    <!-- Contact Information -->
+    <div class="contact-info">
+      <h2 style="margin-top: 0; color: #333;">Get in Touch</h2>
+      <p style="color: #666; line-height: 1.6;">
+        We specialize in premium quality t-shirts, hoodies, and custom apparel. Whether you need bulk orders for your business or custom printed merchandise, we're here to assist.
+      </p>
+      
+      <div class="contact-details">
+        <div class="contact-item">
+          <div class="contact-icon">📍</div>
+          <div class="contact-text">
+            <h4>Our Location</h4>
+            <p>Delhi, India<br>
+            <small style="color: #888;">Primary operations in Delhi NCR region</small></p>
+          </div>
+        </div>
+        
+        <div class="contact-item">
+          <div class="contact-icon">📧</div>
+          <div class="contact-text">
+            <h4>Email Address</h4>
+            <p>support@mybrand.com<br>
+            orders@mybrand.com (for bulk orders)</p>
+          </div>
+        </div>
+        
+        <div class="contact-item">
+          <div class="contact-icon">📱</div>
+          <div class="contact-text">
+            <h4>Phone / WhatsApp</h4>
+            <p>+91 98765 43210<br>
+            <small style="color: #888;">Available on WhatsApp for quick queries</small></p>
+          </div>
+        </div>
+        
+        <div class="contact-item">
+          <div class="contact-icon">⏰</div>
+          <div class="contact-text">
+            <h4>Response Time</h4>
+            <p>Within 24 hours for emails<br>
+            Within 2 hours for WhatsApp messages</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Business Hours -->
+      <div class="business-hours">
+        <h3>Business Hours</h3>
+        <ul class="hours-list">
+          <li><span class="day">Monday - Friday</span><span class="time">9:00 AM - 6:00 PM</span></li>
+          <li><span class="day">Saturday</span><span class="time">10:00 AM - 4:00 PM</span></li>
+          <li><span class="day">Sunday</span><span class="time">Closed</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Owner/Founder Information -->
+  <div class="owner-info">
+    <h3>About the Founder</h3>
+    <div class="owner-details">
+      <p><i>👤</i> <strong>Your Name</strong> - Founder & CEO</p>
+      <p><i>💼</i> 5+ years experience in apparel manufacturing and e-commerce</p>
+      <p><i>🎯</i> Specializes in bulk orders, custom printing, and premium fabrics</p>
+      <p><i>🌱</i> Passionate about sustainable fashion and quality craftsmanship</p>
+      <p><i>🤝</i> Believes in building long-term relationships with customers</p>
+    </div>
+  </div>
+  
+  <!-- Quick Response Note -->
+  <div style="background: #fff3cd; padding: 20px; border-radius: 8px; margin-top: 30px; text-align: center;">
+    <h3 style="margin-top: 0; color: #856404;">💡 Quick Note</h3>
+    <p style="color: #856404; margin: 0;">
+      <strong>For Bulk Orders (50+ pieces):</strong> Mention "BULK QUERY" in your message for priority response and customized pricing.
+    </p>
+  </div>
+</main>
+
+<footer style="background: #333; color: white; padding: 40px 20px; margin-top: 50px;">
+  <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px;">
+    <div>
+      <h3 style="margin-top: 0;">MyBrand</h3>
+      <p>Premium apparel for individuals and businesses. Quality, comfort, and style in every stitch.</p>
+    </div>
+    <div>
+      <h4 style="margin-top: 0;">Quick Links</h4>
+      <ul style="list-style: none; padding: 0;">
+        <li><a href="index.html" style="color: #ddd; text-decoration: none;">Home</a></li>
+        <li><a href="shop.html" style="color: #ddd; text-decoration: none;">Shop</a></li>
+        <li><a href="bulktshirts.html" style="color: #ddd; text-decoration: none;">Bulk T-shirts</a></li>
+        <li><a href="contact.html" style="color: #ddd; text-decoration: none;">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 style="margin-top: 0;">Contact Info</h4>
+      <p>📧 support@mybrand.com</p>
+      <p>📱 +91 98765 43210</p>
+      <p>📍 Delhi, India</p>
+    </div>
+  </div>
+  <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #444;">
+    <p>&copy; 2024 MyBrand. All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const contactForm = document.getElementById('contactForm');
+    const successMessage = document.getElementById('successMessage');
+    
+    if (contactForm) {
+      contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Get form data
+        const formData = {
+          name: document.getElementById('name').value,
+          email: document.getElementById('email').value,
+          phone: document.getElementById('phone').value,
+          subject: document.getElementById('subject').value,
+          message: document.getElementById('message').value,
+          timestamp: new Date().toISOString()
+        };
+        
+        // Save to localStorage (simulated backend)
+        try {
+          const existingMessages = JSON.parse(localStorage.getItem('contactMessages') || '[]');
+          existingMessages.push(formData);
+          localStorage.setItem('contactMessages', JSON.stringify(existingMessages));
+          
+          console.log('📨 Contact message saved:', formData);
+          
+          // Show success message
+          successMessage.style.display = 'block';
+          contactForm.reset();
+          
+          // Scroll to success message
+          successMessage.scrollIntoView({ behavior: 'smooth' });
+          
+          // Hide success message after 5 seconds
+          setTimeout(() => {
+            successMessage.style.display = 'none';
+          }, 5000);
+          
+        } catch (error) {
+          console.error('Error saving contact message:', error);
+          alert('There was an error sending your message. Please try again.');
+        }
+      });
+    }
+  });
+</script>
+
 <script src="js/auth.js"></script>
 <script src="js/script.js"></script>
 </body>
-   </html>
-
+</html>
