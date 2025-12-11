@@ -3,8 +3,148 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Product - MyBrand</title>
+  <title>About Us - MyBrand | India's Premier B2B Apparel Manufacturer</title>
   <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .about-hero {
+      background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('images/manufacturing-bg.jpg');
+      background-size: cover;
+      color: white;
+      padding: 80px 20px;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    
+    .about-hero h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+    }
+    
+    .about-hero p {
+      font-size: 1.2rem;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin: 40px 0;
+    }
+    
+    .stat-card {
+      text-align: center;
+      padding: 30px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .stat-card h3 {
+      font-size: 2.5rem;
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+    
+    .stat-card p {
+      color: #666;
+      font-size: 0.9rem;
+    }
+    
+    .section {
+      margin: 60px 0;
+    }
+    
+    .section-title {
+      text-align: center;
+      margin-bottom: 40px;
+      color: #2c3e50;
+    }
+    
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+    }
+    
+    .feature-card {
+      padding: 30px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      border-top: 4px solid #3498db;
+    }
+    
+    .feature-card h3 {
+      color: #2c3e50;
+      margin-bottom: 15px;
+    }
+    
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #3498db;
+    }
+    
+    .product-showcase {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+    
+    .product-item {
+      text-align: center;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+    
+    .cta-section {
+      background: #2c3e50;
+      color: white;
+      padding: 60px 20px;
+      text-align: center;
+      border-radius: 8px;
+      margin-top: 60px;
+    }
+    
+    .cta-button {
+      display: inline-block;
+      background: #3498db;
+      color: white;
+      padding: 15px 40px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: bold;
+      margin-top: 20px;
+      transition: background 0.3s;
+    }
+    
+    .cta-button:hover {
+      background: #2980b9;
+    }
+    
+    .video-container {
+      max-width: 800px;
+      margin: 40px auto;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+    }
+    
+    .video-placeholder {
+      background: #34495e;
+      height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.2rem;
+    }
+  </style>
 </head>
 <body>
 <!-- In shop.html, cart.html, about.html, contact.html -->
@@ -33,10 +173,267 @@
         <div class="menu-icon" id="menuToggle">☰</div>
     </nav>
 </header>
-<main style="padding:40px;"><h1>About Us</h1><p>Write your brand story here.</p></main>
-<footer>...</footer>
+
+<main style="padding:40px;">
+  
+  <!-- Hero Section -->
+  <section class="about-hero">
+    <h1>India's Premier B2B Apparel Manufacturer</h1>
+    <p>Leading the wholesale apparel industry with vertically integrated manufacturing, complete quality control, and nationwide distribution network. We power India's custom printing ecosystem with premium blank apparel.</p>
+  </section>
+  
+  <!-- Stats Section -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <h3>19+</h3>
+      <p>Product Categories</p>
+    </div>
+    <div class="stat-card">
+      <h3>Lakhs+</h3>
+      <p>Pieces Sold Monthly</p>
+    </div>
+    <div class="stat-card">
+      <h3>1-2</h3>
+      <p>Days Delivery Pan India</p>
+    </div>
+    <div class="stat-card">
+      <h3>6</h3>
+      <p>Shipping Options</p>
+    </div>
+  </div>
+  
+  <!-- Manufacturing Excellence -->
+  <section class="section">
+    <h2 class="section-title">Manufacturing Excellence</h2>
+    <p style="text-align: center; max-width: 800px; margin: 0 auto 30px; line-height: 1.6;">
+      Our vertically integrated approach sets us apart – we source our own yarn and knit the fabric in-house, ensuring complete quality control from raw materials to finished products. This allows us to maintain consistent quality while offering competitive wholesale pricing across India.
+    </p>
+    
+    <div class="video-container">
+      <div class="video-placeholder">
+        🎬 See Our Manufacturing Process: From Yarn to Finished Product
+      </div>
+    </div>
+    
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🏭</div>
+        <h3>Vertical Integration</h3>
+        <p>Complete control from yarn sourcing to fabric knitting and garment manufacturing. This ensures consistent quality and competitive pricing.</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon">📦</div>
+        <h3>Ready Stock Management</h3>
+        <p>We maintain huge inventory of all 19 products for ready-to-dispatch. Orders are dispatched within minutes of receipt.</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon">🚀</div>
+        <h3>Instant Dispatch</h3>
+        <p>Our always-ready stock policy means zero waiting time. We dispatch all orders within minutes of confirmation.</p>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Our Customers -->
+  <section class="section">
+    <h2 class="section-title">Who We Serve</h2>
+    <div style="max-width: 800px; margin: 0 auto; padding: 30px; background: #f8f9fa; border-radius: 8px;">
+      <h3 style="color: #2c3e50; margin-bottom: 20px;">B2B Focus: Powering India's Custom Printing Industry</h3>
+      <p style="line-height: 1.6; margin-bottom: 15px;">
+        Our primary customers are custom printers operating pan India who purchase plain t-shirts in bulk, add their custom prints, and resell to their customers. We exclusively operate in the B2B wholesale market – we are not retailers and focus entirely on serving businesses with bulk requirements.
+      </p>
+      <p style="line-height: 1.6;">
+        We support the entire custom printing ecosystem across India by providing high-quality blank apparel that serves as the foundation for custom branded merchandise, promotional items, and retail fashion.
+      </p>
+    </div>
+  </section>
+  
+  <!-- Product Range -->
+  <section class="section">
+    <h2 class="section-title">Our Premium Product Range</h2>
+    <div class="product-showcase">
+      <div class="product-item">
+        <h3>Regular Fit T-Shirts</h3>
+        <p>Classic fit in multiple colors and sizes</p>
+      </div>
+      <div class="product-item">
+        <h3>Oversized T-Shirts</h3>
+        <p>Premium 240 GSM terry cotton drop shoulder variants</p>
+      </div>
+      <div class="product-item">
+        <h3>Plain Hoodies</h3>
+        <p>Various colors and weights for all seasons</p>
+      </div>
+      <div class="product-item">
+        <h3>Acid Wash Collection</h3>
+        <p>Trendy stone-washed finish t-shirts</p>
+      </div>
+      <div class="product-item">
+        <h3>Collar T-Shirts</h3>
+        <p>Professional and casual polo styles</p>
+      </div>
+      <div class="product-item">
+        <h3>Shorts</h3>
+        <p>Comfortable casual and sports variants</p>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Delivery Network -->
+  <section class="section">
+    <h2 class="section-title">Pan India Delivery Network</h2>
+    <p style="text-align: center; margin-bottom: 30px;">We offer 6 comprehensive shipping options for fastest delivery anywhere in India</p>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+      <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <h4 style="color: #2c3e50;">🚚 Courier Service</h4>
+        <p>Standard reliable delivery across India</p>
+      </div>
+      <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <h4 style="color: #2c3e50;">🚂 Train Cargo</h4>
+        <p>Cost-effective bulk transportation</p>
+      </div>
+      <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <h4 style="color: #2c3e50;">🚛 Road Transport</h4>
+        <p>Large volume orders with door-to-door service</p>
+      </div>
+      <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <h4 style="color: #2c3e50;">⚡ Porter/Rapido</h4>
+        <p>2-hour local Delhi delivery service</p>
+      </div>
+      <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <h4 style="color: #2c3e50;">📦 Drop Shipping</h4>
+        <p>Zero-contact direct customer delivery</p>
+      </div>
+      <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <h4 style="color: #2c3e50;">🛤️ Railway Network</h4>
+        <p>Pan India coverage with bulk logistics</p>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Warehouse Locations -->
+  <section class="section">
+    <h2 class="section-title">Strategic Warehouse Locations</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 30px;">
+      <div style="background: #2c3e50; color: white; padding: 30px; border-radius: 8px;">
+        <h3>📍 Tiruppur Hub</h3>
+        <p>Located in India's textile capital, our Tiruppur facility handles manufacturing and South India distribution with state-of-the-art production lines.</p>
+      </div>
+      <div style="background: #3498db; color: white; padding: 30px; border-radius: 8px;">
+        <h3>📍 Delhi Hub</h3>
+        <p>F-120, Tshirt Wala Godown<br>
+        Shutter Wali Gali, Near Transformer<br>
+        Khanpur Village, South Delhi - 110062</p>
+        <p>Strategic hub for rapid distribution across entire India covering all states and territories.</p>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Digital Platform -->
+  <section class="section">
+    <h2 class="section-title">Digital-First B2B Platform</h2>
+    <div style="max-width: 800px; margin: 0 auto; padding: 40px; background: #f8f9fa; border-radius: 8px;">
+      <p style="line-height: 1.6; margin-bottom: 20px;">
+        Our entire operation is powered by our robust e-commerce platform where we process lakhs of pieces in orders every month. The platform offers:
+      </p>
+      <ul style="line-height: 1.8; margin-left: 20px;">
+        <li>Real-time inventory visibility</li>
+        <li>Instant order processing and confirmation</li>
+        <li>Multiple payment options including bulk credit</li>
+        <li>Order tracking and logistics integration</li>
+        <li>Bulk pricing tiers and volume discounts</li>
+        <li>Zero-contact drop shipping capabilities</li>
+        <li>Digital catalog with high-resolution product images</li>
+      </ul>
+    </div>
+  </section>
+  
+  <!-- FAQ Section -->
+  <section class="section">
+    <h2 class="section-title">Frequently Asked Questions</h2>
+    <div style="max-width: 800px; margin: 0 auto;">
+      <details style="margin-bottom: 15px; padding: 15px; background: white; border-radius: 8px; border: 1px solid #ddd;">
+        <summary style="font-weight: bold; cursor: pointer;">What products does MyBrand manufacture?</summary>
+        <p style="margin-top: 10px; line-height: 1.6;">We manufacture 19+ product categories including regular fit t-shirts, oversized t-shirts (240 GSM), plain hoodies, shorts, collar t-shirts, and acid wash t-shirts with stone-washed finish.</p>
+      </details>
+      
+      <details style="margin-bottom: 15px; padding: 15px; background: white; border-radius: 8px; border: 1px solid #ddd;">
+        <summary style="font-weight: bold; cursor: pointer;">How fast is your delivery across India?</summary>
+        <p style="margin-top: 10px; line-height: 1.6;">We typically deliver within 1-2 working days pan India using our 6 comprehensive shipping options. For Delhi/NCR, we offer 2-hour delivery through Porter/Rapido services.</p>
+      </details>
+      
+      <details style="margin-bottom: 15px; padding: 15px; background: white; border-radius: 8px; border: 1px solid #ddd;">
+        <summary style="font-weight: bold; cursor: pointer;">Do you sell to retailers or only wholesale?</summary>
+        <p style="margin-top: 10px; line-height: 1.6;">We exclusively operate in the B2B wholesale market. Our primary customers are custom printers, businesses, and resellers who purchase in bulk quantities.</p>
+      </details>
+      
+      <details style="margin-bottom: 15px; padding: 15px; background: white; border-radius: 8px; border: 1px solid #ddd;">
+        <summary style="font-weight: bold; cursor: pointer;">What makes your pricing competitive?</summary>
+        <p style="margin-top: 10px; line-height: 1.6;">Our vertical integration allows us to control costs from yarn sourcing to finished product. We produce in lakhs of pieces at once, maintaining economies of scale that result in highly competitive wholesale pricing.</p>
+      </details>
+    </div>
+  </section>
+  
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <h2 style="margin-bottom: 20px;">Ready to Partner with India's Leading B2B Manufacturer?</h2>
+    <p style="max-width: 600px; margin: 0 auto 30px; line-height: 1.6;">
+      Join thousands of custom printers and businesses who trust us for their bulk apparel needs. Get competitive pricing, premium quality, and reliable delivery across India.
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+      <a href="bulktshirts.html" class="cta-button">Browse Bulk Products</a>
+      <a href="contact.html" class="cta-button" style="background: #27ae60;">Contact Our Sales Team</a>
+      <a href="tel:+919336695049" class="cta-button" style="background: #9b59b6;">Call: +91-9336695049</a>
+    </div>
+  </section>
+  
+</main>
+
+<footer>
+  <!-- Your existing footer content -->
+  <div style="background: #2c3e50; color: white; padding: 40px 20px; margin-top: 60px;">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px;">
+        <div>
+          <h3 style="margin-bottom: 20px;">MyBrand</h3>
+          <p>India's premier B2B wholesale manufacturer specializing in plain t-shirts, hoodies, and apparel for the custom printing industry.</p>
+        </div>
+        <div>
+          <h3 style="margin-bottom: 20px;">📞 Contact Details</h3>
+          <p>Phone: +91-9336695049</p>
+          <p>Email: sales@mybrand.com</p>
+          <p>WhatsApp: +91-9336695049</p>
+        </div>
+        <div>
+          <h3 style="margin-bottom: 20px;">📍 Delhi Warehouse</h3>
+          <p>F-120, Tshirt Wala Godown<br>
+          Shutter Wali Gali, Near Transformer<br>
+          Khanpur Village, South Delhi - 110062</p>
+        </div>
+        <div>
+          <h3 style="margin-bottom: 20px;">🕒 Business Hours</h3>
+          <p>Monday - Sunday:<br>
+          10:00 AM - 5:00 PM<br>
+          Always available on WhatsApp</p>
+        </div>
+      </div>
+      <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+        <p>© 2024 MyBrand. All rights reserved. | India's Trusted B2B Apparel Manufacturer</p>
+        <div style="margin-top: 20px;">
+          <a href="#" style="color: white; margin: 0 10px; text-decoration: none;">Facebook</a>
+          <a href="#" style="color: white; margin: 0 10px; text-decoration: none;">Instagram</a>
+          <a href="#" style="color: white; margin: 0 10px; text-decoration: none;">YouTube</a>
+          <a href="#" style="color: white; margin: 0 10px; text-decoration: none;">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
 <script src="js/auth.js"></script>
 <script src="js/script.js"></script>
 </body>
-    </html>
-
+</html>
