@@ -2,7 +2,9 @@
 console.log("✅ Admin.js is loading...");
 class AdminPanel {
     constructor() {
-        this.init();
+        this.ADMIN_PASSWORD = "mybrand123"; // Change this to a secure password!
+        this.showLoginIfNeeded();
+        // Don't call init() here - showLoginIfNeeded() will call it
     }
 
     init() {
@@ -22,7 +24,6 @@ class AdminPanel {
         
         console.log('✅ Admin Panel Ready');
     }
-
     checkAdminAccess() {
         // Simple admin check - in production, use proper authentication
         const currentUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -612,12 +613,6 @@ class AdminPanel {
 
 
 
-// Add to AdminPanel constructor
-constructor() {
-    this.ADMIN_PASSWORD = "mybrand123"; // Change this!
-    this.showLoginIfNeeded();
-    this.init();
-}
 
 showLoginIfNeeded() {
     const isLoggedIn = localStorage.getItem('adminLoggedIn') === 'true';
