@@ -3,288 +3,289 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Our Story - MyBrand | Crafting Quality Apparel Since 2015</title>
+  <title>About Us - MyBrand | Quality Apparel Since 2015</title>
   <link rel="stylesheet" href="css/style.css" />
   <style>
-    /* Unique Visual Design */
-    .story-container {
-      max-width: 1200px;
+    /* Modern Color Palette */
+    :root {
+      --primary: #4361ee;
+      --secondary: #3a0ca3;
+      --accent: #f72585;
+      --light: #f8f9ff;
+      --dark: #2b2d42;
+      --success: #4cc9f0;
+    }
+    
+    .about-container {
+      max-width: 1000px;
       margin: 0 auto;
       padding: 40px 20px;
     }
     
-    .story-hero {
+    /* Hero Section */
+    .about-hero {
       text-align: center;
-      padding: 80px 20px;
-      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-      border-radius: 20px;
-      margin-bottom: 60px;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .story-hero::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1);
+      padding: 60px 20px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border-radius: 15px;
+      margin-bottom: 50px;
     }
     
     .hero-title {
-      font-size: 3.5rem;
-      background: linear-gradient(90deg, #2c3e50, #3498db);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      font-size: 2.8rem;
       margin-bottom: 20px;
-      font-weight: 800;
+      font-weight: 700;
     }
     
     .hero-subtitle {
-      font-size: 1.3rem;
-      color: #666;
-      max-width: 800px;
-      margin: 0 auto 30px;
+      font-size: 1.2rem;
+      max-width: 600px;
+      margin: 0 auto;
+      opacity: 0.9;
       line-height: 1.6;
     }
     
-    /* Timeline Feature */
-    .journey-timeline {
-      margin: 80px 0;
+    /* Journey Section */
+    .journey-section {
+      margin: 60px 0;
+    }
+    
+    .section-title {
+      text-align: center;
+      color: var(--dark);
+      margin-bottom: 50px;
+      font-size: 2.2rem;
       position: relative;
     }
     
-    .timeline-line {
+    .section-title::after {
+      content: '';
       position: absolute;
+      bottom: -10px;
       left: 50%;
       transform: translateX(-50%);
-      width: 2px;
-      height: 100%;
-      background: linear-gradient(to bottom, #3498db, #9b59b6);
-      z-index: 1;
+      width: 80px;
+      height: 4px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+    
+    /* Timeline - Simple Design */
+    .timeline {
+      position: relative;
+      max-width: 800px;
+      margin: 0 auto;
     }
     
     .timeline-item {
       display: flex;
-      justify-content: center;
-      margin-bottom: 60px;
-      position: relative;
-      z-index: 2;
+      align-items: center;
+      margin-bottom: 40px;
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      border-left: 4px solid var(--primary);
+      transition: transform 0.3s ease;
+    }
+    
+    .timeline-item:hover {
+      transform: translateX(10px);
+      border-left-color: var(--accent);
+    }
+    
+    .year-badge {
+      background: var(--primary);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      min-width: 100px;
+      text-align: center;
+      margin-right: 25px;
+      flex-shrink: 0;
     }
     
     .timeline-content {
-      width: 45%;
-      padding: 30px;
-      background: white;
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-      position: relative;
-      border: 1px solid rgba(0,0,0,0.05);
+      flex-grow: 1;
     }
     
-    .timeline-left {
-      margin-right: 55%;
+    .timeline-content h3 {
+      color: var(--dark);
+      margin-bottom: 10px;
+      font-size: 1.3rem;
     }
     
-    .timeline-right {
-      margin-left: 55%;
+    .timeline-content p {
+      color: #666;
+      line-height: 1.6;
+      margin: 0;
     }
     
-    .timeline-year {
-      display: inline-block;
-      background: linear-gradient(135deg, #3498db, #9b59b6);
-      color: white;
-      padding: 8px 20px;
-      border-radius: 20px;
-      font-weight: bold;
-      margin-bottom: 15px;
-    }
-    
-    /* Craftsmanship Section */
-    .craftsmanship-grid {
+    /* Stats Section */
+    .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 30px;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 25px;
       margin: 60px 0;
     }
     
-    .craft-card {
-      padding: 40px;
-      border-radius: 15px;
+    .stat-card {
       background: white;
+      padding: 30px;
+      border-radius: 12px;
       text-align: center;
-      transition: transform 0.3s ease;
-      border: 1px solid rgba(0,0,0,0.05);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      border-top: 4px solid var(--success);
     }
     
-    .craft-card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: var(--primary);
+      margin-bottom: 10px;
     }
     
-    .craft-icon {
-      width: 80px;
-      height: 80px;
-      margin: 0 auto 25px;
-      background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
-    }
-    
-    .craft-card:nth-child(2) .craft-icon {
-      background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
-    }
-    
-    .craft-card:nth-child(3) .craft-icon {
-      background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    .stat-label {
+      color: var(--dark);
+      font-size: 0.9rem;
     }
     
     /* Values Section */
-    .values-container {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 80px 40px;
-      border-radius: 20px;
+    .values-section {
       margin: 80px 0;
-      text-align: center;
-    }
-    
-    .values-title {
-      font-size: 2.5rem;
-      margin-bottom: 50px;
     }
     
     .values-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 40px;
-    }
-    
-    .value-item {
-      padding: 30px;
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(10px);
-      border-radius: 15px;
-      border: 1px solid rgba(255,255,255,0.2);
-    }
-    
-    /* Team Section */
-    .team-showcase {
-      margin: 80px 0;
-    }
-    
-    .team-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 30px;
-      margin-top: 40px;
     }
     
-    .team-member {
-      text-align: center;
-      padding: 30px;
+    .value-card {
       background: white;
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
     }
     
-    .member-avatar {
-      width: 120px;
-      height: 120px;
+    .value-icon {
+      width: 60px;
+      height: 60px;
       margin: 0 auto 20px;
+      background: linear-gradient(135deg, var(--primary), var(--success));
       border-radius: 50%;
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2.5rem;
-      color: white;
-    }
-    
-    /* Impact Section */
-    .impact-stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 30px;
-      margin: 60px 0;
-    }
-    
-    .impact-stat {
-      text-align: center;
-      padding: 40px 20px;
-      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-      border-radius: 15px;
-      color: white;
-    }
-    
-    .impact-stat:nth-child(2) {
-      background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-    }
-    
-    .impact-stat:nth-child(3) {
-      background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-    }
-    
-    .impact-stat:nth-child(4) {
-      background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
-    }
-    
-    /* Quote Section */
-    .founder-quote {
-      margin: 80px 0;
-      padding: 60px;
-      background: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%);
-      border-radius: 20px;
-      text-align: center;
-      position: relative;
-    }
-    
-    .quote-icon {
-      font-size: 3rem;
-      color: #3498db;
-      margin-bottom: 30px;
-      opacity: 0.3;
-    }
-    
-    .quote-text {
       font-size: 1.5rem;
-      line-height: 1.6;
-      color: #2c3e50;
-      font-style: italic;
-      max-width: 800px;
-      margin: 0 auto 30px;
+      color: white;
+    }
+    
+    .value-card h3 {
+      color: var(--dark);
+      margin-bottom: 15px;
+    }
+    
+    /* CTA Section */
+    .cta-section {
+      background: linear-gradient(135deg, var(--light), white);
+      padding: 60px;
+      border-radius: 15px;
+      text-align: center;
+      margin: 60px 0;
+      border: 2px dashed var(--primary);
+    }
+    
+    .cta-title {
+      color: var(--dark);
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+    }
+    
+    .cta-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 30px;
+    }
+    
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      padding: 15px 35px;
+      border-radius: 25px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: 2px solid var(--primary);
+    }
+    
+    .btn-primary:hover {
+      background: transparent;
+      color: var(--primary);
+    }
+    
+    .btn-secondary {
+      background: transparent;
+      color: var(--primary);
+      padding: 15px 35px;
+      border-radius: 25px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: 2px solid var(--primary);
+    }
+    
+    .btn-secondary:hover {
+      background: var(--primary);
+      color: white;
     }
     
     /* Responsive Design */
     @media (max-width: 768px) {
-      .timeline-line {
-        left: 30px;
+      .timeline-item {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 20px;
       }
       
-      .timeline-content {
-        width: calc(100% - 80px);
-        margin-left: 80px !important;
-        margin-right: 0 !important;
+      .year-badge {
+        margin-right: 0;
+        margin-bottom: 15px;
       }
       
       .hero-title {
-        font-size: 2.5rem;
+        font-size: 2.2rem;
       }
       
-      .story-hero {
-        padding: 60px 20px;
+      .about-hero {
+        padding: 40px 20px;
+      }
+      
+      .cta-section {
+        padding: 40px 20px;
       }
     }
     
-    .section-divider {
-      height: 1px;
-      background: linear-gradient(90deg, transparent, #ddd, transparent);
-      margin: 60px 0;
+    /* Animation for items */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .fade-in {
+      animation: fadeInUp 0.6s ease forwards;
     }
   </style>
 </head>
@@ -316,233 +317,186 @@
 </header>
 
 <main>
-  <div class="story-container">
+  <div class="about-container">
     
     <!-- Hero Section -->
-    <section class="story-hero">
-      <h1 class="hero-title">The Art of Apparel Craftsmanship</h1>
+    <section class="about-hero fade-in">
+      <h1 class="hero-title">Our Journey in Apparel</h1>
       <p class="hero-subtitle">
-        Since 2015, we've been redefining what quality means in apparel manufacturing. From a small workshop to a national brand, our journey is built on passion, precision, and purpose.
+        From humble beginnings to trusted national brand, we've been crafting quality apparel with passion and precision since 2015.
       </p>
-      <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 30px;">
-        <a href="shop.html" style="padding: 15px 30px; background: #2c3e50; color: white; text-decoration: none; border-radius: 25px;">Explore Collection</a>
-        <a href="contact.html" style="padding: 15px 30px; background: transparent; color: #2c3e50; text-decoration: none; border: 2px solid #2c3e50; border-radius: 25px;">Partner With Us</a>
-      </div>
     </section>
     
-    <!-- Our Journey Timeline -->
-    <section class="journey-timeline">
-      <h2 style="text-align: center; margin-bottom: 60px; color: #2c3e50;">Our Journey Through Time</h2>
-      <div class="timeline-line"></div>
+    <!-- Journey Timeline -->
+    <section class="journey-section">
+      <h2 class="section-title">Our Journey Through Time</h2>
       
-      <div class="timeline-item">
-        <div class="timeline-content timeline-left">
-          <div class="timeline-year">2015</div>
-          <h3>The Beginning</h3>
-          <p>Started with just 3 sewing machines in a 500 sq ft workshop. Our first product line featured 5 basic t-shirt designs that quickly gained attention for their exceptional fabric quality.</p>
-        </div>
-      </div>
-      
-      <div class="timeline-item">
-        <div class="timeline-content timeline-right">
-          <div class="timeline-year">2017</div>
-          <h3>First Major Innovation</h3>
-          <p>Developed our proprietary fabric blend that combined breathability with durability. This innovation became our signature and set new standards in the industry.</p>
-        </div>
-      </div>
-      
-      <div class="timeline-item">
-        <div class="timeline-content timeline-left">
-          <div class="timeline-year">2019</div>
-          <h3>National Expansion</h3>
-          <p>Opened our second manufacturing facility and expanded distribution to all major cities across India. Partnered with 50+ custom printing businesses nationwide.</p>
-        </div>
-      </div>
-      
-      <div class="timeline-item">
-        <div class="timeline-content timeline-right">
-          <div class="timeline-year">2022</div>
-          <h3>Sustainable Transformation</h3>
-          <p>Implemented eco-friendly manufacturing processes and introduced our first line of organic cotton products. Reduced water consumption by 40% across operations.</p>
-        </div>
-      </div>
-      
-      <div class="timeline-item">
-        <div class="timeline-content timeline-left">
-          <div class="timeline-year">2024</div>
-          <h3>Digital Revolution</h3>
-          <p>Launched our complete digital ecosystem, serving thousands of businesses across India with real-time inventory, AI-powered recommendations, and seamless logistics.</p>
-        </div>
-      </div>
-    </section>
-    
-    <div class="section-divider"></div>
-    
-    <!-- Craftsmanship Philosophy -->
-    <section>
-      <h2 style="text-align: center; margin-bottom: 50px; color: #2c3e50;">The Craftsmanship Behind Every Thread</h2>
-      <div class="craftsmanship-grid">
-        <div class="craft-card">
-          <div class="craft-icon">🎨</div>
-          <h3>Material Alchemy</h3>
-          <p>We don't just source fabric; we engineer it. Our team spends months developing proprietary blends that balance comfort, durability, and sustainability.</p>
+      <div class="timeline">
+        
+        <div class="timeline-item fade-in">
+          <div class="year-badge" style="background: #4361ee;">2015</div>
+          <div class="timeline-content">
+            <h3>The Beginning</h3>
+            <p>Started with just 3 sewing machines in a 500 sq ft workshop. Our first product line featured 5 basic t-shirt designs that quickly gained attention for their exceptional fabric quality.</p>
+          </div>
         </div>
         
-        <div class="craft-card">
-          <div class="craft-icon">✂️</div>
-          <h3>Precision Tailoring</h3>
-          <p>Each garment undergoes 47 quality checks. From stitch density to seam alignment, our artisans maintain standards that mass production often overlooks.</p>
+        <div class="timeline-item fade-in">
+          <div class="year-badge" style="background: #3a0ca3;">2017</div>
+          <div class="timeline-content">
+            <h3>First Major Innovation</h3>
+            <p>Developed our proprietary fabric blend that combined breathability with durability. This innovation became our signature and set new standards in the industry.</p>
+          </div>
         </div>
         
-        <div class="craft-card">
-          <div class="craft-icon">❤️</div>
-          <h3>Human Touch</h3>
-          <p>Technology enhances, but never replaces, the human element. Our experienced craftspeople bring care and attention that machines simply cannot replicate.</p>
+        <div class="timeline-item fade-in">
+          <div class="year-badge" style="background: #f72585;">2019</div>
+          <div class="timeline-content">
+            <h3>National Expansion</h3>
+            <p>Opened our second manufacturing facility and expanded distribution to all major cities across India. Partnered with 50+ custom printing businesses nationwide.</p>
+          </div>
         </div>
+        
+        <div class="timeline-item fade-in">
+          <div class="year-badge" style="background: #4cc9f0;">2022</div>
+          <div class="timeline-content">
+            <h3>Sustainable Transformation</h3>
+            <p>Implemented eco-friendly manufacturing processes and introduced our first line of organic cotton products. Reduced water consumption by 40% across operations.</p>
+          </div>
+        </div>
+        
+        <div class="timeline-item fade-in">
+          <div class="year-badge" style="background: #7209b7;">2024</div>
+          <div class="timeline-content">
+            <h3>Digital Revolution</h3>
+            <p>Launched our complete digital ecosystem, serving thousands of businesses across India with real-time inventory, AI-powered recommendations, and seamless logistics.</p>
+          </div>
+        </div>
+        
       </div>
     </section>
+    
+    <!-- Quick Stats -->
+    <div class="stats-grid">
+      <div class="stat-card fade-in">
+        <div class="stat-number">9+</div>
+        <div class="stat-label">Years Experience</div>
+      </div>
+      <div class="stat-card fade-in">
+        <div class="stat-number">500+</div>
+        <div class="stat-label">Business Partners</div>
+      </div>
+      <div class="stat-card fade-in">
+        <div class="stat-number">19+</div>
+        <div class="stat-label">Product Lines</div>
+      </div>
+      <div class="stat-card fade-in">
+        <div class="stat-number">40%</div>
+        <div class="stat-label">Water Saved</div>
+      </div>
+    </div>
     
     <!-- Core Values -->
-    <section class="values-container">
-      <h2 class="values-title">Values That Weave Our Fabric</h2>
+    <section class="values-section">
+      <h2 class="section-title">Our Guiding Principles</h2>
+      
       <div class="values-grid">
-        <div class="value-item">
-          <h3>Integrity First</h3>
-          <p>Transparent pricing, honest timelines, and ethical practices form the foundation of every partnership.</p>
+        <div class="value-card fade-in">
+          <div class="value-icon">🏭</div>
+          <h3>Quality First</h3>
+          <p>Every garment undergoes rigorous quality checks to ensure excellence in every stitch and seam.</p>
         </div>
         
-        <div class="value-item">
+        <div class="value-card fade-in">
+          <div class="value-icon">🌱</div>
           <h3>Sustainable Growth</h3>
-          <p>We believe growth should benefit everyone - our partners, community, and the environment.</p>
+          <p>We're committed to eco-friendly practices that protect our planet while serving our customers.</p>
         </div>
         
-        <div class="value-item">
+        <div class="value-card fade-in">
+          <div class="value-icon">🤝</div>
+          <h3>Partnership Focus</h3>
+          <p>Your success is our success. We build lasting relationships based on trust and mutual growth.</p>
+        </div>
+        
+        <div class="value-card fade-in">
+          <div class="value-icon">💡</div>
           <h3>Continuous Innovation</h3>
-          <p>Comfort with the status quo is our greatest enemy. We're always evolving, always improving.</p>
-        </div>
-        
-        <div class="value-item">
-          <h3>Collaborative Spirit</h3>
-          <p>Your success is our success. We work alongside partners, not just for them.</p>
-        </div>
-      </div>
-    </section>
-    
-    <!-- Impact Metrics -->
-    <section>
-      <h2 style="text-align: center; margin-bottom: 50px; color: #2c3e50;">Our Collective Impact</h2>
-      <div class="impact-stats">
-        <div class="impact-stat">
-          <h3 style="font-size: 2.5rem; margin-bottom: 10px;">500+</h3>
-          <p>Business Partnerships</p>
-        </div>
-        
-        <div class="impact-stat">
-          <h3 style="font-size: 2.5rem; margin-bottom: 10px;">2M+</h3>
-          <p>Garments Crafted</p>
-        </div>
-        
-        <div class="impact-stat">
-          <h3 style="font-size: 2.5rem; margin-bottom: 10px;">40%</h3>
-          <p>Reduced Water Usage</p>
-        </div>
-        
-        <div class="impact-stat">
-          <h3 style="font-size: 2.5rem; margin-bottom: 10px;">98%</h3>
-          <p>Client Retention Rate</p>
-        </div>
-      </div>
-    </section>
-    
-    <!-- Founder's Quote -->
-    <section class="founder-quote">
-      <div class="quote-icon">"</div>
-      <p class="quote-text">
-        "Apparel manufacturing isn't just about making clothes; it's about creating canvases for expression, platforms for brands, and comfort for everyday life. We're not manufacturers; we're enablers of creativity."
-      </p>
-      <div style="color: #2c3e50; font-weight: bold;">
-        — Founder & CEO, MyBrand
-      </div>
-    </section>
-    
-    <!-- Team Section -->
-    <section class="team-showcase">
-      <h2 style="text-align: center; margin-bottom: 50px; color: #2c3e50;">Meet The Visionaries</h2>
-      <div class="team-grid">
-        <div class="team-member">
-          <div class="member-avatar">AR</div>
-          <h3>Amit R.</h3>
-          <p>Creative Director</p>
-          <p style="font-size: 0.9rem; color: #666; margin-top: 10px;">15 years in textile design</p>
-        </div>
-        
-        <div class="team-member">
-          <div class="member-avatar">PS</div>
-          <h3>Priya S.</h3>
-          <p>Sustainability Lead</p>
-          <p style="font-size: 0.9rem; color: #666; margin-top: 10px;">Pioneering eco-friendly manufacturing</p>
-        </div>
-        
-        <div class="team-member">
-          <div class="member-avatar">RK</div>
-          <h3>Rajesh K.</h3>
-          <p>Production Head</p>
-          <p style="font-size: 0.9rem; color: #666; margin-top: 10px;">Master craftsman since 2008</p>
-        </div>
-        
-        <div class="team-member">
-          <div class="member-avatar">ND</div>
-          <h3>Neha D.</h3>
-          <p>Client Relations</p>
-          <p style="font-size: 0.9rem; color: #666; margin-top: 10px;">Building partnerships since 2016</p>
+          <p>Always improving, always evolving to meet the changing needs of our partners and the market.</p>
         </div>
       </div>
     </section>
     
     <!-- Call to Action -->
-    <section style="text-align: center; padding: 80px 20px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 20px; color: white;">
-      <h2 style="font-size: 2.5rem; margin-bottom: 30px;">Ready to Create Together?</h2>
-      <p style="font-size: 1.2rem; max-width: 600px; margin: 0 auto 40px; line-height: 1.6;">
-        Whether you're a growing brand or an established business, let's build something remarkable together. Your vision, our craftsmanship.
+    <section class="cta-section fade-in">
+      <h2 class="cta-title">Ready to Build Together?</h2>
+      <p style="color: #666; max-width: 600px; margin: 0 auto; line-height: 1.6;">
+        Join hundreds of businesses that trust us for their apparel needs. Let's create something remarkable together.
       </p>
-      <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
-        <a href="contact.html" style="padding: 18px 40px; background: white; color: #f5576c; text-decoration: none; border-radius: 30px; font-weight: bold;">Start a Conversation</a>
-        <a href="bulktshirts.html" style="padding: 18px 40px; background: transparent; color: white; text-decoration: none; border: 2px solid white; border-radius: 30px; font-weight: bold;">View Bulk Options</a>
+      
+      <div class="cta-buttons">
+        <a href="bulktshirts.html" class="btn-primary">Explore Bulk Options</a>
+        <a href="contact.html" class="btn-secondary">Contact Our Team</a>
       </div>
     </section>
     
   </div>
 </main>
 
-<footer style="background: #2c3e50; color: white; padding: 60px 20px 30px; margin-top: 80px;">
-  <div style="max-width: 1200px; margin: 0 auto;">
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px;">
+<footer style="background: var(--dark); color: white; padding: 50px 20px 20px; margin-top: 60px;">
+  <div style="max-width: 1000px; margin: 0 auto;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; margin-bottom: 40px;">
       <div>
-        <h3 style="margin-bottom: 20px;">MyBrand Studio</h3>
+        <h3 style="margin-bottom: 20px; color: var(--light);">MyBrand</h3>
         <p style="opacity: 0.8; line-height: 1.6;">
-          Crafting premium apparel with purpose since 2015. Where innovation meets tradition in every stitch.
+          Crafting quality apparel with purpose and precision since 2015.
         </p>
       </div>
       <div>
-        <h3 style="margin-bottom: 20px;">Connect</h3>
-        <p style="opacity: 0.8;">📧 hello@mybrand.com</p>
+        <h3 style="margin-bottom: 20px; color: var(--light);">Contact</h3>
+        <p style="opacity: 0.8;">📧 contact@mybrand.com</p>
         <p style="opacity: 0.8;">📞 +91 98765 43210</p>
-        <p style="opacity: 0.8;">📍 Mumbai | Delhi | Bangalore</p>
+        <p style="opacity: 0.8;">📍 Nationwide Service</p>
       </div>
       <div>
-        <h3 style="margin-bottom: 20px;">Explore</h3>
-        <p><a href="shop.html" style="color: white; opacity: 0.8; text-decoration: none;">Premium Collections</a></p>
-        <p><a href="bulktshirts.html" style="color: white; opacity: 0.8; text-decoration: none;">Bulk Manufacturing</a></p>
-        <p><a href="contact.html" style="color: white; opacity: 0.8; text-decoration: none;">Custom Projects</a></p>
+        <h3 style="margin-bottom: 20px; color: var(--light);">Quick Links</h3>
+        <p><a href="shop.html" style="color: white; opacity: 0.8; text-decoration: none;">Shop Collection</a></p>
+        <p><a href="bulktshirts.html" style="color: white; opacity: 0.8; text-decoration: none;">Bulk Orders</a></p>
+        <p><a href="contact.html" style="color: white; opacity: 0.8; text-decoration: none;">Get in Touch</a></p>
       </div>
     </div>
-    <div style="text-align: center; margin-top: 60px; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.1);">
-      <p style="opacity: 0.6;">© 2015-2024 MyBrand. All stories are stitched with care.</p>
+    <div style="text-align: center; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.1);">
+      <p style="opacity: 0.6;">© 2015-2024 MyBrand. All rights reserved.</p>
     </div>
   </div>
 </footer>
 
 <script src="js/auth.js"></script>
 <script src="js/script.js"></script>
+
+<script>
+  // Add animation on scroll
+  document.addEventListener('DOMContentLoaded', function() {
+    const fadeElements = document.querySelectorAll('.fade-in');
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, {
+      threshold: 0.1
+    });
+    
+    fadeElements.forEach(element => {
+      element.style.opacity = '0';
+      element.style.transform = 'translateY(30px)';
+      element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      observer.observe(element);
+    });
+  });
+</script>
 </body>
 </html>
