@@ -1,4 +1,5 @@
 // js/admin.js - Admin Panel Functionality
+console.log("✅ Admin.js is loading...");
 class AdminPanel {
     constructor() {
         this.init();
