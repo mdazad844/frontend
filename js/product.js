@@ -1,23 +1,56 @@
 // js/product.js - SIMPLIFIED PRODUCT PAGE FUNCTIONALITY
 
 // Quantity functions (global for onclick handlers)
+// IMPROVED Quantity functions
 window.increaseQuantity = function() {
+    console.log('increaseQuantity() called');
     const qtyInput = document.getElementById('qty');
-    if (qtyInput) {
-        let currentQty = parseInt(qtyInput.value) || 1;
-        if (currentQty < 99999) {
-            qtyInput.value = currentQty + 1;
-        }
+    if (!qtyInput) {
+        console.error('Quantity input not found!');
+        return;
+    }
+    
+    let currentQty = parseInt(qtyInput.value);
+    console.log('Current quantity:', currentQty);
+    
+    if (isNaN(currentQty)) {
+        currentQty = 1;
+    }
+    
+    if (currentQty < 10) {
+        qtyInput.value = currentQty + 1;
+        console.log('Increased to:', qtyInput.value);
+        
+        // Trigger input event to ensure UI updates
+        qtyInput.dispatchEvent(new Event('input', { bubbles: true }));
+    } else {
+        console.log('Already at maximum quantity (10)');
     }
 };
 
 window.decreaseQuantity = function() {
+    console.log('decreaseQuantity() called');
     const qtyInput = document.getElementById('qty');
-    if (qtyInput) {
-        let currentQty = parseInt(qtyInput.value) || 1;
-        if (currentQty > 1) {
-            qtyInput.value = currentQty - 1;
-        }
+    if (!qtyInput) {
+        console.error('Quantity input not found!');
+        return;
+    }
+    
+    let currentQty = parseInt(qtyInput.value);
+    console.log('Current quantity:', currentQty);
+    
+    if (isNaN(currentQty)) {
+        currentQty = 1;
+    }
+    
+    if (currentQty > 1) {
+        qtyInput.value = currentQty - 1;
+        console.log('Decreased to:', qtyInput.value);
+        
+        // Trigger input event to ensure UI updates
+        qtyInput.dispatchEvent(new Event('input', { bubbles: true }));
+    } else {
+        console.log('Already at minimum quantity (1)');
     }
 };
 
