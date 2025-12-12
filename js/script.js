@@ -301,8 +301,9 @@ function updateCartCount() {
     }
 }
 
-function addToCart(productName, productPrice, productImage, productSize = '', productColor = '') {
+function addToCart(productName, productPrice, productImage, productSize = '', productColor = '', productId = null) {
     console.log('🛒 addToCart called from page:', window.location.pathname);
+    console.log('Product ID passed:', productId);
     
     try {
         const price = parseFloat(productPrice);
@@ -318,29 +319,41 @@ function addToCart(productName, productPrice, productImage, productSize = '', pr
             return false;
         }
 
-const cart = AppState.getCart();
-const itemIdentifier = `${productName}-${productSize}-${productColor}`.toLowerCase();
+        const cart = AppState.getCart();
+        const itemIdentifier = `${productName}-${productSize}-${productColor}`.toLowerCase();
 
-const existingItemIndex = cart.findIndex(item => {
-    const existingIdentifier = `${item.name}-${item.size || ''}-${item.color || ''}`.toLowerCase();
-    return existingIdentifier === itemIdentifier;
-});
+        const existingItemIndex = cart.findIndex(item => {
+            const existingIdentifier = `${item.name}-${item.size || ''}-${item.color || ''}`.toLowerCase();
+            return existingIdentifier === itemIdentifier;
+        });
 
-if (existingItemIndex !== -1) {
-    cart[existingItemIndex].quantity += 1;
-} else {
-    const newItem = {
-        id: Date.now() + Math.random(), // KEEP Date.now() since we don't have productId
-        name: productName.toString().trim(),
-        price: price,
-        image: productImage || 'images/placeholder.png',
-        quantity: 1,
-        size: productSize,
-        color: productColor,
-        addedAt: new Date().toISOString()
-    };
-    cart.push(newItem);
-}
+        if (existingItemIndex !== -1) {
+            // Item exists, increase quantity
+            cart[existingItemIndex].quantity += 1;
+            
+            // Update bulk price if needed
+            if (productId) {
+                cart[existingItemIndex].productId = productId;
+                updatePriceForQuantity(cart[existingItemIndex]);
+            }
+            
+            console.log('📦 Increased quantity for existing item');
+        } else {
+            // Add new item
+            const newItem = {
+                id: Date.now() + Math.random(),
+                productId: productId, // Store productId for bulk pricing
+                name: productName.toString().trim(),
+                price: price,
+                image: productImage || 'images/placeholder.png',
+                quantity: 1,
+                size: productSize,
+                color: productColor,
+                addedAt: new Date().toISOString()
+            };
+            cart.push(newItem);
+            console.log('📦 Added new item to cart:', newItem);
+        }
         
         AppState.updateCart(cart);
         showNotification(`✅ "${productName}" added to cart!`, 'success');
@@ -353,6 +366,47 @@ if (existingItemIndex !== -1) {
         return false;
     }
 }
+
+
+function updatePriceForQuantity(item) {
+    console.log('🔍 Checking bulk pricing for:', item.name, 'Qty:', item.quantity);
+    
+    // Check if we have productId to look up bulk pricing
+    if (item.productId && typeof productDatabase !== 'undefined' && productDatabase[item.productId]) {
+        const product = productDatabase[item.productId];
+        
+        // Check if product has bulk pricing tiers
+        if (product.pricingTiers && Array.isArray(product.pricingTiers)) {
+            const totalQuantity = item.quantity;
+            
+            console.log('📊 Product has pricing tiers:', product.pricingTiers);
+            
+            // Find the correct price for this quantity
+            for (const tier of product.pricingTiers) {
+                if (totalQuantity >= tier.min && totalQuantity <= tier.max) {
+                    const oldPrice = item.price;
+                    const newPrice = tier.price;
+                    
+                    // Only update if price has changed
+                    if (oldPrice !== newPrice) {
+                        item.price = newPrice;
+                        console.log(`💰 Updated price: ${totalQuantity} pieces = ₹${newPrice} each (was ₹${oldPrice})`);
+                        return true;
+                    }
+                    return false;
+                }
+            }
+        } else {
+            console.log('ℹ️ Product does not have pricing tiers');
+        }
+    } else {
+        console.log('ℹ️ No productId or product database not available');
+    }
+    return false;
+}
+
+
+
 
 /* CORE WISHLIST FUNCTIONALITY */
 function loadWishlist() {
@@ -582,6 +636,11 @@ function displayCartItems() {
         }
         
         cart.forEach((item, index) => {
+            // ============================================
+            // ADD THIS LINE: Ensure price is correct for current quantity
+            // ============================================
+            updatePriceForQuantity(item);
+            
             const price = Number(item.price) || 0;
             const quantity = Number(item.quantity) || 1;
             const itemTotal = price * quantity;
@@ -589,15 +648,20 @@ function displayCartItems() {
             const sizeInfo = item.size ? `<p class="item-size">Size: ${item.size}</p>` : '';
             const colorInfo = item.color ? `<p class="item-color">Color: ${item.color}</p>` : '';
             
+            // Add bulk pricing indicator if available
+            const bulkInfo = (item.productId && productDatabase && productDatabase[item.productId] && 
+                             productDatabase[item.productId].pricingTiers) ? 
+                             '<span style="color: #28a745; font-size: 12px; margin-left: 5px;">(Bulk Pricing)</span>' : '';
+            
             const div = document.createElement('div');
             div.className = 'cart-item';
             div.innerHTML = `
                 <img src="${item.image}" alt="${item.name}" onerror="this.src='images/placeholder.png'">
                 <div class="cart-info">
-                    <h3>${item.name}</h3>
+                    <h3>${item.name} ${bulkInfo}</h3>
                     ${sizeInfo}
                     ${colorInfo}
-                    <p class="item-price">Price: ₹${price}</p>
+                    <p class="item-price">Price: ₹${price} ${quantity > 1 ? `× ${quantity} = ₹${itemTotal}` : ''}</p>
                     <div class="quantity-controls">
                         <button class="quantity-btn" onclick="decreaseQuantity(${index})">-</button>
                         <span class="quantity">${quantity}</span>
@@ -619,29 +683,72 @@ function displayCartItems() {
     }
 }
 
-function increaseQuantity(index) {
+// ====================================================
+// ADD this test function for debugging
+// ====================================================
+window.testBulkPricing = function() {
+    console.log('🧪 TESTING BULK PRICING SYSTEM');
+    
     const cart = AppState.getCart();
-    if (cart[index]) {
-        cart[index].quantity += 1;
-        AppState.updateCart(cart);
-        if (window.location.pathname.includes('cart.html')) {
-            displayCartItems();
-        }
+    if (cart.length === 0) {
+        console.log('Cart is empty. Add a product first.');
+        return;
     }
-}
-
+    
+    console.log('=== CART ITEMS ===');
+    cart.forEach((item, index) => {
+        console.log(`${index + 1}. ${item.name}`);
+        console.log(`   Quantity: ${item.quantity}`);
+        console.log(`   Price: ₹${item.price}`);
+        console.log(`   Product ID: ${item.productId || 'Not set'}`);
+        
+        if (item.productId && productDatabase && productDatabase[item.productId]) {
+            const product = productDatabase[item.productId];
+            console.log(`   Product in DB: ${product.name}`);
+            
+            if (product.pricingTiers) {
+                console.log('   Pricing Tiers:', product.pricingTiers);
+                
+                // Find correct price for this quantity
+                for (const tier of product.pricingTiers) {
+                    if (item.quantity >= tier.min && item.quantity <= tier.max) {
+                        console.log(`   ✅ CORRECT price for ${item.quantity} pieces: ₹${tier.price}`);
+                        console.log(`   ${item.price === tier.price ? '✅ Price is correct!' : '❌ Price is WRONG!'}`);
+                        break;
+                    }
+                }
+            }
+        }
+        console.log('---');
+    });
+};
+		
+		
+		
 function decreaseQuantity(index) {
     const cart = AppState.getCart();
     if (cart[index]) {
         if (cart[index].quantity > 1) {
+            // Decrease quantity
             cart[index].quantity -= 1;
+            
+            console.log(`➖ Decreased quantity to ${cart[index].quantity} for:`, cart[index].name);
+            
+            // Update price based on new quantity (for bulk products)
+            const priceUpdated = updatePriceForQuantity(cart[index]);
+            
+            if (priceUpdated) {
+                console.log('✅ Price updated due to quantity change');
+            }
+            
+            AppState.updateCart(cart);
+            
+            // Update UI if on cart page
+            if (window.location.pathname.includes('cart.html')) {
+                displayCartItems();
+            }
         } else {
             removeItem(index);
-            return;
-        }
-        AppState.updateCart(cart);
-        if (window.location.pathname.includes('cart.html')) {
-            displayCartItems();
         }
     }
 }
