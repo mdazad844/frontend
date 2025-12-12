@@ -367,7 +367,7 @@ document.addEventListener('DOMContentLoaded', function() {
         qtyInput.addEventListener('input', function(e) {
             let value = parseInt(e.target.value);
             if (isNaN(value) || value < 1) e.target.value = 1;
-            if (value > 10) e.target.value = 10;
+            if (value > 99999) e.target.value = 99999;
         });
     }
 });
