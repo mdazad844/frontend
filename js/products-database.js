@@ -63,7 +63,7 @@ const productDatabase = {
             origin: 'Made in India'
         },
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
-        colors: [' navy blue'],
+        colors: ['navy blue'],
         category: 'men',
         rating: 4.7,
         reviewCount: 156,
@@ -563,7 +563,7 @@ const productDatabase = {
     },
 
     '26': {
-        id: 24,
+        id: 26,
         name: 'Classic Off-White Hoodie',
         price: 529,
         images: ['product26.jpg', 'product26-back.jpg', 'product26-detail.jpg', 'product26-side.jpg'],
@@ -586,7 +586,7 @@ const productDatabase = {
     },
 
     '27': {
-        id: 24,
+        id: 27,
         name: 'White Polo T-shirt',
         price: 249,
         images: ['product27.jpg', 'product27-back.jpg', 'product27-detail.jpg', 'product27-side.jpg'],
@@ -609,7 +609,7 @@ const productDatabase = {
     },
 
     '28': {
-        id: 24,
+        id: 28,
         name: 'White Polo T-shirt',
         price: 249,
         images: ['product28.jpg', 'product28-back.jpg', 'product28-detail.jpg', 'product28-side.jpg'],
