@@ -451,21 +451,38 @@ displayShippingOptions(options, isFallback = false) {
         return this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     }
 
-    updateTotals() {
-        const subtotal = this.calculateSubtotal();
-        const tax = Math.round(subtotal * 0.05);
-        const deliveryCharge = this.selectedDelivery || 0;
-        const grandTotal = subtotal + tax + deliveryCharge;
-        
-        console.log(`💰 Tax Calculation: ${subtotal} × 5% = ${tax}`);
+   updateTotals() {
+    const subtotal = this.calculateSubtotal();
+    const deliveryCharge = this.selectedDelivery || 0;
+    
+    // ✅ CORRECTED: Calculate 5% tax on (subtotal + deliveryCharge)
+    const taxableAmount = subtotal + deliveryCharge;
+    const tax = Math.round(taxableAmount * 0.05);
+    
+    const grandTotal = subtotal + tax + deliveryCharge;
+    
+    // Log for debugging
+    console.log(`💰 Tax Calculation:`);
+    console.log(`   - Subtotal: ₹${subtotal}`);
+    console.log(`   - Delivery: ₹${deliveryCharge}`);
+    console.log(`   - Taxable Amount (Subtotal + Delivery): ₹${taxableAmount}`);
+    console.log(`   - 5% GST on Taxable Amount: ₹${tax}`);
+    console.log(`   - Grand Total: ₹${grandTotal}`);
 
-        this.updateElement('subtotal', subtotal);
-        this.updateElement('taxAmount', tax);
-        document.getElementById('deliveryCharge').textContent = deliveryCharge === 0 ? 'FREE' : `₹${deliveryCharge}`;
-        this.updateElement('grandTotal', grandTotal);
-        
-        console.log('💰 Totals updated (5% GST applied)');
+    // Update all display elements
+    this.updateElement('subtotal', subtotal);
+    this.updateElement('taxAmount', tax);
+    
+    // Update delivery charge display (special handling for FREE)
+    const deliveryChargeElement = document.getElementById('deliveryCharge');
+    if (deliveryChargeElement) {
+        deliveryChargeElement.textContent = deliveryCharge === 0 ? 'FREE' : `₹${deliveryCharge}`;
     }
+    
+    this.updateElement('grandTotal', grandTotal);
+    
+    console.log('✅ Totals updated (5% GST on products + delivery)');
+}
 
     proceedToPayment(event) {
         if (event) event.preventDefault();
@@ -553,6 +570,7 @@ document.addEventListener('DOMContentLoaded', function() {
     window.checkoutManager = new CheckoutManager();
     window.checkoutManager.init();
 });
+
 
 
 
