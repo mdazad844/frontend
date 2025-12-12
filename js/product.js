@@ -1,25 +1,12 @@
 // js/product.js - SIMPLIFIED PRODUCT PAGE FUNCTIONALITY
 
-console.log('=== PRODUCT.JS DEBUGGING ===');
-console.log('product.js loaded successfully!');
-
-// Debug: Check if functions are available
-console.log('increaseQuantity function exists:', typeof increaseQuantity);
-console.log('decreaseQuantity function exists:', typeof decreaseQuantity);
-
 // Quantity functions (global for onclick handlers)
 window.increaseQuantity = function() {
     const qtyInput = document.getElementById('qty');
     if (qtyInput) {
         let currentQty = parseInt(qtyInput.value) || 1;
-        if (currentQty < 99999) {  // Set to 100 or any other reasonable limit
+        if (currentQty < 10) {
             qtyInput.value = currentQty + 1;
-        } else {
-            console.log('Maximum quantity reached (99999)');
-            // Optional: Show a message to user
-            if (typeof showNotification === 'function') {
-                showNotification('Maximum quantity is 100', 'warning');
-            }
         }
     }
 };
@@ -276,8 +263,6 @@ function checkWishlistState() {
 }
 
 // Add to cart from product page
-// In your product page JavaScript
-// Add to cart from product page
 function addToCartFromProductPage() {
     if (!window.currentProduct) {
         alert('Product not loaded!');
@@ -300,6 +285,19 @@ function addToCartFromProductPage() {
                 color
             );
         }
+        
+        // Show notification
+        if (typeof showNotification === 'function') {
+            showNotification(`✅ ${qty} ${window.currentProduct.name} added to cart!`, 'success');
+        } else {
+            alert(`✅ ${qty} ${window.currentProduct.name} added to cart!`);
+        }
+    } else {
+        console.error('addToCart function not found!');
+        alert('Unable to add to cart. Please refresh the page.');
+    }
+}
+
 // Buy now function
 function buyNow() {
     addToCartFromProductPage();
@@ -369,63 +367,7 @@ document.addEventListener('DOMContentLoaded', function() {
         qtyInput.addEventListener('input', function(e) {
             let value = parseInt(e.target.value);
             if (isNaN(value) || value < 1) e.target.value = 1;
-            if (value > 99999) e.target.value = 99999;
+            if (value > 10) e.target.value = 10;
         });
     }
-});
-
-
-
-
-
-
-// DIRECT TEST - Add this code
-function testQuantityButtons() {
-    console.log('=== Testing Quantity Buttons ===');
-    
-    // Check if elements exist
-    const qtyInput = document.getElementById('qty');
-    const plusBtn = document.querySelector('.quantity-btn:nth-child(3)'); // The + button
-    const minusBtn = document.querySelector('.quantity-btn:nth-child(1)'); // The - button
-    
-    console.log('Quantity input found:', qtyInput);
-    console.log('Plus button found:', plusBtn);
-    console.log('Minus button found:', minusBtn);
-    
-    if (qtyInput) {
-        console.log('Current qty value:', qtyInput.value);
-        console.log('qty input type:', qtyInput.type);
-        console.log('qty input readonly:', qtyInput.readOnly);
-        console.log('qty input disabled:', qtyInput.disabled);
-    }
-    
-    // Add direct event listeners
-   if (plusBtn && qtyInput) {
-        plusBtn.addEventListener('click', function() {
-            console.log('PLUS button clicked via addEventListener');
-            let currentQty = parseInt(qtyInput.value) || 1;
-            if (currentQty < 99999) {  // CHANGE THIS TO 99999
-                qtyInput.value = currentQty + 1;
-                console.log('New quantity:', qtyInput.value);
-            } else {
-                console.log('Maximum quantity reached (99999)');
-            }
-        });
-    }
-    
-    if (minusBtn && qtyInput) {
-        minusBtn.addEventListener('click', function() {
-            console.log('MINUS button clicked via addEventListener');
-            let currentQty = parseInt(qtyInput.value) || 1;
-            if (currentQty > 1) {
-                qtyInput.value = currentQty - 1;
-                console.log('New quantity:', qtyInput.value);
-            }
-        });
-    }
-}
-
-// Call test after page loads
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(testQuantityButtons, 500);
 });
