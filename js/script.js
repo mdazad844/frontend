@@ -301,36 +301,13 @@ function updateCartCount() {
     }
 }
 
-// In script.js - UPDATE the addToCart function
-function addToCart(productName, productPrice, productImage, productSize = '', productColor = '', productId = null, quantity = 1) {
-    console.log('🛒 addToCart called with:', { 
-        productName, 
-        productPrice, 
-        productSize, 
-        productColor,
-        productId,
-        quantity
-    });
+function addToCart(productName, productPrice, productImage, productSize = '', productColor = '') {
+    console.log('🛒 addToCart called from page:', window.location.pathname);
     
     try {
-        // Get product from database to check bulk pricing
-        let price = parseFloat(productPrice);
-        const product = productDatabase[productId];
-        
-        // If this is a bulk product with pricing tiers, calculate correct price
-        if (product && product.pricingTiers) {
-            // Find the correct price based on quantity
-            for (const tier of product.pricingTiers) {
-                if (quantity >= tier.min && quantity <= tier.max) {
-                    price = tier.price;
-                    console.log(`💰 Using bulk price: ₹${price} for ${quantity} pieces`);
-                    break;
-                }
-            }
-        }
-        
+        const price = parseFloat(productPrice);
         if (isNaN(price) || price <= 0) {
-            console.error('❌ Invalid product price');
+            console.error('❌ Invalid product price:', productPrice);
             showNotification('Error: Invalid product price', 'error');
             return false;
         }
@@ -341,48 +318,29 @@ function addToCart(productName, productPrice, productImage, productSize = '', pr
             return false;
         }
 
-        const cart = AppState.getCart();
-        const itemIdentifier = `${productName}-${productSize}-${productColor}-${productId || ''}`.toLowerCase();
-        
-        const existingItemIndex = cart.findIndex(item => {
-            const existingIdentifier = `${item.name}-${item.size || ''}-${item.color || ''}-${item.productId || ''}`.toLowerCase();
-            return existingIdentifier === itemIdentifier;
-        });
+const cart = AppState.getCart();
+const itemIdentifier = `${productName}-${productSize}-${productColor}`.toLowerCase();
 
-        if (existingItemIndex !== -1) {
-            // Item exists, increase quantity and RECALCULATE PRICE
-            cart[existingItemIndex].quantity += quantity;
-            
-            // Recalculate price based on NEW total quantity
-            const totalQuantity = cart[existingItemIndex].quantity;
-            if (product && product.pricingTiers) {
-                for (const tier of product.pricingTiers) {
-                    if (totalQuantity >= tier.min && totalQuantity <= tier.max) {
-                        cart[existingItemIndex].price = tier.price;
-                        console.log(`🔄 Updated price to: ₹${tier.price} for ${totalQuantity} pieces`);
-                        break;
-                    }
-                }
-            }
-            
-            console.log('📦 Increased quantity for existing item');
-        } else {
-            // Add new item
-            const newItem = {
-                id: Date.now() + Math.random(),
-                productId: productId,
-                name: productName.toString().trim(),
-                price: price,
-                image: productImage || 'images/placeholder.png',
-                quantity: quantity,
-                size: productSize,
-                color: productColor,
-                addedAt: new Date().toISOString(),
-                isBulk: product ? !!product.pricingTiers : false
-            };
-            cart.push(newItem);
-            console.log('📦 Added new item to cart:', newItem);
-        }
+const existingItemIndex = cart.findIndex(item => {
+    const existingIdentifier = `${item.name}-${item.size || ''}-${item.color || ''}`.toLowerCase();
+    return existingIdentifier === itemIdentifier;
+});
+
+if (existingItemIndex !== -1) {
+    cart[existingItemIndex].quantity += 1;
+} else {
+    const newItem = {
+        id: Date.now() + Math.random(), // KEEP Date.now() since we don't have productId
+        name: productName.toString().trim(),
+        price: price,
+        image: productImage || 'images/placeholder.png',
+        quantity: 1,
+        size: productSize,
+        color: productColor,
+        addedAt: new Date().toISOString()
+    };
+    cart.push(newItem);
+}
         
         AppState.updateCart(cart);
         showNotification(`✅ "${productName}" added to cart!`, 'success');
@@ -752,57 +710,24 @@ function removeFromWishlist(productId) {
     }
 }
 
-// In script.js - UPDATE the updateCartTotal function
 function updateCartTotal() {
     try {
         const cart = AppState.getCart();
-        let subtotal = 0;
+        const total = cart.reduce((sum, item) => {
+            const price = Number(item.price) || 0;
+            const quantity = Number(item.quantity) || 1;
+            return sum + (price * quantity);
+        }, 0);
         
-        // Group items by product to check bulk pricing across ALL quantities
-        const productGroups = {};
-        
-        cart.forEach(item => {
-            if (!productGroups[item.productId]) {
-                productGroups[item.productId] = [];
-            }
-            productGroups[item.productId].push(item);
-        });
-        
-        // Calculate total for each product group
-        Object.keys(productGroups).forEach(productId => {
-            const items = productGroups[productId];
-            const product = productDatabase[productId];
-            
-            if (product && product.pricingTiers) {
-                // Calculate TOTAL quantity for this product
-                const totalQuantity = items.reduce((sum, item) => sum + (item.quantity || 1), 0);
-                
-                // Find price for total quantity
-                let pricePerUnit = product.basePrice || product.price || 0;
-                for (const tier of product.pricingTiers) {
-                    if (totalQuantity >= tier.min && totalQuantity <= tier.max) {
-                        pricePerUnit = tier.price;
-                        break;
-                    }
-                }
-                
-                // Apply price to all items of this product
-                items.forEach(item => {
-                    item.price = pricePerUnit;
-                    const itemTotal = pricePerUnit * (item.quantity || 1);
-                    subtotal += itemTotal;
-                });
-            } else {
-                // Regular product pricing
-                items.forEach(item => {
-                    const price = Number(item.price) || 0;
-                    const quantity = Number(item.quantity) || 1;
-                    subtotal += price * quantity;
-                });
-            }
-        });
-        
-        
+        const totalElement = document.getElementById('cart-total');
+        if (totalElement) {
+            totalElement.textContent = `Total: ₹${total}`;
+        }
+    } catch (error) {
+        console.error('Error updating cart total:', error);
+    }
+}
+
 /* WISHLIST PAGE SPECIFIC FUNCTIONS */
 function displayWishlistItems() {
     const wishlistContainer = document.getElementById('wishlist-items');
@@ -1125,8 +1050,6 @@ async function initializeApp() {
     AppState.loadWishlist();
     AppState.loadUser();
     AppState.loadOrders();
-	// Save updated cart with corrected prices
-        AppState.updateCart(cart);
     
     // Update UI
     updateCartCount();
@@ -1152,7 +1075,6 @@ async function initializeApp() {
 }
 
 /* MAKE FUNCTIONS GLOBALLY AVAILABLE */
-/* MAKE FUNCTIONS GLOBALLY AVAILABLE */
 window.addToCart = addToCart;
 window.addToWishlist = addToWishlist;
 window.removeFromWishlist = removeFromWishlist;
@@ -1166,9 +1088,11 @@ window.removeItem = removeItem;
 window.moveToCartFromWishlist = moveToCartFromWishlist;
 window.checkout = checkout;
 
+
 window.updateWishlistHearts = updateWishlistHearts;
 window.initializeWishlistButtons = initializeWishlistButtons;
 window.updateWishlistButtonState = updateWishlistButtonState;
+
 // Debug functions
 window.debugCart = function() {
     const cart = AppState.getCart();
@@ -1190,6 +1114,3 @@ window.debugWishlist = function() {
 console.log('📦 MyBrand System Loading...');
 
 initializeApp();
-
-
-
