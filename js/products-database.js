@@ -18,7 +18,8 @@ const productDatabase = {
             origin: 'Made in India'
         },
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
-        colors: ['white'], //['white', 'black', 'off-white', 'navy'],
+        colors: ['white'], 
+        //['white', 'black', 'off-white', 'navy'],
         pricingTiers: [
             { min: 1, max: 10, price: 529 },
             { min: 11, max: 20, price: 499 },
