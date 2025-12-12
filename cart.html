@@ -24,6 +24,11 @@
         box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
     
+    .cart-item.bulk-item {
+        border-left: 4px solid #28a745;
+        background: #f8fff8;
+    }
+    
     .cart-item img { 
         width: 100px; 
         height: 100px;
@@ -45,6 +50,57 @@
         color: #666;
     }
     
+    .quantity-controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 10px 0;
+    }
+    
+    .quantity-btn {
+        width: 30px;
+        height: 30px;
+        border: 1px solid #ddd;
+        background: white;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .quantity-btn:hover {
+        background: #f8f9fa;
+    }
+    
+    .quantity {
+        min-width: 30px;
+        text-align: center;
+        font-weight: 600;
+    }
+    
+    .item-price {
+        font-weight: bold;
+        color: #333;
+    }
+    
+    .item-total {
+        font-weight: bold;
+        color: #28a745;
+        font-size: 1.1em;
+    }
+    
+    .bulk-badge {
+        display: inline-block;
+        background: #28a745;
+        color: white;
+        font-size: 12px;
+        padding: 2px 8px;
+        border-radius: 12px;
+        margin-left: 8px;
+    }
+    
     .remove-btn { 
         background: #ff4d4d; 
         padding: 8px 16px; 
@@ -61,10 +117,31 @@
     
     .checkout-section { 
         margin-top: 30px; 
-        padding: 20px;
+        padding: 30px;
         background: white;
         border-radius: 8px;
         box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .price-breakdown {
+        margin-bottom: 20px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 6px;
+    }
+    
+    .price-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .price-row.total-row {
+        border-top: 2px solid #007bff;
+        margin-top: 10px;
+        padding-top: 15px;
+        font-size: 1.2em;
     }
     
     .cart-actions {
@@ -76,15 +153,24 @@
     
     .empty-cart {
         text-align: center;
-        padding: 40px;
+        padding: 60px 20px;
         color: #666;
+    }
+    
+    .empty-cart h2 {
+        margin-bottom: 15px;
+        color: #333;
+    }
+    
+    .empty-cart .btn {
+        margin-top: 20px;
+        padding: 12px 30px;
     }
     
     #cart-total {
         font-size: 24px;
         font-weight: bold;
         color: #333;
-        margin-bottom: 20px;
     }
   </style>
 </head>
@@ -97,7 +183,7 @@
             <li><a href="shop.html">Shop</a></li>
 			<li><a href="bulktshirts.html">Bulk plain T-shirts</a></li>
             <li>
-                <a href="cart.html">Cart 
+                <a href="cart.html" class="active">Cart 
                     <span class="cart-count" id="cartCount">0</span>
                 </a>
             </li>
@@ -123,59 +209,160 @@
     </div>
 
     <div class="checkout-section">
-        <p id="cart-total">Total: ₹0</p>
-        <div class="cart-actions">
-            <button id="clear-cart-btn" class="btn" style="background: #666;">Clear Cart</button>
-            <button id="checkout-btn" class="btn">Proceed to Checkout</button>
+        <h3>Order Summary</h3>
+        <div class="price-breakdown" id="priceBreakdown">
+            <!-- Price breakdown will be loaded here -->
         </div>
+        
+        <div class="cart-actions">
+            <button id="continue-shopping-btn" class="btn" style="background: #666;">Continue Shopping</button>
+            <button id="clear-cart-btn" class="btn" style="background: #dc3545;">Clear Cart</button>
+            <button id="checkout-btn" class="btn" style="background: #28a745;">Proceed to Checkout</button>
+        </div>
+        
+        <!-- Bulk pricing note -->
+        <p style="margin-top: 20px; font-size: 14px; color: #666; text-align: center;">
+            💰 <strong>Bulk Pricing Applied:</strong> Prices automatically adjust based on quantity!
+        </p>
     </div>
   </main>
 
   <footer>
     <p>© 2025 MyBrand. All Rights Reserved.</p>
   </footer>
+  
 <script>
-// Simple cart page initialization
+// Enhanced cart page initialization
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🛒 Cart page loaded - using AppState system');
+    console.log('🛒 Cart page loaded');
     
-    // Use the SAME system as script.js
+    // Set active navigation link
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        link.classList.remove('active');
+        if (link.href.includes('cart.html')) {
+            link.classList.add('active');
+        }
+    });
+    
+    // Display cart items if function exists
     if (typeof displayCartItems !== 'undefined') {
         displayCartItems();
         updateCartCount();
+    } else {
+        console.error('displayCartItems function not found!');
+        document.getElementById('cart-items').innerHTML = `
+            <div class="empty-cart">
+                <h2>Error Loading Cart</h2>
+                <p>Please refresh the page or contact support.</p>
+                <button onclick="location.reload()" class="btn">Refresh Page</button>
+            </div>
+        `;
+    }
+    
+    // Update wishlist count if available
+    if (typeof updateWishlistCount !== 'undefined') {
+        updateWishlistCount();
     }
     
     // Add event listeners
     const checkoutBtn = document.getElementById('checkout-btn');
     const clearCartBtn = document.getElementById('clear-cart-btn');
+    const continueBtn = document.getElementById('continue-shopping-btn');
     
     if (checkoutBtn) {
         checkoutBtn.addEventListener('click', function() {
-            if (AppState.getCart().length === 0) {
+            const cart = AppState ? AppState.getCart() : JSON.parse(localStorage.getItem('cart') || '[]');
+            
+            if (cart.length === 0) {
                 showNotification('Your cart is empty!', 'error');
                 return;
             }
-            window.location.href = 'checkout.html';
+            
+            // Use checkout function if available, otherwise redirect
+            if (typeof checkout === 'function') {
+                checkout();
+            } else {
+                window.location.href = 'checkout.html';
+            }
         });
     }
     
     if (clearCartBtn) {
         clearCartBtn.addEventListener('click', function() {
-            if (confirm('Are you sure you want to clear your cart?')) {
-                AppState.updateCart([]);
+            if (confirm('Are you sure you want to clear your entire cart?')) {
+                if (AppState && typeof AppState.updateCart === 'function') {
+                    AppState.updateCart([]);
+                } else {
+                    localStorage.removeItem('cart');
+                }
+                
                 showNotification('Cart cleared!', 'info');
-                displayCartItems();
+                
+                // Reload cart display
+                if (typeof displayCartItems === 'function') {
+                    displayCartItems();
+                }
+                
+                // Update cart count
+                if (typeof updateCartCount === 'function') {
+                    updateCartCount();
+                }
             }
         });
     }
+    
+    if (continueBtn) {
+        continueBtn.addEventListener('click', function() {
+            window.location.href = 'shop.html';
+        });
+    }
+    
+    // Debug button (only in development)
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        const debugBtn = document.createElement('button');
+        debugBtn.textContent = 'Debug Cart';
+        debugBtn.style.cssText = 'position: fixed; bottom: 10px; right: 10px; background: #333; color: white; padding: 5px 10px; border-radius: 4px; z-index: 9999;';
+        debugBtn.onclick = function() {
+            if (typeof testBulkPricing === 'function') {
+                testBulkPricing();
+            }
+            console.log('Cart data:', AppState ? AppState.getCart() : JSON.parse(localStorage.getItem('cart') || '[]'));
+        };
+        document.body.appendChild(debugBtn);
+    }
 });
+
+// Helper function to show notification
+function showNotification(message, type = 'info') {
+    // Use existing notification function if available
+    if (typeof window.showNotification === 'function') {
+        window.showNotification(message, type);
+        return;
+    }
+    
+    // Fallback notification
+    const notification = document.createElement('div');
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        background: ${type === 'error' ? '#f44336' : type === 'success' ? '#4CAF50' : '#2196F3'};
+        color: white;
+        border-radius: 4px;
+        z-index: 10000;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    `;
+    
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 3000);
+}
 </script>
   
- 
   <!-- IMPORTANT: Load auth.js first for navbar functionality -->
   <script src="js/auth.js"></script>
   <script src="js/script.js"></script>
  
 </body>
-
 </html>
