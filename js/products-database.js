@@ -20,11 +20,7 @@ const productDatabase = {
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['white'], 
         //['white', 'black', 'off-white', 'navy'],
-        pricingTiers: [
-            { min: 1, max: 10, price: 529 },
-            { min: 11, max: 20, price: 499 },
-            { min: 21, max: 999999, price: 449 }
-        ],
+        
         category: 'men',
         rating: 4.8,
         reviewCount: 127,
