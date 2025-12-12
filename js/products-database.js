@@ -5,45 +5,29 @@ const productDatabase = {
     '1': {
         id: 1,
         name: 'Classic White Hoodie',
-        basePrice: 529,
+        price: 529,
         images: ['product1.jpg', 'product1-back.jpg', 'product1-detail.jpg', 'product1-side.jpg'],
         description: 'Premium cotton blend hoodie with a comfortable fit. Perfect for casual wear and everyday comfort.',
-        colors: [
-            {
-                name: "white",
-                displayName: "White",
-                code: "#ffffff",
-                images: [
-                    "images/product1.jpg",
-                    "images/product1-back.jpg",
-                    "images/product1-detail.jpg"
-                ]
-            }
-        ],
+        details: {
+            material: '88% Cotton, 12% Polyester',
+            fit: 'Regular Fit',
+            care: 'Machine Washable',
+            style: 'Pullover with Front Pocket',
+            features: 'Adjustable Drawstrings, Ribbed Cuffs',
+            weight: '430 GSM',
+            origin: 'Made in India'
+        },
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+        colors: ['white'], //['white', 'black', 'off-white', 'navy'],
         pricingTiers: [
             { min: 1, max: 10, price: 529 },
             { min: 11, max: 20, price: 499 },
             { min: 21, max: 999999, price: 449 }
         ],
-        features: [
-            "88% Cotton, 12% Polyester",
-            "Machine Washable",
-            "Pullover with Front Pocket",
-            "Adjustable Drawstrings, Ribbed Cuffs"
-        ],
-        specifications: {
-            material: '88% Cotton, 12% Polyester',
-            fit: 'Regular Fit',
-            care: 'Machine Washable',
-            weight: '430 GSM',
-            origin: 'Made in India'
-        },
         category: 'men',
         rating: 4.8,
         reviewCount: 127,
-        inStock: true,
-        isBulk: true  // NEW: Flag for bulk products
+        inStock: true
     },
     '2': {
         id: 2,
