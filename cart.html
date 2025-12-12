@@ -358,11 +358,93 @@ function showNotification(message, type = 'info') {
     document.body.appendChild(notification);
     setTimeout(() => notification.remove(), 3000);
 }
+
+
+
+
+
+	document.addEventListener('DOMContentLoaded', function() {
+    console.log('🛒 Cart page: DOM loaded');
+    
+    // Wait a bit more for scripts to load
+    setTimeout(function() {
+        console.log('🛒 Cart page: Attempting to display cart');
+        
+        // Try multiple times if needed
+        let attempts = 0;
+        const tryDisplayCart = function() {
+            attempts++;
+            console.log(`🛒 Attempt ${attempts} to display cart`);
+            
+            if (typeof displayCartItems === 'function') {
+                console.log('✅ displayCartItems function found!');
+                displayCartItems();
+                
+                // Also update counts
+                if (typeof updateCartCount === 'function') {
+                    updateCartCount();
+                }
+                if (typeof updateWishlistCount === 'function') {
+                    updateWishlistCount();
+                }
+            } else if (attempts < 5) {
+                console.log('⚠️ displayCartItems not found yet, retrying...');
+                setTimeout(tryDisplayCart, 500);
+            } else {
+                console.error('❌ displayCartItems function never loaded!');
+                
+                // Emergency fallback: Display cart directly from localStorage
+                try {
+                    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+                    const container = document.getElementById('cart-items');
+                    if (container && cart.length > 0) {
+                        container.innerHTML = cart.map(item => `
+                            <div class="cart-item">
+                                <img src="${item.image}" alt="${item.name}">
+                                <div class="cart-info">
+                                    <h3>${item.name}</h3>
+                                    <p>Price: ₹${item.price}</p>
+                                    <p>Quantity: ${item.quantity}</p>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                } catch (error) {
+                    console.error('Emergency display failed:', error);
+                }
+            }
+        };
+        
+        tryDisplayCart();
+    }, 1000); // 1 second delay
+    
+    // Setup button click handlers
+    document.getElementById('checkout-btn')?.addEventListener('click', function() {
+        const cart = AppState ? AppState.getCart() : JSON.parse(localStorage.getItem('cart') || '[]');
+        if (cart.length === 0) {
+            alert('Your cart is empty!');
+            return;
+        }
+        window.location.href = 'checkout.html';
+    });
+    
+    document.getElementById('clear-cart-btn')?.addEventListener('click', function() {
+        if (confirm('Clear cart?')) {
+            localStorage.removeItem('cart');
+            if (AppState && AppState.updateCart) {
+                AppState.updateCart([]);
+            }
+            location.reload();
+        }
+    });
+});
 </script>
   
   <!-- IMPORTANT: Load auth.js first for navbar functionality -->
   <script src="js/auth.js"></script>
   <script src="js/script.js"></script>
- 
+ <!-- Add this RIGHT BEFORE the closing </body> tag in cart.html -->
+
 </body>
 </html>
+
