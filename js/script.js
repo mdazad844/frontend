@@ -1152,6 +1152,7 @@ async function initializeApp() {
 }
 
 /* MAKE FUNCTIONS GLOBALLY AVAILABLE */
+/* MAKE FUNCTIONS GLOBALLY AVAILABLE */
 window.addToCart = addToCart;
 window.addToWishlist = addToWishlist;
 window.removeFromWishlist = removeFromWishlist;
@@ -1165,11 +1166,9 @@ window.removeItem = removeItem;
 window.moveToCartFromWishlist = moveToCartFromWishlist;
 window.checkout = checkout;
 
-
 window.updateWishlistHearts = updateWishlistHearts;
 window.initializeWishlistButtons = initializeWishlistButtons;
 window.updateWishlistButtonState = updateWishlistButtonState;
-
 // Debug functions
 window.debugCart = function() {
     const cart = AppState.getCart();
@@ -1191,5 +1190,6 @@ window.debugWishlist = function() {
 console.log('📦 MyBrand System Loading...');
 
 initializeApp();
+
 
 
