@@ -1,5 +1,12 @@
 // js/product.js - SIMPLIFIED PRODUCT PAGE FUNCTIONALITY
 
+console.log('=== PRODUCT.JS DEBUGGING ===');
+console.log('product.js loaded successfully!');
+
+// Debug: Check if functions are available
+console.log('increaseQuantity function exists:', typeof increaseQuantity);
+console.log('decreaseQuantity function exists:', typeof decreaseQuantity);
+
 // Quantity functions (global for onclick handlers)
 window.increaseQuantity = function() {
     const qtyInput = document.getElementById('qty');
