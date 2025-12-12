@@ -854,7 +854,22 @@
 <button onclick="testProductPage()" style="position: fixed; top: 10px; right: 10px; z-index: 9999; background: red; color: white; padding: 10px;">
     TEST JS
 </button>
-
+<script>
+function testProductPage() {
+    console.log('=== MANUAL TEST ===');
+    console.log('currentProduct:', window.currentProduct);
+    console.log('addToCart function:', typeof window.addToCart);
+    console.log('addToCartFromProductPage:', typeof addToCartFromProductPage);
+    
+    // Try to add to cart
+    if (window.currentProduct && typeof window.addToCart === 'function') {
+        window.addToCart('Test Product', 100, 'images/placeholder.png');
+        alert('Test successful! Check console.');
+    } else {
+        alert('ERROR: Functions not loaded!');
+    }
+}
+</script>
 
    
   <!-- In product.html, replace the entire <script> tag at the bottom with: -->
@@ -866,6 +881,7 @@
  
 </body>
 </html>
+
 
 
 
