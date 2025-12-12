@@ -419,3 +419,9 @@ function testQuantityButtons() {
         });
     }
 }
+
+
+// Call test after page loads
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(testQuantityButtons, 500);
+});
