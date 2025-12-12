@@ -582,6 +582,7 @@ function displayCartItems() {
         }
         
         cart.forEach((item, index) => {
+			updatePriceForQuantity(item);  // added new
             const price = Number(item.price) || 0;
             const quantity = Number(item.quantity) || 1;
             const itemTotal = price * quantity;
@@ -619,10 +620,46 @@ function displayCartItems() {
     }
 }
 
+
+//new add
+
+// ADD THIS FUNCTION to script.js (anywhere before increaseQuantity)
+function updatePriceForQuantity(item) {
+    // If this is a bulk product with pricing tiers
+    if (item.productId && productDatabase && productDatabase[item.productId]) {
+        const product = productDatabase[item.productId];
+        
+        if (product.pricingTiers) {
+            const totalQuantity = item.quantity;
+            
+            // Find the correct price for this quantity
+            for (const tier of product.pricingTiers) {
+                if (totalQuantity >= tier.min && totalQuantity <= tier.max) {
+                    // Update the price
+                    item.price = tier.price;
+                    console.log(`💰 Updated price: ${totalQuantity} pieces = ₹${tier.price} each`);
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+
+
+
+
+// REPLACE your current increaseQuantity function with this:
 function increaseQuantity(index) {
     const cart = AppState.getCart();
     if (cart[index]) {
+        // Increase quantity
         cart[index].quantity += 1;
+        
+        // IMPORTANT: Update price based on NEW quantity
+        updatePriceForQuantity(cart[index]);
+        
         AppState.updateCart(cart);
         if (window.location.pathname.includes('cart.html')) {
             displayCartItems();
@@ -630,18 +667,23 @@ function increaseQuantity(index) {
     }
 }
 
+// REPLACE your current decreaseQuantity function with this:
 function decreaseQuantity(index) {
     const cart = AppState.getCart();
     if (cart[index]) {
         if (cart[index].quantity > 1) {
+            // Decrease quantity
             cart[index].quantity -= 1;
+            
+            // IMPORTANT: Update price based on NEW quantity
+            updatePriceForQuantity(cart[index]);
+            
+            AppState.updateCart(cart);
+            if (window.location.pathname.includes('cart.html')) {
+                displayCartItems();
+            }
         } else {
             removeItem(index);
-            return;
-        }
-        AppState.updateCart(cart);
-        if (window.location.pathname.includes('cart.html')) {
-            displayCartItems();
         }
     }
 }
@@ -1114,3 +1156,4 @@ window.debugWishlist = function() {
 console.log('📦 MyBrand System Loading...');
 
 initializeApp();
+
