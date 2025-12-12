@@ -5,7 +5,7 @@ window.increaseQuantity = function() {
     const qtyInput = document.getElementById('qty');
     if (qtyInput) {
         let currentQty = parseInt(qtyInput.value) || 1;
-        if (currentQty < 10) {
+        if (currentQty < 99999) {
             qtyInput.value = currentQty + 1;
         }
     }
