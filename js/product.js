@@ -372,3 +372,50 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+
+// DIRECT TEST - Add this code
+function testQuantityButtons() {
+    console.log('=== Testing Quantity Buttons ===');
+    
+    // Check if elements exist
+    const qtyInput = document.getElementById('qty');
+    const plusBtn = document.querySelector('.quantity-btn:nth-child(3)'); // The + button
+    const minusBtn = document.querySelector('.quantity-btn:nth-child(1)'); // The - button
+    
+    console.log('Quantity input found:', qtyInput);
+    console.log('Plus button found:', plusBtn);
+    console.log('Minus button found:', minusBtn);
+    
+    if (qtyInput) {
+        console.log('Current qty value:', qtyInput.value);
+        console.log('qty input type:', qtyInput.type);
+        console.log('qty input readonly:', qtyInput.readOnly);
+        console.log('qty input disabled:', qtyInput.disabled);
+    }
+    
+    // Add direct event listeners
+    if (plusBtn && qtyInput) {
+        plusBtn.addEventListener('click', function() {
+            console.log('PLUS button clicked via addEventListener');
+            let currentQty = parseInt(qtyInput.value) || 1;
+            if (currentQty < 99999) {  // CHANGE THIS TO 99999
+                qtyInput.value = currentQty + 1;
+                console.log('New quantity:', qtyInput.value);
+            } else {
+                console.log('Maximum quantity reached (99999)');
+            }
+        });
+    }
+    
+    if (minusBtn && qtyInput) {
+        minusBtn.addEventListener('click', function() {
+            console.log('MINUS button clicked via addEventListener');
+            let currentQty = parseInt(qtyInput.value) || 1;
+            if (currentQty > 1) {
+                qtyInput.value = currentQty - 1;
+                console.log('New quantity:', qtyInput.value);
+            }
+        });
+    }
+}
