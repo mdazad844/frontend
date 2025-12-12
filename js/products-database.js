@@ -8,7 +8,16 @@ const productDatabase = {
         price: 529,
         images: ['product1.jpg', 'product1-back.jpg', 'product1-detail.jpg', 'product1-side.jpg'],
         description: 'Premium cotton blend hoodie with a comfortable fit. Perfect for casual wear and everyday comfort.',
-        details: {
+       
+        sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+        
+		 pricingTiers: [
+            { min: 1, max: 10, price: 529 },
+            { min: 11, max: 20, price: 499 },
+            { min: 21, max: 999999, price: 449 }
+        ],
+		colors: ['white'],   //['white', 'black', 'off-white', 'navy'],
+		 details: {
             material: '88% Cotton, 12% Polyester',
             fit: 'Regular Fit',
             care: 'Machine Washable',
@@ -17,13 +26,6 @@ const productDatabase = {
             weight: '430 GSM',
             origin: 'Made in India'
         },
-        sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
-        colors: ['white'],   //['white', 'black', 'off-white', 'navy'],
-		 pricingTiers: [
-            { min: 1, max: 10, price: 529 },
-            { min: 11, max: 20, price: 499 },
-            { min: 21, max: 999999, price: 449 }
-        ],
         category: 'men',
         rating: 4.8,
         reviewCount: 127,
