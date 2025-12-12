@@ -277,34 +277,29 @@ function checkWishlistState() {
 
 // Add to cart from product page
 // In your product page JavaScript
+// Add to cart from product page
 function addToCartFromProductPage() {
-    const quantity = parseInt(document.getElementById('quantity').value) || 1;
-    const size = document.getElementById('size').value;
-    const productId = window.currentProduct.id;
-    
-    // Get the CORRECT price for this quantity
-    let price = window.currentProduct.basePrice;
-    if (window.currentProduct.pricingTiers) {
-        for (const tier of window.currentProduct.pricingTiers) {
-            if (quantity >= tier.min && quantity <= tier.max) {
-                price = tier.price;
-                break;
-            }
-        }
+    if (!window.currentProduct) {
+        alert('Product not loaded!');
+        return;
     }
     
-    // Call addToCart with quantity parameter
-    window.addToCart(
-        window.currentProduct.name,
-        price, // Pass the calculated price
-        `images/${window.currentProduct.images[0]}`,
-        size,
-        '',
-        productId,
-        quantity // Pass the quantity
-    );
-}
-
+    const qty = parseInt(document.getElementById('qty').value) || 1;
+    const size = document.getElementById('size').value;
+    const color = document.getElementById('color').value;
+    
+    // Check if addToCart function exists
+    if (typeof addToCart === 'function') {
+        // Add multiple items based on quantity
+        for (let i = 0; i < qty; i++) {
+            addToCart(
+                window.currentProduct.name,
+                window.currentProduct.price,
+                `images/${window.currentProduct.images[0]}`,
+                size,
+                color
+            );
+        }
 // Buy now function
 function buyNow() {
     addToCartFromProductPage();
