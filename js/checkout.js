@@ -370,39 +370,55 @@ async loadDeliveryOptions() {
         this.loadDeliveryOptions();
     }
 
-    displayShippingOptions(options, isFallback = false) {
-        console.log(`📦 Displaying ${options.length} shipping options`);
-        
-        const deliveryOptions = document.getElementById('deliveryOptions');
-        if (!deliveryOptions) return;
+displayShippingOptions(options, isFallback = false) {
+    console.log(`📦 Displaying ${options.length} shipping options`);
+    
+    const deliveryOptions = document.getElementById('deliveryOptions');
+    if (!deliveryOptions) return;
+    
+    // 🚨 NEW CODE: Sort options by charge (DESCENDING - costliest first) and take top 5
+    const sortedOptions = [...options]  // Create a copy to avoid mutating original
+        .sort((a, b) => b.charge - a.charge)  // Sort DESCENDING (b - a)
+        .slice(0, 5);  // Take only first 5
+    
+    console.log(`🎯 Displaying top ${sortedOptions.length} costliest options`);
+    
+    deliveryOptions.innerHTML = `
+        ${isFallback ? `
+            <div style="text-align: center; margin-bottom: 15px; padding: 10px; background: #fff3cd; border-radius: 6px;">
+                <strong>📦 Standard Shipping Options (Top 5 Costliest)</strong>
+            </div>
+        ` : `
+            <div style="text-align: center; margin-bottom: 15px; padding: 10px; background: #d4edda; border-radius: 6px;">
+                <strong>🚀 Real-time Shipping Rates (Top 5 Costliest)</strong>
+            </div>
+        `}
+        ${sortedOptions.map(option => `
+            <div class="delivery-option" onclick="window.checkoutManager.selectShippingOption(this, ${option.charge})">
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <div>
+                        <h4 style="margin: 0 0 5px 0;">${option.name}</h4>
+                        <p style="margin: 0; font-size: 13px; color: #666;">
+                            📅 ${option.estimatedDays} • 
+                            ${option.provider || 'Shiprocket'}
+                        </p>
+                    </div>
+                    <p class="delivery-price" style="font-size: 18px; font-weight: bold;">
+                        ${option.charge === 0 ? 'FREE' : `₹${option.charge}`}
+                    </p>
+                </div>
+            </div>
+        `).join('')}
+    `;
 
-        deliveryOptions.innerHTML = `
-            ${isFallback ? `
-                <div style="text-align: center; margin-bottom: 15px; padding: 10px; background: #fff3cd; border-radius: 6px;">
-                    <strong>📦 Standard Shipping Options</strong>
-                </div>
-            ` : `
-                <div style="text-align: center; margin-bottom: 15px; padding: 10px; background: #d4edda; border-radius: 6px;">
-                    <strong>🚀 Real-time Shipping Rates</strong>
-                </div>
-            `}
-            ${options.map(option => `
-                <div class="delivery-option" onclick="window.checkoutManager.selectShippingOption(this, ${option.charge})">
-                    <h4>${option.name}</h4>
-                    <p>📅 Estimated delivery: ${option.estimatedDays}</p>
-                    <p class="delivery-price">${option.charge === 0 ? 'FREE' : `₹${option.charge}`}</p>
-                </div>
-            `).join('')}
-        `;
-
-        // Auto-select first option
-        if (options.length > 0) {
-            const firstOption = deliveryOptions.querySelector('.delivery-option');
-            if (firstOption) {
-                this.selectShippingOption(firstOption, options[0].charge);
-            }
+    // Auto-select first (now the MOST EXPENSIVE) option
+    if (sortedOptions.length > 0) {
+        const firstOption = deliveryOptions.querySelector('.delivery-option');
+        if (firstOption) {
+            this.selectShippingOption(firstOption, sortedOptions[0].charge);
         }
     }
+}
 
     selectShippingOption(optionElement, charge) {
         console.log(`🚚 Shipping option selected: ₹${charge}`);
@@ -537,5 +553,6 @@ document.addEventListener('DOMContentLoaded', function() {
     window.checkoutManager = new CheckoutManager();
     window.checkoutManager.init();
 });
+
 
 
