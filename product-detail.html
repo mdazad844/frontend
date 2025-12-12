@@ -1895,6 +1895,7 @@
 
     // Add to cart with details
     // Add to cart with details - UPDATED VERSION
+// REPLACE the addToCartWithDetails() function with this:
 function addToCartWithDetails() {
     try {
         if (!currentProduct) {
@@ -1929,36 +1930,42 @@ function addToCartWithDetails() {
         
         // Use window.addToCart to ensure it uses the same function as other pages
         if (typeof window.addToCart === 'function') {
-            // Call the addToCart function from script.js
-            const result = window.addToCart(productName, unitPrice, productImage, selectedSize, colorName);
+            // MODIFIED: Call addToCart with the correct quantity
+            // We'll add the item once, then update quantity in the cart
+            const cart = AppState.getCart();
+            const itemIdentifier = `${productName}-${selectedSize}-${colorName}`.toLowerCase();
             
-            // Update quantity if needed
-            if (result && selectedQuantity > 1) {
-                setTimeout(() => {
-                    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-                    const itemIdentifier = `${productName}-${selectedSize}-${colorName}`.toLowerCase();
-                    const existingItemIndex = cart.findIndex(item => {
-                        const existingIdentifier = `${item.name}-${item.size || ''}-${item.color || ''}`.toLowerCase();
-                        return existingIdentifier === itemIdentifier;
-                    });
-                    
-                    if (existingItemIndex !== -1) {
-                        cart[existingItemIndex].quantity = selectedQuantity;
-                        localStorage.setItem('cart', JSON.stringify(cart));
-                        
-                        // Update UI
-                        if (typeof window.updateCartCount === 'function') {
-                            window.updateCartCount();
-                        }
-                        
-                        if (typeof window.AppState !== 'undefined' && typeof window.AppState.loadCart === 'function') {
-                            window.AppState.loadCart();
-                        }
-                    }
-                }, 100);
+            // Check if item already exists
+            const existingItemIndex = cart.findIndex(item => {
+                const existingIdentifier = `${item.name}-${item.size || ''}-${item.color || ''}`.toLowerCase();
+                return existingIdentifier === itemIdentifier;
+            });
+            
+            if (existingItemIndex !== -1) {
+                // Item exists - update quantity
+                cart[existingItemIndex].quantity += selectedQuantity;
+            } else {
+                // Item doesn't exist - add with correct quantity
+                const newItem = {
+                    id: Date.now() + Math.random(),
+                    name: productName,
+                    price: unitPrice,
+                    image: productImage,
+                    quantity: selectedQuantity,  // Use selectedQuantity instead of 1
+                    size: selectedSize,
+                    color: colorName,
+                    addedAt: new Date().toISOString()
+                };
+                cart.push(newItem);
             }
             
-            return result;
+            // Update cart and UI
+            AppState.updateCart(cart);
+            updateCartCount();  // Force immediate UI update
+            
+            showNotification(`✅ Added ${selectedQuantity} "${productName}" to cart!`, 'success');
+            animateCartIcon();
+            return true;
         } else {
             console.error('addToCart function not found in window');
             showNotification('Cart system not available', 'error');
@@ -2100,3 +2107,4 @@ function addToWishlistWithDetails() {
 
 </body>
 </html>
+
