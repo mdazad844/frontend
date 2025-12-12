@@ -1,5 +1,4 @@
-
-// COMPLETE PRODUCT DATABASE FOR MYBRAND - 25 PRODUCTS
+ // COMPLETE PRODUCT DATABASE FOR MYBRAND - 25 PRODUCTS
 const productDatabase = {
     // MEN'S CLOTHING
     '1': {
@@ -19,17 +18,11 @@ const productDatabase = {
         },
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['white'],   //['white', 'black', 'off-white', 'navy'],
-		 pricingTiers: [
-            { min: 1, max: 10, price: 529 },
-            { min: 11, max: 20, price: 499 },
-            { min: 21, max: 999999, price: 449 }
-        ],
         category: 'men',
         rating: 4.8,
         reviewCount: 127,
         inStock: true
     },
-	
     '2': {
         id: 2,
         name: 'Black Oversized T-Shirt',
@@ -68,7 +61,7 @@ const productDatabase = {
             origin: 'Made in India'
         },
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
-        colors: ['navy blue'],
+        colors: [' navy blue'],
         category: 'men',
         rating: 4.7,
         reviewCount: 156,
@@ -568,7 +561,7 @@ const productDatabase = {
     },
 
     '26': {
-        id: 26,
+        id: 24,
         name: 'Classic Off-White Hoodie',
         price: 529,
         images: ['product26.jpg', 'product26-back.jpg', 'product26-detail.jpg', 'product26-side.jpg'],
@@ -591,7 +584,7 @@ const productDatabase = {
     },
 
     '27': {
-        id: 27,
+        id: 24,
         name: 'White Polo T-shirt',
         price: 249,
         images: ['product27.jpg', 'product27-back.jpg', 'product27-detail.jpg', 'product27-side.jpg'],
@@ -614,7 +607,7 @@ const productDatabase = {
     },
 
     '28': {
-        id: 28,
+        id: 24,
         name: 'White Polo T-shirt',
         price: 249,
         images: ['product28.jpg', 'product28-back.jpg', 'product28-detail.jpg', 'product28-side.jpg'],
