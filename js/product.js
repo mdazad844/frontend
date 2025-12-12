@@ -276,39 +276,33 @@ function checkWishlistState() {
 }
 
 // Add to cart from product page
+// In your product page JavaScript
 function addToCartFromProductPage() {
-    if (!window.currentProduct) {
-        alert('Product not loaded!');
-        return;
-    }
-    
-    const qty = parseInt(document.getElementById('qty').value) || 1;
+    const quantity = parseInt(document.getElementById('quantity').value) || 1;
     const size = document.getElementById('size').value;
-    const color = document.getElementById('color').value;
+    const productId = window.currentProduct.id;
     
-    // Check if addToCart function exists
-    if (typeof addToCart === 'function') {
-        // Add multiple items based on quantity
-        for (let i = 0; i < qty; i++) {
-            addToCart(
-                window.currentProduct.name,
-                window.currentProduct.price,
-                `images/${window.currentProduct.images[0]}`,
-                size,
-                color
-            );
+    // Get the CORRECT price for this quantity
+    let price = window.currentProduct.basePrice;
+    if (window.currentProduct.pricingTiers) {
+        for (const tier of window.currentProduct.pricingTiers) {
+            if (quantity >= tier.min && quantity <= tier.max) {
+                price = tier.price;
+                break;
+            }
         }
-        
-        // Show notification
-        if (typeof showNotification === 'function') {
-            showNotification(`✅ ${qty} ${window.currentProduct.name} added to cart!`, 'success');
-        } else {
-            alert(`✅ ${qty} ${window.currentProduct.name} added to cart!`);
-        }
-    } else {
-        console.error('addToCart function not found!');
-        alert('Unable to add to cart. Please refresh the page.');
     }
+    
+    // Call addToCart with quantity parameter
+    window.addToCart(
+        window.currentProduct.name,
+        price, // Pass the calculated price
+        `images/${window.currentProduct.images[0]}`,
+        size,
+        '',
+        productId,
+        quantity // Pass the quantity
+    );
 }
 
 // Buy now function
