@@ -855,22 +855,7 @@
     TEST JS
 </button>
 
-<script>
-function testProductPage() {
-    console.log('=== MANUAL TEST ===');
-    console.log('currentProduct:', window.currentProduct);
-    console.log('addToCart function:', typeof window.addToCart);
-    console.log('addToCartFromProductPage:', typeof addToCartFromProductPage);
-    
-    // Try to add to cart
-    if (window.currentProduct && typeof window.addToCart === 'function') {
-        window.addToCart('Test Product', 100, 'images/placeholder.png');
-        alert('Test successful! Check console.');
-    } else {
-        alert('ERROR: Functions not loaded!');
-    }
-}
-</script>
+
    
   <!-- In product.html, replace the entire <script> tag at the bottom with: -->
 <script src="js/products-database.js"></script>
@@ -881,6 +866,7 @@ function testProductPage() {
  
 </body>
 </html>
+
 
 
 
