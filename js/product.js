@@ -362,12 +362,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Setup quantity input validation
-    const qtyInput = document.getElementById('qty');
-    if (qtyInput) {
-        qtyInput.addEventListener('input', function(e) {
-            let value = parseInt(e.target.value);
-            if (isNaN(value) || value < 1) e.target.value = 1;
-            if (value > 99999) e.target.value = 99999;
-        });
-    }
-});
+   // In testQuantityButtons function, change:
+if (plusBtn && qtyInput) {
+    plusBtn.addEventListener('click', function() {
+        console.log('PLUS button clicked via addEventListener');
+        let currentQty = parseInt(qtyInput.value) || 1;
+        if (currentQty < 99999) {  // REMOVE OR CHANGE THIS CONDITION
+            qtyInput.value = currentQty + 1;
+            console.log('New quantity:', qtyInput.value);
+        }
+    });
+}
