@@ -1217,7 +1217,36 @@ window.debugWishlist = function() {
     updateWishlistCount();
 };
 
+// ADD THIS AT THE VERY BOTTOM of script.js (just before the last line)
+console.log('=== DEBUG: Checking cart system ===');
+
+// Debug function to see what's in storage
+window.debugCartStorage = function() {
+    console.log('🧪 DEBUG CART STORAGE');
+    console.log('localStorage "cart":', localStorage.getItem('cart'));
+    console.log('AppState cart:', AppState ? AppState.getCart() : 'AppState not found');
+    
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    console.log('Parsed cart items:', cart.length);
+    cart.forEach((item, i) => {
+        console.log(`Item ${i + 1}:`, item.name, 'Qty:', item.quantity);
+    });
+};
+
+// Debug function to test adding an item
+window.testAddToCart = function() {
+    console.log('🧪 TEST: Adding test product');
+    const success = addToCart('Test Product', 100, 'images/placeholder.png', '', '', 999);
+    console.log('Result:', success ? '✅ Success' : '❌ Failed');
+    debugCartStorage();
+};
+
+// Auto-run debug on cart page load
+if (window.location.pathname.includes('cart.html')) {
+    setTimeout(debugCartStorage, 1000);
+}
 // INITIALIZE IMMEDIATELY
 console.log('📦 MyBrand System Loading...');
 
 initializeApp();
+
