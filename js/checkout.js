@@ -390,7 +390,7 @@ displayShippingOptions(options, isFallback = false) {
             </div>
         ` : `
             <div style="text-align: center; margin-bottom: 15px; padding: 10px; background: #d4edda; border-radius: 6px;">
-                <strong>🚀 Real-time Shipping Rates (Top 5 Costliest)</strong>
+                <strong>🚀 Real-time Shipping Rates</strong>
             </div>
         `}
         ${sortedOptions.map(option => `
@@ -570,6 +570,7 @@ document.addEventListener('DOMContentLoaded', function() {
     window.checkoutManager = new CheckoutManager();
     window.checkoutManager.init();
 });
+
 
 
 
