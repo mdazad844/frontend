@@ -411,13 +411,15 @@ function testQuantityButtons() {
     }
     
     // Add direct event listeners
-    if (plusBtn && qtyInput) {
+   if (plusBtn && qtyInput) {
         plusBtn.addEventListener('click', function() {
             console.log('PLUS button clicked via addEventListener');
             let currentQty = parseInt(qtyInput.value) || 1;
-            if (currentQty < 10) {
+            if (currentQty < 99999) {  // CHANGE THIS TO 99999
                 qtyInput.value = currentQty + 1;
                 console.log('New quantity:', qtyInput.value);
+            } else {
+                console.log('Maximum quantity reached (99999)');
             }
         });
     }
