@@ -12,8 +12,14 @@ window.increaseQuantity = function() {
     const qtyInput = document.getElementById('qty');
     if (qtyInput) {
         let currentQty = parseInt(qtyInput.value) || 1;
-        if (currentQty < 10) {
+        if (currentQty < 99999) {  // Set to 100 or any other reasonable limit
             qtyInput.value = currentQty + 1;
+        } else {
+            console.log('Maximum quantity reached (99999)');
+            // Optional: Show a message to user
+            if (typeof showNotification === 'function') {
+                showNotification('Maximum quantity is 100', 'warning');
+            }
         }
     }
 };
