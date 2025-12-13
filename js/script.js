@@ -1,5 +1,3 @@
-this is script.js 
-
 // In script.js - At the VERY TOP - SINGLE SOURCE OF TRUTH
 const API_BASE_URL = 'https://myshop-production-63f9.up.railway.app/api';
 
@@ -1212,3 +1210,4 @@ window.testBulkPricing = function() {
 console.log('📦 MyBrand System Loading...');
 
 initializeApp();
+
