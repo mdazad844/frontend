@@ -1,3 +1,5 @@
+this is script.js 
+
 // In script.js - At the VERY TOP - SINGLE SOURCE OF TRUTH
 const API_BASE_URL = 'https://myshop-production-63f9.up.railway.app/api';
 
@@ -368,42 +370,8 @@ function addToCart(productName, productPrice, productImage, productSize = '', pr
 }
 
 
-function updatePriceForQuantity(item) {
-    console.log('🔍 Checking bulk pricing for:', item.name, 'Qty:', item.quantity);
-    
-    // Check if we have productId to look up bulk pricing
-    if (item.productId && typeof productDatabase !== 'undefined' && productDatabase[item.productId]) {
-        const product = productDatabase[item.productId];
-        
-        // Check if product has bulk pricing tiers
-        if (product.pricingTiers && Array.isArray(product.pricingTiers)) {
-            const totalQuantity = item.quantity;
-            
-            console.log('📊 Product has pricing tiers:', product.pricingTiers);
-            
-            // Find the correct price for this quantity
-            for (const tier of product.pricingTiers) {
-                if (totalQuantity >= tier.min && totalQuantity <= tier.max) {
-                    const oldPrice = item.price;
-                    const newPrice = tier.price;
-                    
-                    // Only update if price has changed
-                    if (oldPrice !== newPrice) {
-                        item.price = newPrice;
-                        console.log(`💰 Updated price: ${totalQuantity} pieces = ₹${newPrice} each (was ₹${oldPrice})`);
-                        return true;
-                    }
-                    return false;
-                }
-            }
-        } else {
-            console.log('ℹ️ Product does not have pricing tiers');
-        }
-    } else {
-        console.log('ℹ️ No productId or product database not available');
-    }
-    return false;
-}
+
+
 
 
 
@@ -683,48 +651,31 @@ function displayCartItems() {
     }
 }
 
-// ====================================================
-// ADD this test function for debugging
-// ====================================================
-window.testBulkPricing = function() {
-    console.log('🧪 TESTING BULK PRICING SYSTEM');
-    
+function increaseQuantity(index) {
     const cart = AppState.getCart();
-    if (cart.length === 0) {
-        console.log('Cart is empty. Add a product first.');
-        return;
-    }
-    
-    console.log('=== CART ITEMS ===');
-    cart.forEach((item, index) => {
-        console.log(`${index + 1}. ${item.name}`);
-        console.log(`   Quantity: ${item.quantity}`);
-        console.log(`   Price: ₹${item.price}`);
-        console.log(`   Product ID: ${item.productId || 'Not set'}`);
+    if (cart[index]) {
+        // Increase quantity
+        cart[index].quantity += 1;
         
-        if (item.productId && productDatabase && productDatabase[item.productId]) {
-            const product = productDatabase[item.productId];
-            console.log(`   Product in DB: ${product.name}`);
-            
-            if (product.pricingTiers) {
-                console.log('   Pricing Tiers:', product.pricingTiers);
-                
-                // Find correct price for this quantity
-                for (const tier of product.pricingTiers) {
-                    if (item.quantity >= tier.min && item.quantity <= tier.max) {
-                        console.log(`   ✅ CORRECT price for ${item.quantity} pieces: ₹${tier.price}`);
-                        console.log(`   ${item.price === tier.price ? '✅ Price is correct!' : '❌ Price is WRONG!'}`);
-                        break;
-                    }
-                }
-            }
+        console.log(`➕ Increased quantity to ${cart[index].quantity} for:`, cart[index].name);
+        
+        // Update price based on new quantity (for bulk products)
+        const priceUpdated = updatePriceForQuantity(cart[index]);
+        
+        if (priceUpdated) {
+            console.log('✅ Price updated due to quantity change');
         }
-        console.log('---');
-    });
-};
-		
-		
-		
+        
+        AppState.updateCart(cart);
+        
+        // Update UI if on cart page
+        if (window.location.pathname.includes('cart.html')) {
+            displayCartItems();
+        }
+    }
+}
+
+
 function decreaseQuantity(index) {
     const cart = AppState.getCart();
     if (cart[index]) {
@@ -1217,36 +1168,47 @@ window.debugWishlist = function() {
     updateWishlistCount();
 };
 
-// ADD THIS AT THE VERY BOTTOM of script.js (just before the last line)
-console.log('=== DEBUG: Checking cart system ===');
 
-// Debug function to see what's in storage
-window.debugCartStorage = function() {
-    console.log('🧪 DEBUG CART STORAGE');
-    console.log('localStorage "cart":', localStorage.getItem('cart'));
-    console.log('AppState cart:', AppState ? AppState.getCart() : 'AppState not found');
+// ADD this test function for debugging
+// ====================================================
+window.testBulkPricing = function() {
+    console.log('🧪 TESTING BULK PRICING SYSTEM');
     
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    console.log('Parsed cart items:', cart.length);
-    cart.forEach((item, i) => {
-        console.log(`Item ${i + 1}:`, item.name, 'Qty:', item.quantity);
+    const cart = AppState.getCart();
+    if (cart.length === 0) {
+        console.log('Cart is empty. Add a product first.');
+        return;
+    }
+    
+    console.log('=== CART ITEMS ===');
+    cart.forEach((item, index) => {
+        console.log(`${index + 1}. ${item.name}`);
+        console.log(`   Quantity: ${item.quantity}`);
+        console.log(`   Price: ₹${item.price}`);
+        console.log(`   Product ID: ${item.productId || 'Not set'}`);
+        
+        if (item.productId && productDatabase && productDatabase[item.productId]) {
+            const product = productDatabase[item.productId];
+            console.log(`   Product in DB: ${product.name}`);
+            
+            if (product.pricingTiers) {
+                console.log('   Pricing Tiers:', product.pricingTiers);
+                
+                // Find correct price for this quantity
+                for (const tier of product.pricingTiers) {
+                    if (item.quantity >= tier.min && item.quantity <= tier.max) {
+                        console.log(`   ✅ CORRECT price for ${item.quantity} pieces: ₹${tier.price}`);
+                        console.log(`   ${item.price === tier.price ? '✅ Price is correct!' : '❌ Price is WRONG!'}`);
+                        break;
+                    }
+                }
+            }
+        }
+        console.log('---');
     });
 };
 
-// Debug function to test adding an item
-window.testAddToCart = function() {
-    console.log('🧪 TEST: Adding test product');
-    const success = addToCart('Test Product', 100, 'images/placeholder.png', '', '', 999);
-    console.log('Result:', success ? '✅ Success' : '❌ Failed');
-    debugCartStorage();
-};
-
-// Auto-run debug on cart page load
-if (window.location.pathname.includes('cart.html')) {
-    setTimeout(debugCartStorage, 1000);
-}
 // INITIALIZE IMMEDIATELY
 console.log('📦 MyBrand System Loading...');
 
 initializeApp();
-
