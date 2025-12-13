@@ -401,7 +401,7 @@ document.addEventListener('DOMContentLoaded', function() {
         qtyInput.addEventListener('input', function(e) {
             let value = parseInt(e.target.value);
             if (isNaN(value) || value < 1) e.target.value = 1;
-            if (value > 10) e.target.value = 10;
+            if (value > 99999) e.target.value = 99999;
         });
     }
 });
@@ -432,7 +432,7 @@ function testQuantityButtons() {
         plusBtn.addEventListener('click', function() {
             console.log('PLUS button clicked via addEventListener');
             let currentQty = parseInt(qtyInput.value) || 1;
-            if (currentQty < 99999) {  // CHANGE THIS TO 99999
+            if (currentQty < 10) {  // CHANGE THIS TO 99999
                 qtyInput.value = currentQty + 1;
                 console.log('New quantity:', qtyInput.value);
             } else {
