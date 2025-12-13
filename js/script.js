@@ -657,32 +657,34 @@ function increaseQuantity(index) {
     
     try {
         const cart = AppState.getCart();
-        console.log('Cart items:', cart);
         
         if (cart[index]) {
             // Increase quantity
             cart[index].quantity += 1;
+            const newQuantity = cart[index].quantity;
             
-            console.log(`Increased ${cart[index].name} quantity to ${cart[index].quantity}`);
+            console.log(`Increased ${cart[index].name} quantity to ${newQuantity}`);
             
-            // CHECK AND UPDATE PRICE IF IT HAS PRICING TIERS
+            // ✅ CHECK IF IT HAS PRICING TIERS
             if (cart[index].pricingTiers && Array.isArray(cart[index].pricingTiers)) {
-                const newQuantity = cart[index].quantity;
-                const tiers = cart[index].pricingTiers;
+                console.log('Item has pricing tiers:', cart[index].pricingTiers);
                 
-                // Find the correct price tier
-                for (const tier of tiers) {
+                // Find the correct price for NEW quantity
+                for (const tier of cart[index].pricingTiers) {
                     if (newQuantity >= tier.min && newQuantity <= tier.max) {
                         const oldPrice = cart[index].price;
                         const newPrice = tier.price;
                         
+                        // Update price if changed
                         if (oldPrice !== newPrice) {
                             cart[index].price = newPrice;
-                            console.log(`💰 Price updated: ${newQuantity} pieces = ₹${newPrice} each (was ₹${oldPrice})`);
+                            console.log(`💰 BULK PRICING: ${newQuantity} pieces = ₹${newPrice} each (was ₹${oldPrice})`);
                         }
                         break;
                     }
                 }
+            } else {
+                console.log('Item does NOT have pricing tiers');
             }
             
             // Update cart
@@ -690,11 +692,8 @@ function increaseQuantity(index) {
             
             // Refresh cart display
             if (window.location.pathname.includes('cart.html')) {
-                console.log('Refreshing cart display...');
                 displayCartItems();
             }
-        } else {
-            console.error('❌ No item found at index:', index);
         }
     } catch (error) {
         console.error('❌ Error in increaseQuantity:', error);
@@ -712,23 +711,24 @@ function decreaseQuantity(index) {
             if (cart[index].quantity > 1) {
                 // Decrease quantity
                 cart[index].quantity -= 1;
+                const newQuantity = cart[index].quantity;
                 
-                console.log(`Decreased ${cart[index].name} quantity to ${cart[index].quantity}`);
+                console.log(`Decreased ${cart[index].name} quantity to ${newQuantity}`);
                 
-                // CHECK AND UPDATE PRICE IF IT HAS PRICING TIERS
+                // ✅ CHECK IF IT HAS PRICING TIERS
                 if (cart[index].pricingTiers && Array.isArray(cart[index].pricingTiers)) {
-                    const newQuantity = cart[index].quantity;
-                    const tiers = cart[index].pricingTiers;
+                    console.log('Item has pricing tiers:', cart[index].pricingTiers);
                     
-                    // Find the correct price tier
-                    for (const tier of tiers) {
+                    // Find the correct price for NEW quantity
+                    for (const tier of cart[index].pricingTiers) {
                         if (newQuantity >= tier.min && newQuantity <= tier.max) {
                             const oldPrice = cart[index].price;
                             const newPrice = tier.price;
                             
+                            // Update price if changed
                             if (oldPrice !== newPrice) {
                                 cart[index].price = newPrice;
-                                console.log(`💰 Price updated: ${newQuantity} pieces = ₹${newPrice} each (was ₹${oldPrice})`);
+                                console.log(`💰 BULK PRICING: ${newQuantity} pieces = ₹${newPrice} each (was ₹${oldPrice})`);
                             }
                             break;
                         }
@@ -740,16 +740,11 @@ function decreaseQuantity(index) {
                 
                 // Refresh cart display
                 if (window.location.pathname.includes('cart.html')) {
-                    console.log('Refreshing cart display...');
                     displayCartItems();
                 }
             } else {
-                // Remove item if quantity becomes 0
-                console.log('Quantity is 1, removing item...');
                 removeItem(index);
             }
-        } else {
-            console.error('❌ No item found at index:', index);
         }
     } catch (error) {
         console.error('❌ Error in decreaseQuantity:', error);
@@ -1265,6 +1260,7 @@ window.testBulkPricing = function() {
 console.log('📦 MyBrand System Loading...');
 
 initializeApp();
+
 
 
 
