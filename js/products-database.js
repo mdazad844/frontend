@@ -18,6 +18,11 @@ const productDatabase = {
         },
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['white'],   //['white', 'black', 'off-white', 'navy'],
+		pricingTiers: [
+        { min: 1, max: 10, price: 529 },
+        { min: 11, max: 20, price: 499 },
+        { min: 21, max: 999999, price: 449 }
+    ],
         category: 'men',
         rating: 4.8,
         reviewCount: 127,
@@ -40,6 +45,11 @@ const productDatabase = {
         },
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['black'],
+		pricingTiers: [
+        { min: 1, max: 10, price: 239 },
+        { min: 11, max: 20, price: 225 },
+        { min: 21, max: 999999, price: 209 }
+    ],
         category: 'men',
         rating: 4.5,
         reviewCount: 89,
@@ -62,6 +72,11 @@ const productDatabase = {
         },
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: [' navy blue'],
+		pricingTiers: [
+        { min: 1, max: 10, price: 289 },
+        { min: 11, max: 20, price: 269 },
+        { min: 21, max: 999999, price: 249 }
+    ],
         category: 'men',
         rating: 4.7,
         reviewCount: 156,
@@ -84,6 +99,11 @@ const productDatabase = {
         },
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['marron'],
+		pricingTiers: [
+        { min: 1, max: 10, price: 189 },
+        { min: 11, max: 20, price: 179 },
+        { min: 21, max: 999999, price: 169 }
+    ],
         category: 'men',
         rating: 4.9,
         reviewCount: 203,
@@ -106,6 +126,11 @@ const productDatabase = {
         },
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['black'],
+		pricingTiers: [
+        { min: 1, max: 10, price: 289 },
+        { min: 11, max: 20, price: 269 },
+        { min: 21, max: 999999, price: 249 }
+    ],
         category: 'men',
         rating: 4.6,
         reviewCount: 94,
@@ -130,6 +155,11 @@ const productDatabase = {
         },
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['white'],
+		pricingTiers: [
+        { min: 1, max: 10, price: 289 },
+        { min: 11, max: 20, price: 269 },
+        { min: 21, max: 999999, price: 249 }
+    ],
         category: 'women',
         rating: 4.8,
         reviewCount: 178,
@@ -152,6 +182,11 @@ const productDatabase = {
         },
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['marron'],
+pricingTiers: [
+        { min: 1, max: 10, price: 289 },
+        { min: 11, max: 20, price: 269 },
+        { min: 21, max: 999999, price: 249 }
+    ],
         category: 'women',
         rating: 4.7,
         reviewCount: 231,
@@ -174,6 +209,11 @@ const productDatabase = {
         },
         sizes:  ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['white'],
+		pricingTiers: [
+        { min: 1, max: 10, price: 189 },
+        { min: 11, max: 20, price: 179 },
+        { min: 21, max: 999999, price: 169 }
+    ],
         category: 'women',
         rating: 4.9,
         reviewCount: 112,
@@ -196,6 +236,11 @@ const productDatabase = {
         },
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['black'],
+		pricingTiers: [
+        { min: 1, max: 10, price: 189 },
+        { min: 11, max: 20, price: 179 },
+        { min: 21, max: 999999, price: 169 }
+    ],
         category: 'women',
         rating: 4.6,
         reviewCount: 87,
@@ -218,6 +263,11 @@ const productDatabase = {
         },
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['beige'],
+		pricingTiers: [
+        { min: 1, max: 10, price: 189 },
+        { min: 11, max: 20, price: 179 },
+        { min: 21, max: 999999, price: 169 }
+    ],
         category: 'women',
         rating: 4.8,
         reviewCount: 145,
@@ -242,6 +292,11 @@ const productDatabase = {
         },
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['blue'],
+		pricingTiers: [
+        { min: 1, max: 10, price: 189 },
+        { min: 11, max: 20, price: 179 },
+        { min: 21, max: 999999, price: 169 }
+    ],
         category: 'kids',
         rating: 4.7,
         reviewCount: 203,
@@ -264,6 +319,11 @@ const productDatabase = {
         },
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['grey'],
+		pricingTiers: [
+        { min: 1, max: 10, price: 189 },
+        { min: 11, max: 20, price: 179 },
+        { min: 21, max: 999999, price: 169 }
+    ],
         category: 'kids',
         rating: 4.6,
         reviewCount: 98,
@@ -286,6 +346,11 @@ const productDatabase = {
         },
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['lavender'],
+		pricingTiers: [
+        { min: 1, max: 10, price: 189 },
+        { min: 11, max: 20, price: 179 },
+        { min: 21, max: 999999, price: 169 }
+    ],
         category: 'kids',
         rating: 4.9,
         reviewCount: 156,
@@ -308,6 +373,11 @@ const productDatabase = {
         },
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['orange'],
+		pricingTiers: [
+        { min: 1, max: 10, price: 189 },
+        { min: 11, max: 20, price: 179 },
+        { min: 21, max: 999999, price: 169 }
+    ],
         category: 'kids',
         rating: 4.5,
         reviewCount: 112,
@@ -330,6 +400,11 @@ const productDatabase = {
         },
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['sky blue'],
+		pricingTiers: [
+        { min: 1, max: 10, price: 189 },
+        { min: 11, max: 20, price: 179 },
+        { min: 21, max: 999999, price: 169 }
+    ],
         category: 'kids',
         rating: 4.8,
         reviewCount: 134,
@@ -354,6 +429,11 @@ const productDatabase = {
         },
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['white'],
+		pricingTiers: [
+        { min: 1, max: 10, price: 239 },
+        { min: 11, max: 20, price: 225 },
+        { min: 21, max: 999999, price: 209 }
+    ],
         category: 'footwear',
         rating: 4.7,
         reviewCount: 287,
@@ -376,6 +456,11 @@ const productDatabase = {
         },
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['marron'],
+		pricingTiers: [
+        { min: 1, max: 10, price: 239 },
+        { min: 11, max: 20, price: 225 },
+        { min: 21, max: 999999, price: 209 }
+    ],
         category: 'footwear',
         rating: 4.7,
         reviewCount: 287,
@@ -398,6 +483,11 @@ const productDatabase = {
         },
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['beige'],
+		pricingTiers: [
+        { min: 1, max: 10, price: 239 },
+        { min: 11, max: 20, price: 225 },
+        { min: 21, max: 999999, price: 209 }
+    ],
         category: 'footwear',
         rating: 4.7,
         reviewCount: 287,
@@ -420,6 +510,11 @@ const productDatabase = {
         },
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['lavender'],
+		pricingTiers: [
+        { min: 1, max: 10, price: 239 },
+        { min: 11, max: 20, price: 225 },
+        { min: 21, max: 999999, price: 209 }
+    ],
         category: 'footwear',
         rating: 4.7,
         reviewCount: 287,
@@ -442,6 +537,11 @@ const productDatabase = {
         },
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['black'],
+		pricingTiers: [
+        { min: 1, max: 10, price: 309 },
+        { min: 11, max: 20, price: 289 },
+        { min: 21, max: 999999, price: 269 }
+    ],
         category: 'men',
         rating: 4.8,
         reviewCount: 178,
@@ -466,6 +566,11 @@ const productDatabase = {
         },
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['grey'],
+		pricingTiers: [
+        { min: 1, max: 10, price: 309 },
+        { min: 11, max: 20, price: 289 },
+        { min: 21, max: 999999, price: 269 }
+    ],
         category: 'accessories',
         rating: 4.6,
         reviewCount: 134,
@@ -488,6 +593,11 @@ const productDatabase = {
         },
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['navy'],
+		pricingTiers: [
+        { min: 1, max: 10, price: 309 },
+        { min: 11, max: 20, price: 289 },
+        { min: 21, max: 999999, price: 269 }
+    ],
         category: 'accessories',
         rating: 4.7,
         reviewCount: 89,
@@ -510,6 +620,11 @@ const productDatabase = {
         },
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['black'],
+		pricingTiers: [
+        { min: 1, max: 10, price: 249 },
+        { min: 11, max: 20, price: 229 },
+        { min: 21, max: 999999, price: 209 }
+    ],
         category: 'accessories',
         rating: 4.8,
         reviewCount: 203,
@@ -532,6 +647,11 @@ const productDatabase = {
         },
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['white'],
+		pricingTiers: [
+        { min: 1, max: 10, price: 249 },
+        { min: 11, max: 20, price: 229 },
+        { min: 21, max: 999999, price: 209 }
+    ],
         category: 'accessories',
         rating: 4.5,
         reviewCount: 167,
@@ -554,6 +674,11 @@ const productDatabase = {
         },
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['marron'],
+		pricingTiers: [
+        { min: 1, max: 10, price: 249 },
+        { min: 11, max: 20, price: 229 },
+        { min: 21, max: 999999, price: 209 }
+    ],
         category: 'accessories',
         rating: 4.6,
         reviewCount: 112,
@@ -577,6 +702,11 @@ const productDatabase = {
         },
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['off-white'],
+		pricingTiers: [
+        { min: 1, max: 10, price: 529 },
+        { min: 11, max: 20, price: 499 },
+        { min: 21, max: 999999, price: 449 }
+    ],
         category: 'accessories',
         rating: 4.5,
         reviewCount: 167,
@@ -600,6 +730,11 @@ const productDatabase = {
         },
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['black'],
+		pricingTiers: [
+        { min: 1, max: 10, price: 529 },
+        { min: 11, max: 20, price: 499 },
+        { min: 21, max: 999999, price: 449 }
+    ],
         category: 'accessories',
         rating: 4.5,
         reviewCount: 167,
@@ -623,6 +758,11 @@ const productDatabase = {
         },
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         colors: ['navy'],
+		pricingTiers: [
+        { min: 1, max: 10, price: 529 },
+        { min: 11, max: 20, price: 499 },
+        { min: 21, max: 999999, price: 449 }
+    ],
         category: 'accessories',
         rating: 4.5,
         reviewCount: 167,
