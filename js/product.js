@@ -401,7 +401,7 @@ document.addEventListener('DOMContentLoaded', function() {
         qtyInput.addEventListener('input', function(e) {
             let value = parseInt(e.target.value);
             if (isNaN(value) || value < 1) e.target.value = 1;
-            if (value > 99999) e.target.value = 99999;
+            if (value > 10) e.target.value = 10;
         });
     }
 });
@@ -436,7 +436,7 @@ function testQuantityButtons() {
                 qtyInput.value = currentQty + 1;
                 console.log('New quantity:', qtyInput.value);
             } else {
-                console.log('Maximum quantity reached (99999)');
+                console.log('Maximum quantity reached (10)');
             }
         });
     }
