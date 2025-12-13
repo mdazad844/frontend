@@ -587,7 +587,10 @@ function displayCartItems() {
     if (!cartContainer) return;
     
     try {
+        console.log('🛒 DEBUG: Starting displayCartItems...');
         const cart = AppState.getCart();
+        console.log('🛒 DEBUG: Cart has', cart.length, 'items');
+        
         cartContainer.innerHTML = '';
         
         if (cart.length === 0) {
@@ -598,15 +601,12 @@ function displayCartItems() {
                 </div>
             `;
             updateCartTotal();
+            console.log('✅ Cart displayed (empty)');
             return;
         }
         
+        // Simple loop - NO updatePriceForQuantity calls
         cart.forEach((item, index) => {
-            // ============================================
-            // ADD THIS LINE: Ensure price is correct for current quantity
-            // ============================================
-            updatePriceForQuantity(item);
-            
             const price = Number(item.price) || 0;
             const quantity = Number(item.quantity) || 1;
             const itemTotal = price * quantity;
@@ -614,20 +614,20 @@ function displayCartItems() {
             const sizeInfo = item.size ? `<p class="item-size">Size: ${item.size}</p>` : '';
             const colorInfo = item.color ? `<p class="item-color">Color: ${item.color}</p>` : '';
             
-            // Add bulk pricing indicator if available
-            const bulkInfo = (item.productId && productDatabase && productDatabase[item.productId] && 
-                             productDatabase[item.productId].pricingTiers) ? 
-                             '<span style="color: #28a745; font-size: 12px; margin-left: 5px;">(Bulk Pricing)</span>' : '';
+            // REMOVE THIS COMPLETELY:
+            // const bulkInfo = (item.productId && productDatabase && productDatabase[item.productId] && 
+            //                  productDatabase[item.productId].pricingTiers) ? 
+            //                  '<span style="color: #28a745; font-size: 12px; margin-left: 5px;">(Bulk Pricing)</span>' : '';
             
             const div = document.createElement('div');
             div.className = 'cart-item';
             div.innerHTML = `
-                <img src="${item.image}" alt="${item.name}" onerror="this.src='images/placeholder.png'">
+                <img src="${item.image || 'images/placeholder.png'}" alt="${item.name}" onerror="this.src='images/placeholder.png'">
                 <div class="cart-info">
-                    <h3>${item.name} ${bulkInfo}</h3>
+                    <h3>${item.name}</h3>
                     ${sizeInfo}
                     ${colorInfo}
-                    <p class="item-price">Price: ₹${price} ${quantity > 1 ? `× ${quantity} = ₹${itemTotal}` : ''}</p>
+                    <p class="item-price">Price: ₹${price}</p>
                     <div class="quantity-controls">
                         <button class="quantity-btn" onclick="decreaseQuantity(${index})">-</button>
                         <span class="quantity">${quantity}</span>
@@ -643,8 +643,11 @@ function displayCartItems() {
         });
         
         updateCartTotal();
+        console.log('✅ Cart displayed successfully');
+        
     } catch (error) {
-        console.error('Error displaying cart items:', error);
+        console.error('❌ ERROR in displayCartItems:', error);
+        console.error('Error stack:', error.stack);
         cartContainer.innerHTML = '<p>Error loading cart items</p>';
     }
 }
@@ -1210,4 +1213,5 @@ window.testBulkPricing = function() {
 console.log('📦 MyBrand System Loading...');
 
 initializeApp();
+
 
