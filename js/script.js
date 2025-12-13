@@ -665,6 +665,26 @@ function increaseQuantity(index) {
             
             console.log(`Increased ${cart[index].name} quantity to ${cart[index].quantity}`);
             
+            // CHECK AND UPDATE PRICE IF IT HAS PRICING TIERS
+            if (cart[index].pricingTiers && Array.isArray(cart[index].pricingTiers)) {
+                const newQuantity = cart[index].quantity;
+                const tiers = cart[index].pricingTiers;
+                
+                // Find the correct price tier
+                for (const tier of tiers) {
+                    if (newQuantity >= tier.min && newQuantity <= tier.max) {
+                        const oldPrice = cart[index].price;
+                        const newPrice = tier.price;
+                        
+                        if (oldPrice !== newPrice) {
+                            cart[index].price = newPrice;
+                            console.log(`💰 Price updated: ${newQuantity} pieces = ₹${newPrice} each (was ₹${oldPrice})`);
+                        }
+                        break;
+                    }
+                }
+            }
+            
             // Update cart
             AppState.updateCart(cart);
             
@@ -682,7 +702,6 @@ function increaseQuantity(index) {
     }
 }
 
-
 function decreaseQuantity(index) {
     console.log('➖ decreaseQuantity called for index:', index);
     
@@ -695,6 +714,26 @@ function decreaseQuantity(index) {
                 cart[index].quantity -= 1;
                 
                 console.log(`Decreased ${cart[index].name} quantity to ${cart[index].quantity}`);
+                
+                // CHECK AND UPDATE PRICE IF IT HAS PRICING TIERS
+                if (cart[index].pricingTiers && Array.isArray(cart[index].pricingTiers)) {
+                    const newQuantity = cart[index].quantity;
+                    const tiers = cart[index].pricingTiers;
+                    
+                    // Find the correct price tier
+                    for (const tier of tiers) {
+                        if (newQuantity >= tier.min && newQuantity <= tier.max) {
+                            const oldPrice = cart[index].price;
+                            const newPrice = tier.price;
+                            
+                            if (oldPrice !== newPrice) {
+                                cart[index].price = newPrice;
+                                console.log(`💰 Price updated: ${newQuantity} pieces = ₹${newPrice} each (was ₹${oldPrice})`);
+                            }
+                            break;
+                        }
+                    }
+                }
                 
                 // Update cart
                 AppState.updateCart(cart);
@@ -1226,6 +1265,7 @@ window.testBulkPricing = function() {
 console.log('📦 MyBrand System Loading...');
 
 initializeApp();
+
 
 
 
