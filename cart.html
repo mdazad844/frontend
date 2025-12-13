@@ -135,24 +135,6 @@
     <p>© 2025 MyBrand. All Rights Reserved.</p>
   </footer>
 <script>
-	
-            
-            // Update cart
-            AppState.updateCart(cart);
-            
-            // Refresh cart display
-            if (window.location.pathname.includes('cart.html')) {
-                console.log('Refreshing cart display...');
-                displayCartItems();
-            }
-        } else {
-            console.error('❌ No item found at index:', index);
-        }
-    } catch (error) {
-        console.error('❌ Error in increaseQuantity:', error);
-        showNotification('Error updating quantity', 'error');
-    }
-}
 // Simple cart page initialization
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🛒 Cart page loaded - using AppState system');
@@ -197,5 +179,6 @@ document.addEventListener('DOMContentLoaded', function() {
 </body>
 
 </html>
+
 
 
