@@ -653,55 +653,68 @@ function displayCartItems() {
 }
 
 function increaseQuantity(index) {
-    const cart = AppState.getCart();
-    if (cart[index]) {
-        // Increase quantity
-        cart[index].quantity += 1;
+    console.log('➕ increaseQuantity called for index:', index);
+    
+    try {
+        const cart = AppState.getCart();
+        console.log('Cart items:', cart);
         
-        console.log(`➕ Increased quantity to ${cart[index].quantity} for:`, cart[index].name);
-        
-        // Update price based on new quantity (for bulk products)
-        const priceUpdated = updatePriceForQuantity(cart[index]);
-        
-        if (priceUpdated) {
-            console.log('✅ Price updated due to quantity change');
+        if (cart[index]) {
+            // Increase quantity
+            cart[index].quantity += 1;
+            
+            console.log(`Increased ${cart[index].name} quantity to ${cart[index].quantity}`);
+            
+            // Update cart
+            AppState.updateCart(cart);
+            
+            // Refresh cart display
+            if (window.location.pathname.includes('cart.html')) {
+                console.log('Refreshing cart display...');
+                displayCartItems();
+            }
+        } else {
+            console.error('❌ No item found at index:', index);
         }
-        
-        AppState.updateCart(cart);
-        
-        // Update UI if on cart page
-        if (window.location.pathname.includes('cart.html')) {
-            displayCartItems();
-        }
+    } catch (error) {
+        console.error('❌ Error in increaseQuantity:', error);
+        showNotification('Error updating quantity', 'error');
     }
 }
 
 
 function decreaseQuantity(index) {
-    const cart = AppState.getCart();
-    if (cart[index]) {
-        if (cart[index].quantity > 1) {
-            // Decrease quantity
-            cart[index].quantity -= 1;
-            
-            console.log(`➖ Decreased quantity to ${cart[index].quantity} for:`, cart[index].name);
-            
-            // Update price based on new quantity (for bulk products)
-            const priceUpdated = updatePriceForQuantity(cart[index]);
-            
-            if (priceUpdated) {
-                console.log('✅ Price updated due to quantity change');
-            }
-            
-            AppState.updateCart(cart);
-            
-            // Update UI if on cart page
-            if (window.location.pathname.includes('cart.html')) {
-                displayCartItems();
+    console.log('➖ decreaseQuantity called for index:', index);
+    
+    try {
+        const cart = AppState.getCart();
+        
+        if (cart[index]) {
+            if (cart[index].quantity > 1) {
+                // Decrease quantity
+                cart[index].quantity -= 1;
+                
+                console.log(`Decreased ${cart[index].name} quantity to ${cart[index].quantity}`);
+                
+                // Update cart
+                AppState.updateCart(cart);
+                
+                // Refresh cart display
+                if (window.location.pathname.includes('cart.html')) {
+                    console.log('Refreshing cart display...');
+                    displayCartItems();
+                }
+            } else {
+                // Remove item if quantity becomes 0
+                console.log('Quantity is 1, removing item...');
+                removeItem(index);
             }
         } else {
-            removeItem(index);
+            console.error('❌ No item found at index:', index);
         }
+    } catch (error) {
+        console.error('❌ Error in decreaseQuantity:', error);
+        showNotification('Error updating quantity', 'error');
     }
 }
 
@@ -1213,5 +1226,6 @@ window.testBulkPricing = function() {
 console.log('📦 MyBrand System Loading...');
 
 initializeApp();
+
 
 
