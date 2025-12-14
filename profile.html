@@ -495,43 +495,46 @@
     
  // Update the loadOrderStatistics function in profile.html
 // In profile.html - Update the loadOrderStatistics function
-async function loadOrderStatistics(userEmail) {
-    try {
-        // Fetch from backend API
-        const backendUrl = 'https://backend-production-c281a.up.railway.app';
-        const response = await fetch(`${backendUrl}/api/orders/customer/${encodeURIComponent(userEmail)}`);
-        const data = await response.json();
+// Update the loadOrderStatistics function in profile.html
+function loadOrderStatistics(userEmail) {
+    // FIXED: Get orders from 'orderHistory' (where paymentManager saves them)
+    const orders = JSON.parse(localStorage.getItem('orderHistory') || '[]');
+    const userOrders = orders.filter(order => {
+        // Match by email or userId
+        return order.userEmail === userEmail || 
+               (order.customer && order.customer.email === userEmail) ||
+               order.userId === userEmail;
+    });
+    
+    console.log('📊 Found user orders:', userOrders.length);
+    console.log('User email:', userEmail);
+    console.log('All orders:', orders);
+    
+    // Calculate total spent - FIXED: Use grandTotal instead of total
+    const totalOrders = userOrders.length;
+    const totalSpent = userOrders.reduce((sum, order) => {
+        // Try different possible amount fields
+        const amount = order.grandTotal ||          // New field from paymentManager
+                      order.total ||               // Old field
+                      order.amount ||              // Alternative field
+                      (order.breakdown && order.breakdown.total) || // From breakdown
+                      0;
         
-        if (data.success) {
-            const userOrders = data.orders || [];
-            
-            // Calculate statistics
-            const totalOrders = userOrders.length;
-            const totalSpent = userOrders.reduce((sum, order) => sum + (order.total || 0), 0);
-            
-            // Update UI
-            const totalOrdersElement = document.getElementById('totalOrders');
-            const totalSpentElement = document.getElementById('totalSpent');
-            
-            if (totalOrdersElement) totalOrdersElement.textContent = totalOrders;
-            if (totalSpentElement) totalSpentElement.textContent = `₹${totalSpent.toFixed(2)}`;
-            
-            // Display recent orders
-            displayRecentOrders(userOrders);
-            
-            // Save to localStorage for offline viewing
-            localStorage.setItem(`userOrders_${userEmail}`, JSON.stringify(userOrders));
-        }
-    } catch (error) {
-        console.error('Failed to fetch orders from backend:', error);
-        // Fallback to localStorage
-        const localOrders = JSON.parse(localStorage.getItem(`userOrders_${userEmail}`) || '[]');
-        displayRecentOrders(localOrders);
-    }
+        console.log(`Order ${order.orderId}: amount = ${amount}`);
+        return sum + Number(amount);
+    }, 0);
+    
+    const totalOrdersElement = document.getElementById('totalOrders');
+    const totalSpentElement = document.getElementById('totalSpent');
+    
+    if (totalOrdersElement) totalOrdersElement.textContent = totalOrders;
+    if (totalSpentElement) totalSpentElement.textContent = `₹${totalSpent.toFixed(2)}`;
+    
+    // Display recent orders
+    displayRecentOrders(userOrders);
 }
 
 // Update displayRecentOrders function
-// In profile.html - Update the displayRecentOrders function
 function displayRecentOrders(userOrders) {
     const recentOrdersContainer = document.getElementById('recentOrders');
     if (!recentOrdersContainer) return;
@@ -546,58 +549,43 @@ function displayRecentOrders(userOrders) {
         return;
     }
     
-    // Sort by date and take last 3
-    const sortedOrders = userOrders.sort((a, b) => 
-        new Date(b.paymentDate || b.orderDate) - new Date(a.paymentDate || a.orderDate)
-    ).slice(0, 3);
+    // Sort by date (newest first) and take last 3
+    const sortedOrders = userOrders.sort((a, b) => {
+        const dateA = new Date(a.paymentDate || a.orderDate || a.date || Date.now());
+        const dateB = new Date(b.paymentDate || b.orderDate || b.date || Date.now());
+        return dateB - dateA;
+    }).slice(0, 3);
     
     recentOrdersContainer.innerHTML = sortedOrders.map(order => {
-        const orderAmount = order.financials?.grandTotal || order.grandTotal || order.total || 0;
-        const orderDate = new Date(order.paymentDate || order.orderDate).toLocaleDateString();
-        const orderId = order.orderNumber || order.orderId || 'N/A';
-        const itemCount = order.items ? order.items.length : 1;
-        
-        // Create product list preview
-        const productPreview = order.items && order.items.length > 0 
-            ? order.items.slice(0, 2).map(item => 
-                `<div style="font-size: 12px; color: #666; margin-top: 2px;">
-                    • ${item.name} (${item.quantity}x)
-                </div>`
-            ).join('') 
-            : '';
-        
-        const moreItems = order.items && order.items.length > 2 
-            ? `<div style="font-size: 12px; color: #888;">+ ${order.items.length - 2} more items</div>` 
-            : '';
+        // Get the correct amount for display
+        const orderAmount = order.grandTotal || order.total || order.amount || 0;
+        const orderDate = order.paymentDate || order.orderDate || order.date || Date.now();
+        const orderId = order.orderId || order.id || 'N/A';
+        const itemCount = order.items ? order.items.length : (order.quantity || 1);
+        const orderStatus = order.paymentStatus || order.status || 'Paid';
         
         return `
             <div class="order-item" style="border: 1px solid #eee; padding: 15px; margin-bottom: 10px; border-radius: 6px;">
                 <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                    <div>
-                        <strong>Order #${orderId}</strong>
-                        <div style="font-size: 12px; color: #666;">${orderDate}</div>
-                    </div>
+                    <strong>Order #${orderId}</strong>
                     <span style="color: #28a745; font-weight: bold;">₹${orderAmount.toFixed(2)}</span>
                 </div>
-                
-                <div style="margin-bottom: 10px;">
-                    ${productPreview}
-                    ${moreItems}
+                <div style="color: #666; font-size: 14px;">
+                    <div>Date: ${new Date(orderDate).toLocaleDateString()}</div>
+                    <div>Status: <span style="color: #007bff; font-weight: bold;">${orderStatus}</span></div>
+                    <div>Items: ${itemCount}</div>
+                    ${order.paymentId ? `<div style="font-size: 12px; color: #888;">Payment ID: ${order.paymentId.substring(0, 8)}...</div>` : ''}
                 </div>
-                
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span class="order-status status-completed">${order.status || 'Paid'}</span>
-                    <button onclick="viewOrderDetails('${order.orderId}')" 
-                            class="btn" 
-                            style="padding: 6px 12px; font-size: 13px;">
-                        View Details
-                    </button>
-                </div>
+                <button onclick="viewOrderDetails('${orderId}')" 
+                        class="btn" 
+                        style="margin-top: 10px; padding: 6px 12px; font-size: 13px;">
+                    View Details
+                </button>
             </div>
         `;
     }).join('');
     
-    // Add "View All" button
+    // Add "View All" button if there are more than 3 orders
     if (userOrders.length > 3) {
         recentOrdersContainer.innerHTML += `
             <div style="text-align: center; margin-top: 15px;">
@@ -886,6 +874,7 @@ function viewOrderDetails(orderId) {
 </body>
 
 </html>
+
 
 
 
