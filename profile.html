@@ -494,9 +494,9 @@
     }
     
     function loadOrderStatistics(userEmail) {
-      // FIXED: Get orders from the correct localStorage key 'orders'
-      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-      const userOrders = orders.filter(order => order.userEmail === userEmail || order.userId === userEmail);
+  // FIXED: Get orders from the correct localStorage key 'orderHistory'
+  const orders = JSON.parse(localStorage.getItem('orderHistory') || '[]');
+  const userOrders = orders.filter(order => order.userEmail === userEmail || order.userId === userEmail);
       
       const totalOrders = userOrders.length;
       const totalSpent = userOrders.reduce((sum, order) => sum + (order.total || 0), 0);
@@ -741,6 +741,7 @@
 </body>
 
 </html>
+
 
 
 
