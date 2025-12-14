@@ -77,129 +77,112 @@ class PaymentManager {
   }
 
   async initiatePayment() {
-  const button = document.getElementById('razorpayButton');
-  button.disabled = true;
+    const button = document.getElementById('razorpayButton');
+    button.disabled = true;
 
-  try {
-    // ✅ CALCULATE THE CORRECT TOTAL WITH TAX
-    const subtotal = this.orderData.subtotal || 0;
-    const deliveryCharge = this.orderData.deliveryCharge || 0;
-    const taxableAmount = subtotal + deliveryCharge;
-    const taxAmount = Math.round(taxableAmount * 0.05);
-    const finalTotal = subtotal + deliveryCharge + taxAmount;
-    
-    console.log('💰 Final Calculation:');
-    console.log(`   Subtotal: ₹${subtotal}`);
-    console.log(`   Delivery: ₹${deliveryCharge}`);
-    console.log(`   Taxable Amount: ₹${taxableAmount}`);
-    console.log(`   Tax (5%): ₹${taxAmount}`);
-    console.log(`   Final Total: ₹${finalTotal}`);
-
-    // ✅ Update orderData with correct total
-    this.orderData.taxAmount = taxAmount;
-    this.orderData.total = finalTotal;
-    
-    // ✅ Also update the display
-    this.updateElement('paymentTax', taxAmount);
-    this.updateElement('paymentTotal', finalTotal);
-
-    // 1. Create Razorpay order with CORRECT amount including tax
-    const orderResponse = await this.createRazorpayOrder(finalTotal);
-    
-    if (!orderResponse.success) {
-      throw new Error('Failed to create payment order');
-    }
-
-    // 2. Open Razorpay checkout with CORRECT amount
-    const options = {
-      key: this.razorpayKey,
-      amount: Math.round(finalTotal * 100), // ✅ Amount in paise WITH TAX
-      currency: "INR",
-      name: "MyBrand",
-      description: `Order #${this.orderData.orderId}`,
-      order_id: orderResponse.razorpayOrderId,
-      handler: (response) => {
-        console.log('✅ Payment successful:', response);
-        this.handlePaymentSuccess(response);
-      },
-      prefill: {
-        name: this.currentUser?.name || '',
-        email: this.currentUser?.email || '',
-        contact: this.currentUser?.phone || ""
-      },
-      theme: {
-        color: "#007bff"
+    try {
+      // 1. Create Razorpay order
+      const orderResponse = await this.createRazorpayOrder();
+      
+      if (!orderResponse.success) {
+        throw new Error('Failed to create payment order');
       }
-    };
 
-    const razorpay = new Razorpay(options);
-    razorpay.open();
-    
-    razorpay.on('payment.failed', (response) => {
-      console.error('❌ Payment failed:', response);
-      this.showError('Payment failed. Please try again.');
+      // 2. Open Razorpay checkout
+      const options = {
+        key: this.razorpayKey,
+        amount: this.orderData.total * 100,
+        currency: "INR",
+        name: "MyBrand",
+        description: `Order #${this.orderData.orderId}`,
+        order_id: orderResponse.razorpayOrderId,
+        handler: (response) => {
+          console.log('✅ Payment successful:', response);
+          this.handlePaymentSuccess(response);
+        },
+        prefill: {
+          name: this.currentUser?.name || '',
+          email: this.currentUser?.email || '',
+          contact: this.currentUser?.phone || ""
+        },
+        theme: {
+          color: "#007bff"
+        }
+      };
+
+      const razorpay = new Razorpay(options);
+      razorpay.open();
+      
+      razorpay.on('payment.failed', (response) => {
+        console.error('❌ Payment failed:', response);
+        this.showError('Payment failed. Please try again.');
+        button.disabled = false;
+      });
+
+    } catch (error) {
+      console.error('❌ Payment initiation failed:', error);
+      this.showError(error.message);
       button.disabled = false;
-    });
-
-  } catch (error) {
-    console.error('❌ Payment initiation failed:', error);
-    this.showError(error.message);
-    button.disabled = false;
+    }
   }
-}
 
- async createRazorpayOrder() {
-  try {
-    console.log('🔍 DEBUG: Creating Razorpay order...');
-    console.log('orderData:', JSON.stringify(this.orderData, null, 2));
-    
-    // Calculate what amount SHOULD be sent
-    const subtotal = this.orderData.subtotal || 0;
-    const deliveryCharge = this.orderData.deliveryCharge || 0;
-    const taxAmount = Math.round((subtotal + deliveryCharge) * 0.05);
-    const calculatedTotal = subtotal + deliveryCharge + taxAmount;
-    
-    console.log('💰 Amount Calculation:');
-    console.log(`   - Subtotal: ₹${subtotal}`);
-    console.log(`   - Delivery: ₹${deliveryCharge}`);
-    console.log(`   - Tax (5%): ₹${taxAmount}`);
-    console.log(`   - Calculated Total: ₹${calculatedTotal}`);
-    console.log(`   - orderData.total: ₹${this.orderData.total}`);
-    
-    // Use whichever total exists
-    const amountToSend = this.orderData.total || calculatedTotal;
-    const amountInPaise = Math.round(amountToSend * 100);
-    
-    console.log(`📤 Sending to backend: ₹${amountToSend} (${amountInPaise} paise)`);
-    
+  async createRazorpayOrder() {
     const response = await fetch(`${this.backendUrl}/api/payments/create-order`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        amount: amountInPaise,
+        amount: Math.round(this.orderData.total * 100),
         currency: "INR",
         receipt: this.orderData.orderId
       })
     });
 
-    const result = await response.json();
-    console.log('✅ Backend response:', result);
-    
-    if (!result.success) {
-      console.error('❌ Backend error:', result.error);
-    }
-    
-    return result;
-    
-  } catch (error) {
-    console.error('❌ Fetch error:', error);
-    return {
-      success: false,
-      error: error.message
-    };
+    return await response.json();
   }
+
+  async handlePaymentSuccess(paymentResponse) {
+    const loadingElement = document.getElementById('paymentLoading');
+    if (loadingElement) loadingElement.style.display = 'block';
+
+    try {
+        console.log('🔍 Verifying payment...');
+
+        const verificationResponse = await fetch(`${this.backendUrl}/api/payments/verify-payment`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(paymentResponse)
+        });
+
+        const data = await verificationResponse.json();
+        
+        if (data.success) {
+            console.log('🎉 Payment verified successfully!');
+            this.showSuccess('Payment successful! Redirecting...');
+            
+            // ✅ Add user email to order before saving
+            this.orderData.userEmail = this.currentUser?.email || 'guest';
+            this.orderData.userName = this.currentUser?.name || 'Guest';
+            
+            // Save order to history
+            this.saveOrderToHistory(paymentResponse);
+            
+            // Redirect to success page
+            setTimeout(() => {
+                window.location.href = `order-success.html?order=${this.orderData.orderId}`;
+            }, 2000);
+            
+        } else {
+            throw new Error(data.error || 'Payment verification failed');
+        }
+
+    } catch (error) {
+        console.error('❌ Payment verification failed:', error);
+        this.showError(`Payment verification failed: ${error.message}`);
+    } finally {
+        if (loadingElement) loadingElement.style.display = 'none';
+    }
 }
-  
+
   saveOrderToHistory(paymentResponse) {
     try {
       // Update order data with payment info
@@ -257,5 +240,3 @@ document.addEventListener('DOMContentLoaded', () => {
     alert('Payment system not available. Please refresh the page.');
   }
 });
-
-
