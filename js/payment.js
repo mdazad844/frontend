@@ -225,29 +225,43 @@ class PaymentManager {
 
   saveOrderToHistory(paymentResponse) {
     try {
-      // Update order data with payment info
-      this.orderData.paymentId = paymentResponse.razorpay_payment_id;
-      this.orderData.paymentStatus = 'paid';
-      this.orderData.status = 'confirmed';
-      this.orderData.paymentDate = new Date().toISOString();
-      this.orderData.razorpayOrderId = paymentResponse.razorpay_order_id;
+        // Update order data with payment info and correct amount fields
+        this.orderData.paymentId = paymentResponse.razorpay_payment_id;
+        this.orderData.paymentStatus = 'paid';
+        this.orderData.status = 'confirmed';
+        this.orderData.paymentDate = new Date().toISOString();
+        this.orderData.razorpayOrderId = paymentResponse.razorpay_order_id;
+        
+        // ✅ Ensure the correct amount fields are saved
+        // Use grandTotal (which includes GST) as the main amount
+        this.orderData.grandTotal = this.orderData.grandTotal || this.orderData.total;
+        this.orderData.total = this.orderData.grandTotal; // For backward compatibility
+        
+        // Save GST breakdown for display
+        this.orderData.amountBreakdown = {
+            subtotal: this.orderData.subtotal || 0,
+            deliveryCharge: this.orderData.deliveryCharge || 0,
+            taxAmount: this.orderData.taxAmount || 0,
+            grandTotal: this.orderData.grandTotal || 0
+        };
 
-      // Save to order history
-      const orders = JSON.parse(localStorage.getItem('orderHistory') || '[]');
-      orders.unshift(this.orderData);
-      localStorage.setItem('orderHistory', JSON.stringify(orders));
+        console.log('💾 Saving order to history:', this.orderData);
 
-      // Clear pending order and cart
-      localStorage.removeItem('pendingOrder');
-      localStorage.removeItem('cart');
+        // Save to order history
+        const orders = JSON.parse(localStorage.getItem('orderHistory') || '[]');
+        orders.unshift(this.orderData);
+        localStorage.setItem('orderHistory', JSON.stringify(orders));
 
-      console.log('✅ Order saved to history:', this.orderData);
+        // Clear pending order and cart
+        localStorage.removeItem('pendingOrder');
+        localStorage.removeItem('cart');
+
+        console.log('✅ Order saved to history with amount:', this.orderData.grandTotal);
 
     } catch (error) {
-      console.error('❌ Failed to save order:', error);
+        console.error('❌ Failed to save order:', error);
     }
-  }
-
+}
   showError(message) {
     const messageElement = document.getElementById('paymentMessage');
     if (messageElement) {
@@ -286,3 +300,4 @@ document.addEventListener('DOMContentLoaded', () => {
     document.head.appendChild(script);
   }
 });
+
