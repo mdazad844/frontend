@@ -148,63 +148,31 @@ class PaymentManager {
   }
 }
 
- loadOrderSummary() {
-  try {
-    const orderData = JSON.parse(localStorage.getItem('pendingOrder'));
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+ async createRazorpayOrder() {
+  // ✅ Calculate the correct amount WITH tax
+  const subtotal = this.orderData.subtotal || 0;
+  const deliveryCharge = this.orderData.deliveryCharge || 0;
+  const taxAmount = Math.round((subtotal + deliveryCharge) * 0.05);
+  const finalAmount = subtotal + deliveryCharge + taxAmount;
+  
+  console.log('💰 Creating Razorpay order:');
+  console.log(`   - Subtotal: ₹${subtotal}`);
+  console.log(`   - Delivery: ₹${deliveryCharge}`);
+  console.log(`   - Tax: ₹${taxAmount}`);
+  console.log(`   - Final Amount: ₹${finalAmount}`);
+  console.log(`   - Amount in paise: ₹${Math.round(finalAmount * 100)}`);
 
-    if (!orderData || !currentUser) {
-      this.showError('No order data found. Please complete checkout.');
-      return;
-    }
+  const response = await fetch(`${this.backendUrl}/api/payments/create-order`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      amount: Math.round(finalAmount * 100), // ✅ Use calculated amount with tax
+      currency: "INR",
+      receipt: this.orderData.orderId
+    })
+  });
 
-    this.orderData = orderData;
-    this.currentUser = currentUser;
-
-    // Display order items
-    const itemsContainer = document.getElementById('paymentOrderItems');
-    if (itemsContainer && orderData.items) {
-      itemsContainer.innerHTML = orderData.items.map(item => `
-        <div class="order-item">
-          <span>${item.name} x${item.quantity}</span>
-          <span>₹${(item.price * item.quantity).toFixed(2)}</span>
-        </div>
-      `).join('');
-    }
-
-    // ✅✅✅ FIX: Calculate tax correctly
-    const subtotal = orderData.subtotal || 0;
-    const deliveryCharge = orderData.deliveryCharge || 0;
-    
-    // Recalculate tax to ensure it's 5% on (subtotal + delivery)
-    const taxableAmount = subtotal + deliveryCharge;
-    const correctTax = Math.round(taxableAmount * 0.05);
-    
-    // ✅✅✅ IMPORTANT: Calculate the CORRECT TOTAL with tax
-    const correctTotal = subtotal + deliveryCharge + correctTax;
-    
-    // ✅ Update the orderData with correct tax AND total
-    this.orderData.taxAmount = correctTax;
-    this.orderData.total = correctTotal; // ✅ THIS IS THE FIX!
-    
-    // Update ALL total fields with correct calculations
-    this.updateElement('paymentSubtotal', subtotal);
-    this.updateElement('paymentTax', correctTax);
-    this.updateElement('paymentDelivery', deliveryCharge);
-    this.updateElement('paymentTotal', correctTotal); // ✅ Use correctTotal
-    
-    console.log('📊 Payment Summary:');
-    console.log(`   - Subtotal: ₹${subtotal}`);
-    console.log(`   - Delivery: ₹${deliveryCharge}`);
-    console.log(`   - Taxable Amount: ₹${taxableAmount}`);
-    console.log(`   - 5% GST: ₹${correctTax}`);
-    console.log(`   - Grand Total: ₹${correctTotal}`);
-    console.log(`   - orderData.total (for Razorpay): ₹${this.orderData.total}`);
-    
-  } catch (error) {
-    console.error('❌ Failed to load order:', error);
-    this.showError('Failed to load order details.');
-  }
+  return await response.json();
 }
 
   
@@ -265,3 +233,4 @@ document.addEventListener('DOMContentLoaded', () => {
     alert('Payment system not available. Please refresh the page.');
   }
 });
+
