@@ -13,42 +13,57 @@ class PaymentManager {
 
   loadOrderSummary() {
     try {
-      const orderData = JSON.parse(localStorage.getItem('pendingOrder'));
-      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        const orderData = JSON.parse(localStorage.getItem('pendingOrder'));
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
-      if (!orderData || !currentUser) {
-        this.showError('No order data found. Please complete checkout.');
-        return;
-      }
+        if (!orderData || !currentUser) {
+            this.showError('No order data found. Please complete checkout.');
+            return;
+        }
 
-      this.orderData = orderData;
-      this.currentUser = currentUser;
+        this.orderData = orderData;
+        this.currentUser = currentUser;
 
-      // Display order items
-      const itemsContainer = document.getElementById('paymentOrderItems');
-      if (itemsContainer && orderData.items) {
-        itemsContainer.innerHTML = orderData.items.map(item => `
-          <div class="order-item">
-            <span>${item.name} x${item.quantity}</span>
-            <span>₹${(item.price * item.quantity).toFixed(2)}</span>
-          </div>
-        `).join('');
-      }
+        // Display order items
+        const itemsContainer = document.getElementById('paymentOrderItems');
+        if (itemsContainer && orderData.items) {
+            itemsContainer.innerHTML = orderData.items.map(item => `
+                <div class="order-item">
+                    <span>${item.name} x${item.quantity}</span>
+                    <span>₹${(item.price * item.quantity).toFixed(2)}</span>
+                </div>
+            `).join('');
+        }
 
- // ✅✅✅ ADD THESE 4 LINES - Update ALL total fields
-        this.updateElement('paymentSubtotal', orderData.subtotal || 0);
-        this.updateElement('paymentTax', orderData.taxAmount || orderData.tax || 0);
-        this.updateElement('paymentDelivery', orderData.deliveryCharge || orderData.delivery || 0);
-        this.updateElement('paymentTotal', orderData.total || 0);
-
-      
-   
+        // ✅✅✅ FIXED: Calculate tax correctly for display
+        const subtotal = orderData.subtotal || 0;
+        const deliveryCharge = orderData.deliveryCharge || 0;
+        
+        // Recalculate tax to ensure it's 5% on (subtotal + delivery)
+        const taxableAmount = subtotal + deliveryCharge;
+        const correctTax = Math.round(taxableAmount * 0.05);
+        
+        // Update the orderData with correct tax
+        this.orderData.taxAmount = correctTax;
+        
+        // Update ALL total fields with correct calculations
+        this.updateElement('paymentSubtotal', subtotal);
+        this.updateElement('paymentTax', correctTax);
+        this.updateElement('paymentDelivery', deliveryCharge);
+        this.updateElement('paymentTotal', subtotal + correctTax + deliveryCharge);
+        
+        console.log('📊 Payment Summary:');
+        console.log(`   - Subtotal: ₹${subtotal}`);
+        console.log(`   - Delivery: ₹${deliveryCharge}`);
+        console.log(`   - Taxable Amount: ₹${taxableAmount}`);
+        console.log(`   - 5% GST: ₹${correctTax}`);
+        console.log(`   - Grand Total: ₹${subtotal + correctTax + deliveryCharge}`);
+        
     } catch (error) {
-      console.error('❌ Failed to load order:', error);
-      this.showError('Failed to load order details.');
+        console.error('❌ Failed to load order:', error);
+        this.showError('Failed to load order details.');
     }
-  }
-
+}
   updateElement(id, value) {
     const element = document.getElementById(id);
     if (element) element.textContent = `₹${Number(value).toFixed(2)}`;
@@ -215,4 +230,5 @@ document.addEventListener('DOMContentLoaded', () => {
     alert('Payment system not available. Please refresh the page.');
   }
 });
+
 
