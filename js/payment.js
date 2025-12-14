@@ -225,6 +225,60 @@ class PaymentManager {
   }
 }
 
+
+
+// Frontend verification before payment
+async function verifyAndCreateOrder() {
+  const items = [
+    { price: 1000, quantity: 2 }, // ₹2000
+    { price: 500, quantity: 1 }    // ₹500
+  ];
+  const deliveryCharge = 100;
+  
+  // Calculate locally
+  const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const taxable = subtotal + deliveryCharge;
+  const gst = Math.round(taxable * 0.05);
+  const total = subtotal + deliveryCharge + gst;
+  
+  console.log('Frontend calculation:');
+  console.log('Subtotal:', subtotal);
+  console.log('Delivery:', deliveryCharge);
+  console.log('GST:', gst);
+  console.log('Total:', total);
+  console.log('Total paise:', total * 100);
+  
+  // Create order on backend
+  const response = await fetch('/api/payments/create-order', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      items,
+      deliveryCharge,
+      receipt: 'order_' + Date.now()
+    })
+  });
+  
+  const data = await response.json();
+  
+  console.log('Backend response:');
+  console.log('Order ID:', data.orderId);
+  console.log('Amount (paise):', data.amount);
+  console.log('Breakdown:', data.breakdown);
+  
+  // Verify amounts match
+  const expectedPaise = total * 100;
+  if (data.amount === expectedPaise) {
+    console.log('✅ Amounts match! Proceed with payment.');
+  } else {
+    console.error('❌ Amount mismatch!');
+    console.error('Expected:', expectedPaise);
+    console.error('Received:', data.amount);
+  }
+}
+
+
+
 // Initialize when page loads
 document.addEventListener('DOMContentLoaded', () => {
   if (typeof Razorpay !== 'undefined') {
@@ -234,6 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
     alert('Payment system not available. Please refresh the page.');
   }
 });
+
 
 
 
