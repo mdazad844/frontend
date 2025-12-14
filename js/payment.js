@@ -46,7 +46,7 @@ class PaymentManager {
         
         // Update the orderData with correct values
         this.orderData.taxAmount = correctTax;
-        this.orderData.grandTotal = grandTotal; // Store this for Razorpay
+        this.orderData.grandTotal = grandTotal;
         
         // Update ALL total fields with correct calculations
         this.updateElement('paymentSubtotal', subtotal);
@@ -65,7 +65,7 @@ class PaymentManager {
         console.error('❌ Failed to load order:', error);
         this.showError('Failed to load order details.');
     }
-}
+  }
 
   updateElement(id, value) {
     const element = document.getElementById(id);
@@ -84,7 +84,7 @@ class PaymentManager {
     button.disabled = true;
 
     try {
-      // 1. Create Razorpay order - FIXED: Send subtotal and delivery separately
+      // 1. Create Razorpay order
       const orderResponse = await this.createRazorpayOrder();
       
       if (!orderResponse.success) {
@@ -93,10 +93,10 @@ class PaymentManager {
 
       console.log('✅ Razorpay order created:', orderResponse);
       
-      // 2. Open Razorpay checkout - FIXED: Use amount from backend response
+      // 2. Open Razorpay checkout
       const options = {
         key: this.razorpayKey,
-        amount: orderResponse.amount, // Use amount from backend (includes GST)
+        amount: orderResponse.amount,
         currency: "INR",
         name: "MyBrand",
         description: `Order #${this.orderData.orderId} (Includes 5% GST)`,
@@ -113,7 +113,6 @@ class PaymentManager {
         theme: {
           color: "#007bff"
         },
-        // Add notes to show in Razorpay dashboard
         notes: {
           order_id: this.orderData.orderId,
           subtotal: `₹${this.orderData.subtotal}`,
@@ -141,120 +140,187 @@ class PaymentManager {
       button.disabled = false;
     }
   }
-// Frontend JavaScript - UPDATED
-async function createRazorpayOrder() {
-    const orderData = JSON.parse(localStorage.getItem('pendingOrder'));
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    
-    // Prepare complete order data
-    const completeOrderData = {
+
+  // ✅ FIXED: This should be a method of PaymentManager class
+  async createRazorpayOrder() {
+    try {
+      const orderData = this.orderData;
+      const currentUser = this.currentUser;
+      
+      // Prepare complete order data
+      const completeOrderData = {
         userId: currentUser?.userId,
         customer: {
-            name: currentUser?.name,
-            email: currentUser?.email,
-            phone: currentUser?.phone
+          name: currentUser?.name,
+          email: currentUser?.email,
+          phone: currentUser?.phone
         },
         shippingAddress: currentUser?.address || {},
-        items: orderData?.items || [],
+        items: orderData?.items?.map(item => ({
+          productId: item.id || item.productId,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          size: item.size || '',
+          color: item.color || '',
+          image: item.image || item.img || ''
+        })) || [],
+        subtotal: orderData.subtotal || 0,
+        deliveryCharge: orderData.deliveryCharge || 0,
         notes: document.getElementById('orderNotes')?.value || ''
-    };
-    
-    const requestBody = {
+      };
+      
+      const requestBody = {
         subtotal: orderData.subtotal || 0,
         deliveryCharge: orderData.deliveryCharge || 0,
         currency: "INR",
         receipt: orderData.orderId || `order_${Date.now()}`,
-        orderData: completeOrderData  // Send complete order data
-    };
-    
-    console.log('📤 Sending order data:', requestBody);
-    
-    const response = await fetch(`${this.backendUrl}/api/payments/create-order`, {
+        orderData: completeOrderData
+      };
+      
+      console.log('📤 Sending order data to backend:', requestBody);
+      
+      const response = await fetch(`${this.backendUrl}/api/payments/create-order`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestBody)
-    });
-    
-    return await response.json();
-}
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      console.log('📥 Backend response:', data);
+      return data;
+      
+    } catch (error) {
+      console.error('❌ Error creating Razorpay order:', error);
+      return {
+        success: false,
+        error: error.message
+      };
+    }
+  }
 
-async function handlePaymentSuccess(paymentResponse) {
-    const orderData = JSON.parse(localStorage.getItem('pendingOrder'));
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  // ✅ FIXED: This should be a method of PaymentManager class
+  async handlePaymentSuccess(paymentResponse) {
+    const loadingElement = document.getElementById('paymentLoading');
+    if (loadingElement) loadingElement.style.display = 'block';
     
-    // Prepare complete order data for verification
-    const completeOrderData = {
+    try {
+      console.log('🔍 Verifying payment with backend...');
+      
+      const orderData = this.orderData;
+      const currentUser = this.currentUser;
+      
+      // Prepare complete order data for verification
+      const completeOrderData = {
         userId: currentUser?.userId,
         customer: {
-            name: currentUser?.name,
-            email: currentUser?.email,
-            phone: currentUser?.phone
+          name: currentUser?.name,
+          email: currentUser?.email,
+          phone: currentUser?.phone
         },
         shippingAddress: currentUser?.address || {},
-        items: orderData?.items || [],
-        financials: {
-            subtotal: orderData.subtotal || 0,
-            deliveryCharge: orderData.deliveryCharge || 0,
-            taxAmount: orderData.taxAmount || 0,
-            grandTotal: orderData.grandTotal || 0
-        }
-    };
-    
-    const verificationData = {
+        items: orderData?.items?.map(item => ({
+          productId: item.id || item.productId,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          size: item.size || '',
+          color: item.color || '',
+          image: item.image || item.img || ''
+        })) || [],
+        subtotal: orderData.subtotal || 0,
+        deliveryCharge: orderData.deliveryCharge || 0,
+        taxAmount: orderData.taxAmount || 0,
+        grandTotal: orderData.grandTotal || 0
+      };
+      
+      const verificationData = {
         ...paymentResponse,
         orderData: completeOrderData
-    };
-    
-    const verificationResponse = await fetch(`${this.backendUrl}/api/payments/verify-payment`, {
+      };
+      
+      console.log('📤 Sending verification data:', verificationData);
+      
+      const verificationResponse = await fetch(`${this.backendUrl}/api/payments/verify-payment`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(verificationData)
-    });
-    
-    const data = await verificationResponse.json();
-    
-    if (data.success) {
-        // Save order ID to local storage for profile page
-        const userOrders = JSON.parse(localStorage.getItem('userOrders') || '[]');
-        userOrders.unshift({
-            orderId: data.orderId,
-            orderNumber: data.orderNumber,
-            orderDate: new Date().toISOString(),
-            ...data.orderDetails
-        });
-        localStorage.setItem('userOrders', JSON.stringify(userOrders));
+      });
+      
+      const data = await verificationResponse.json();
+      console.log('📥 Verification response:', data);
+      
+      if (data.success) {
+        console.log('🎉 Payment verified successfully!');
+        this.showSuccess('Payment successful! Redirecting...');
         
-        // Clear cart
+        // Save order to localStorage for profile page
+        this.saveOrderToLocalStorage(data);
+        
+        // Clear cart and pending order
         localStorage.removeItem('cart');
         localStorage.removeItem('pendingOrder');
         
         // Redirect to success page with order ID
-        window.location.href = `order-success.html?order=${data.orderId}`;
-    }
-}
-
-  saveOrderToHistory(paymentResponse) {
-    try {
-      // Update order data with payment info
-      this.orderData.paymentId = paymentResponse.razorpay_payment_id;
-      this.orderData.paymentStatus = 'paid';
-      this.orderData.status = 'confirmed';
-      this.orderData.paymentDate = new Date().toISOString();
-      this.orderData.razorpayOrderId = paymentResponse.razorpay_order_id;
-
-      // Save to order history
-      const orders = JSON.parse(localStorage.getItem('orderHistory') || '[]');
-      orders.unshift(this.orderData);
-      localStorage.setItem('orderHistory', JSON.stringify(orders));
-
-      // Clear pending order and cart
-      localStorage.removeItem('pendingOrder');
-      localStorage.removeItem('cart');
-
-      console.log('✅ Order saved to history:', this.orderData);
-
+        setTimeout(() => {
+          window.location.href = `order-success.html?order=${data.orderId}&payment=${paymentResponse.razorpay_payment_id}`;
+        }, 2000);
+        
+      } else {
+        throw new Error(data.error || 'Payment verification failed');
+      }
+      
     } catch (error) {
-      console.error('❌ Failed to save order:', error);
+      console.error('❌ Payment verification failed:', error);
+      this.showError(`Payment verification failed: ${error.message}`);
+    } finally {
+      if (loadingElement) loadingElement.style.display = 'none';
+    }
+  }
+
+  saveOrderToLocalStorage(verificationData) {
+    try {
+      // Create order object with complete details
+      const order = {
+        orderId: verificationData.orderId,
+        orderNumber: verificationData.orderNumber || verificationData.orderId,
+        orderDate: new Date().toISOString(),
+        status: 'confirmed',
+        paymentStatus: 'paid',
+        paymentId: verificationData.paymentId,
+        customer: this.currentUser,
+        shippingAddress: this.currentUser?.address || {},
+        items: this.orderData.items,
+        total: this.orderData.grandTotal,
+        financials: {
+          subtotal: this.orderData.subtotal,
+          deliveryCharge: this.orderData.deliveryCharge,
+          taxAmount: this.orderData.taxAmount,
+          grandTotal: this.orderData.grandTotal
+        }
+      };
+      
+      // Save to user's orders
+      const userEmail = this.currentUser?.email;
+      if (userEmail) {
+        const userOrders = JSON.parse(localStorage.getItem(`userOrders_${userEmail}`) || '[]');
+        userOrders.unshift(order);
+        localStorage.setItem(`userOrders_${userEmail}`, JSON.stringify(userOrders));
+      }
+      
+      // Also save to general order history
+      const orderHistory = JSON.parse(localStorage.getItem('orderHistory') || '[]');
+      orderHistory.unshift(order);
+      localStorage.setItem('orderHistory', JSON.stringify(orderHistory));
+      
+      console.log('✅ Order saved to localStorage:', order);
+      
+    } catch (error) {
+      console.error('❌ Failed to save order to localStorage:', error);
     }
   }
 
@@ -264,7 +330,6 @@ async function handlePaymentSuccess(paymentResponse) {
       messageElement.innerHTML = `<div class="alert alert-danger">${message}</div>`;
       messageElement.style.display = 'block';
     }
-    // Fallback alert
     setTimeout(() => alert(message), 100);
   }
 
@@ -296,4 +361,3 @@ document.addEventListener('DOMContentLoaded', () => {
     document.head.appendChild(script);
   }
 });
-
