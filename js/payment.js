@@ -145,39 +145,43 @@ class PaymentManager {
     if (loadingElement) loadingElement.style.display = 'block';
 
     try {
-      console.log('🔍 Verifying payment...');
+        console.log('🔍 Verifying payment...');
 
-      const verificationResponse = await fetch(`${this.backendUrl}/api/payments/verify-payment`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(paymentResponse)
-      });
+        const verificationResponse = await fetch(`${this.backendUrl}/api/payments/verify-payment`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(paymentResponse)
+        });
 
-      const data = await verificationResponse.json();
-      
-      if (data.success) {
-        console.log('🎉 Payment verified successfully!');
-        this.showSuccess('Payment successful! Redirecting...');
+        const data = await verificationResponse.json();
         
-        // Save order to history
-        this.saveOrderToHistory(paymentResponse);
-        
-        // Redirect to success page
-        setTimeout(() => {
-          window.location.href = `order-success.html?order=${this.orderData.orderId}`;
-        }, 2000);
-        
-      } else {
-        throw new Error(data.error || 'Payment verification failed');
-      }
+        if (data.success) {
+            console.log('🎉 Payment verified successfully!');
+            this.showSuccess('Payment successful! Redirecting...');
+            
+            // ✅ Add user email to order before saving
+            this.orderData.userEmail = this.currentUser?.email || 'guest';
+            this.orderData.userName = this.currentUser?.name || 'Guest';
+            
+            // Save order to history
+            this.saveOrderToHistory(paymentResponse);
+            
+            // Redirect to success page
+            setTimeout(() => {
+                window.location.href = `order-success.html?order=${this.orderData.orderId}`;
+            }, 2000);
+            
+        } else {
+            throw new Error(data.error || 'Payment verification failed');
+        }
 
     } catch (error) {
-      console.error('❌ Payment verification failed:', error);
-      this.showError(`Payment verification failed: ${error.message}`);
+        console.error('❌ Payment verification failed:', error);
+        this.showError(`Payment verification failed: ${error.message}`);
     } finally {
-      if (loadingElement) loadingElement.style.display = 'none';
+        if (loadingElement) loadingElement.style.display = 'none';
     }
-  }
+}
 
   saveOrderToHistory(paymentResponse) {
     try {
@@ -230,5 +234,6 @@ document.addEventListener('DOMContentLoaded', () => {
     alert('Payment system not available. Please refresh the page.');
   }
 });
+
 
 
