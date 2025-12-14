@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Details - MyBrand</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .order-details-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        }
+        
+        .order-header {
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .order-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 6px;
+        }
+        
+        .order-items {
+            margin-top: 20px;
+        }
+        
+        .order-item-detail {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .order-item-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-right: 15px;
+        }
+        
+        .order-item-info {
+            flex: 1;
+        }
+        
+        .order-summary {
+            background: #e9f7fe;
+            padding: 20px;
+            border-radius: 6px;
+            margin-top: 20px;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed #ddd;
+        }
+        
+        .summary-total {
+            font-size: 18px;
+            font-weight: bold;
+            color: #28a745;
+        }
+        
+        .print-btn {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <!-- Same header as other pages -->
+    </header>
+    
+    <section class="login-section">
+        <div class="order-details-container" id="orderDetails">
+            <!-- Order details will be loaded here -->
+        </div>
+    </section>
+    
+    <footer>
+        <p>© 2025 MyBrand. All Rights Reserved.</p>
+    </footer>
+    
+    <script>
+        function loadOrderDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderId = urlParams.get('order');
+            
+            if (!orderId) {
+                document.getElementById('orderDetails').innerHTML = `
+                    <div class="alert alert-danger">
+                        <h3>Order Not Found</h3>
+                        <p>No order ID specified. Please check your order history.</p>
+                        <a href="profile.html" class="btn">Go to Profile</a>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Find order in orderHistory
+            const orders = JSON.parse(localStorage.getItem('orderHistory') || '[]');
+            const order = orders.find(o => o.orderId === orderId || o.id === orderId);
+            
+            if (!order) {
+                document.getElementById('orderDetails').innerHTML = `
+                    <div class="alert alert-warning">
+                        <h3>Order Not Found</h3>
+                        <p>We couldn't find order #${orderId}.</p>
+                        <a href="profile.html" class="btn">View All Orders</a>
+                    </div>
+                `;
+                return;
+            }
+            
+            renderOrderDetails(order);
+        }
+        
+        function renderOrderDetails(order) {
+            const itemsHTML = order.items ? order.items.map(item => `
+                <div class="order-item-detail">
+                    <img src="${item.image || 'images/default-product.jpg'}" 
+                         alt="${item.name}" 
+                         class="order-item-image">
+                    <div class="order-item-info">
+                        <h4>${item.name}</h4>
+                        <p>Size: ${item.size} | Color: ${item.color}</p>
+                        <p>Quantity: ${item.quantity} × ₹${item.price} = ₹${item.price * item.quantity}</p>
+                    </div>
+                </div>
+            `).join('') : '<p>No items found</p>';
+            
+            const financials = order.financials || {
+                subtotal: order.subtotal || 0,
+                deliveryCharge: order.deliveryCharge || 0,
+                taxAmount: order.taxAmount || 0,
+                grandTotal: order.grandTotal || order.total || 0
+            };
+            
+            document.getElementById('orderDetails').innerHTML = `
+                <div class="order-header">
+                    <h1>Order #${order.orderNumber || order.orderId}</h1>
+                    <p>Placed on ${new Date(order.orderDate || order.paymentDate).toLocaleString()}</p>
+                    <p>Status: <span class="order-status status-completed">${order.status || 'Confirmed'}</span></p>
+                </div>
+                
+                <div class="order-section">
+                    <h3>Shipping Address</h3>
+                    <p><strong>${order.shippingAddress?.name || order.customer?.name}</strong></p>
+                    <p>${order.shippingAddress?.line1}</p>
+                    ${order.shippingAddress?.line2 ? `<p>${order.shippingAddress.line2}</p>` : ''}
+                    <p>${order.shippingAddress?.city}, ${order.shippingAddress?.state} - ${order.shippingAddress?.pincode}</p>
+                    <p>${order.shippingAddress?.country}</p>
+                    <p>Phone: ${order.shippingAddress?.phone || order.customer?.phone}</p>
+                </div>
+                
+                <div class="order-section">
+                    <h3>Order Items (${order.items ? order.items.length : 0})</h3>
+                    <div class="order-items">
+                        ${itemsHTML}
+                    </div>
+                </div>
+                
+                <div class="order-summary">
+                    <h3>Order Summary</h3>
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span>₹${financials.subtotal.toFixed(2)}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Delivery Charge:</span>
+                        <span>₹${financials.deliveryCharge.toFixed(2)}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>GST (5%):</span>
+                        <span>₹${financials.taxAmount.toFixed(2)}</span>
+                    </div>
+                    <div class="summary-row summary-total">
+                        <span>Grand Total:</span>
+                        <span>₹${financials.grandTotal.toFixed(2)}</span>
+                    </div>
+                </div>
+                
+                <div class="order-section">
+                    <h3>Payment Information</h3>
+                    <p><strong>Payment ID:</strong> ${order.paymentId}</p>
+                    <p><strong>Payment Status:</strong> ${order.paymentStatus}</p>
+                    <p><strong>Payment Date:</strong> ${new Date(order.paymentDate).toLocaleString()}</p>
+                </div>
+                
+                <button class="print-btn" onclick="window.print()">Print Invoice</button>
+                <a href="profile.html" class="btn" style="margin-left: 10px;">Back to Profile</a>
+            `;
+        }
+        
+        document.addEventListener('DOMContentLoaded', loadOrderDetails);
+    </script>
+</body>
+</html>
