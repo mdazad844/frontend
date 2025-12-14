@@ -494,42 +494,40 @@
     }
     
  // Update the loadOrderStatistics function in profile.html
-function loadOrderStatistics(userEmail) {
-    // FIXED: Get orders from 'orderHistory' (where paymentManager saves them)
-    const orders = JSON.parse(localStorage.getItem('orderHistory') || '[]');
-    const userOrders = orders.filter(order => {
-        // Match by email or userId
-        return order.userEmail === userEmail || 
-               (order.customer && order.customer.email === userEmail) ||
-               order.userId === userEmail;
-    });
-    
-    console.log('📊 Found user orders:', userOrders.length);
-    console.log('User email:', userEmail);
-    console.log('All orders:', orders);
-    
-    // Calculate total spent - FIXED: Use grandTotal instead of total
-    const totalOrders = userOrders.length;
-    const totalSpent = userOrders.reduce((sum, order) => {
-        // Try different possible amount fields
-        const amount = order.grandTotal ||          // New field from paymentManager
-                      order.total ||               // Old field
-                      order.amount ||              // Alternative field
-                      (order.breakdown && order.breakdown.total) || // From breakdown
-                      0;
+// In profile.html - Update the loadOrderStatistics function
+async function loadOrderStatistics(userEmail) {
+    try {
+        // Fetch from backend API
+        const backendUrl = 'https://backend-production-c281a.up.railway.app';
+        const response = await fetch(`${backendUrl}/api/orders/customer/${encodeURIComponent(userEmail)}`);
+        const data = await response.json();
         
-        console.log(`Order ${order.orderId}: amount = ${amount}`);
-        return sum + Number(amount);
-    }, 0);
-    
-    const totalOrdersElement = document.getElementById('totalOrders');
-    const totalSpentElement = document.getElementById('totalSpent');
-    
-    if (totalOrdersElement) totalOrdersElement.textContent = totalOrders;
-    if (totalSpentElement) totalSpentElement.textContent = `₹${totalSpent.toFixed(2)}`;
-    
-    // Display recent orders
-    displayRecentOrders(userOrders);
+        if (data.success) {
+            const userOrders = data.orders || [];
+            
+            // Calculate statistics
+            const totalOrders = userOrders.length;
+            const totalSpent = userOrders.reduce((sum, order) => sum + (order.total || 0), 0);
+            
+            // Update UI
+            const totalOrdersElement = document.getElementById('totalOrders');
+            const totalSpentElement = document.getElementById('totalSpent');
+            
+            if (totalOrdersElement) totalOrdersElement.textContent = totalOrders;
+            if (totalSpentElement) totalSpentElement.textContent = `₹${totalSpent.toFixed(2)}`;
+            
+            // Display recent orders
+            displayRecentOrders(userOrders);
+            
+            // Save to localStorage for offline viewing
+            localStorage.setItem(`userOrders_${userEmail}`, JSON.stringify(userOrders));
+        }
+    } catch (error) {
+        console.error('Failed to fetch orders from backend:', error);
+        // Fallback to localStorage
+        const localOrders = JSON.parse(localStorage.getItem(`userOrders_${userEmail}`) || '[]');
+        displayRecentOrders(localOrders);
+    }
 }
 
 // Update displayRecentOrders function
@@ -888,6 +886,7 @@ function viewOrderDetails(orderId) {
 </body>
 
 </html>
+
 
 
 
