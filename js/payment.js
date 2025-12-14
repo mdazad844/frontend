@@ -141,85 +141,95 @@ class PaymentManager {
       button.disabled = false;
     }
   }
-
-  async createRazorpayOrder() {
-    try {
-      // FIXED: Send subtotal and deliveryCharge separately so backend can calculate GST
-      const requestBody = {
-        subtotal: this.orderData.subtotal || 0,
-        deliveryCharge: this.orderData.deliveryCharge || 0,
+// Frontend JavaScript - UPDATED
+async function createRazorpayOrder() {
+    const orderData = JSON.parse(localStorage.getItem('pendingOrder'));
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    
+    // Prepare complete order data
+    const completeOrderData = {
+        userId: currentUser?.userId,
+        customer: {
+            name: currentUser?.name,
+            email: currentUser?.email,
+            phone: currentUser?.phone
+        },
+        shippingAddress: currentUser?.address || {},
+        items: orderData?.items || [],
+        notes: document.getElementById('orderNotes')?.value || ''
+    };
+    
+    const requestBody = {
+        subtotal: orderData.subtotal || 0,
+        deliveryCharge: orderData.deliveryCharge || 0,
         currency: "INR",
-        receipt: this.orderData.orderId || `receipt_${Date.now()}`
-      };
-
-      console.log('📤 Creating Razorpay order with:', requestBody);
-
-      const response = await fetch(`${this.backendUrl}/api/payments/create-order`, {
+        receipt: orderData.orderId || `order_${Date.now()}`,
+        orderData: completeOrderData  // Send complete order data
+    };
+    
+    console.log('📤 Sending order data:', requestBody);
+    
+    const response = await fetch(`${this.backendUrl}/api/payments/create-order`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestBody)
-      });
+    });
+    
+    return await response.json();
+}
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      
-      if (!data.success) {
-        throw new Error(data.error || 'Failed to create order');
-      }
-
-      console.log('✅ Backend response:', data);
-      return data;
-
-    } catch (error) {
-      console.error('❌ Error creating Razorpay order:', error);
-      throw error;
-    }
-  }
-
-  async handlePaymentSuccess(paymentResponse) {
-    const loadingElement = document.getElementById('paymentLoading');
-    if (loadingElement) loadingElement.style.display = 'block';
-
-    try {
-        console.log('🔍 Verifying payment...');
-
-        const verificationResponse = await fetch(`${this.backendUrl}/api/payments/verify-payment`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(paymentResponse)
-        });
-
-        const data = await verificationResponse.json();
-        
-        if (data.success) {
-            console.log('🎉 Payment verified successfully!');
-            this.showSuccess('Payment successful! Redirecting...');
-            
-            // Add user email to order before saving
-            this.orderData.userEmail = this.currentUser?.email || 'guest';
-            this.orderData.userName = this.currentUser?.name || 'Guest';
-            this.orderData.paymentId = paymentResponse.razorpay_payment_id;
-            
-            // Save order to history
-            this.saveOrderToHistory(paymentResponse);
-            
-            // Redirect to success page
-            setTimeout(() => {
-                window.location.href = `order-success.html?order=${this.orderData.orderId}&payment=${paymentResponse.razorpay_payment_id}`;
-            }, 2000);
-            
-        } else {
-            throw new Error(data.error || 'Payment verification failed');
+async function handlePaymentSuccess(paymentResponse) {
+    const orderData = JSON.parse(localStorage.getItem('pendingOrder'));
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    
+    // Prepare complete order data for verification
+    const completeOrderData = {
+        userId: currentUser?.userId,
+        customer: {
+            name: currentUser?.name,
+            email: currentUser?.email,
+            phone: currentUser?.phone
+        },
+        shippingAddress: currentUser?.address || {},
+        items: orderData?.items || [],
+        financials: {
+            subtotal: orderData.subtotal || 0,
+            deliveryCharge: orderData.deliveryCharge || 0,
+            taxAmount: orderData.taxAmount || 0,
+            grandTotal: orderData.grandTotal || 0
         }
-
-    } catch (error) {
-        console.error('❌ Payment verification failed:', error);
-        this.showError(`Payment verification failed: ${error.message}`);
-    } finally {
-        if (loadingElement) loadingElement.style.display = 'none';
+    };
+    
+    const verificationData = {
+        ...paymentResponse,
+        orderData: completeOrderData
+    };
+    
+    const verificationResponse = await fetch(`${this.backendUrl}/api/payments/verify-payment`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(verificationData)
+    });
+    
+    const data = await verificationResponse.json();
+    
+    if (data.success) {
+        // Save order ID to local storage for profile page
+        const userOrders = JSON.parse(localStorage.getItem('userOrders') || '[]');
+        userOrders.unshift({
+            orderId: data.orderId,
+            orderNumber: data.orderNumber,
+            orderDate: new Date().toISOString(),
+            ...data.orderDetails
+        });
+        localStorage.setItem('userOrders', JSON.stringify(userOrders));
+        
+        // Clear cart
+        localStorage.removeItem('cart');
+        localStorage.removeItem('pendingOrder');
+        
+        // Redirect to success page with order ID
+        window.location.href = `order-success.html?order=${data.orderId}`;
     }
 }
 
@@ -286,3 +296,4 @@ document.addEventListener('DOMContentLoaded', () => {
     document.head.appendChild(script);
   }
 });
+
