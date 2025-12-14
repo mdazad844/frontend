@@ -92,7 +92,7 @@ const productDatabase = {
     '5': {
         id: 5,
         name: 'Premium Black Polo T-shirt',
-        price: 1,
+        price: 289,
         images: ['product5.jpg', 'product5-back.jpg', 'product5-detail.jpg', 'product5-side.jpg'],
         description: 'Premium cotton  polo T-shirt with excellent breathability and professional look.',
         details: {
