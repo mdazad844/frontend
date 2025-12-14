@@ -149,32 +149,56 @@ class PaymentManager {
 }
 
  async createRazorpayOrder() {
-  // ✅ Calculate the correct amount WITH tax
-  const subtotal = this.orderData.subtotal || 0;
-  const deliveryCharge = this.orderData.deliveryCharge || 0;
-  const taxAmount = Math.round((subtotal + deliveryCharge) * 0.05);
-  const finalAmount = subtotal + deliveryCharge + taxAmount;
-  
-  console.log('💰 Creating Razorpay order:');
-  console.log(`   - Subtotal: ₹${subtotal}`);
-  console.log(`   - Delivery: ₹${deliveryCharge}`);
-  console.log(`   - Tax: ₹${taxAmount}`);
-  console.log(`   - Final Amount: ₹${finalAmount}`);
-  console.log(`   - Amount in paise: ₹${Math.round(finalAmount * 100)}`);
+  try {
+    console.log('🔍 DEBUG: Creating Razorpay order...');
+    console.log('orderData:', JSON.stringify(this.orderData, null, 2));
+    
+    // Calculate what amount SHOULD be sent
+    const subtotal = this.orderData.subtotal || 0;
+    const deliveryCharge = this.orderData.deliveryCharge || 0;
+    const taxAmount = Math.round((subtotal + deliveryCharge) * 0.05);
+    const calculatedTotal = subtotal + deliveryCharge + taxAmount;
+    
+    console.log('💰 Amount Calculation:');
+    console.log(`   - Subtotal: ₹${subtotal}`);
+    console.log(`   - Delivery: ₹${deliveryCharge}`);
+    console.log(`   - Tax (5%): ₹${taxAmount}`);
+    console.log(`   - Calculated Total: ₹${calculatedTotal}`);
+    console.log(`   - orderData.total: ₹${this.orderData.total}`);
+    
+    // Use whichever total exists
+    const amountToSend = this.orderData.total || calculatedTotal;
+    const amountInPaise = Math.round(amountToSend * 100);
+    
+    console.log(`📤 Sending to backend: ₹${amountToSend} (${amountInPaise} paise)`);
+    
+    const response = await fetch(`${this.backendUrl}/api/payments/create-order`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        amount: amountInPaise,
+        currency: "INR",
+        receipt: this.orderData.orderId
+      })
+    });
 
-  const response = await fetch(`${this.backendUrl}/api/payments/create-order`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      amount: Math.round(finalAmount * 100), // ✅ Use calculated amount with tax
-      currency: "INR",
-      receipt: this.orderData.orderId
-    })
-  });
-
-  return await response.json();
+    const result = await response.json();
+    console.log('✅ Backend response:', result);
+    
+    if (!result.success) {
+      console.error('❌ Backend error:', result.error);
+    }
+    
+    return result;
+    
+  } catch (error) {
+    console.error('❌ Fetch error:', error);
+    return {
+      success: false,
+      error: error.message
+    };
+  }
 }
-
   
   saveOrderToHistory(paymentResponse) {
     try {
@@ -233,4 +257,5 @@ document.addEventListener('DOMContentLoaded', () => {
     alert('Payment system not available. Please refresh the page.');
   }
 });
+
 
