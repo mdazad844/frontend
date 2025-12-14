@@ -480,9 +480,23 @@ displayShippingOptions(options, isFallback = false) {
     }
     
     this.updateElement('grandTotal', grandTotal);
+
+       // ✅ Update the pending order with correct tax
+    const pendingOrder = JSON.parse(localStorage.getItem('pendingOrder') || '{}');
+    if (pendingOrder && pendingOrder.orderId) {
+        pendingOrder.taxAmount = tax;
+        pendingOrder.total = grandTotal;
+        localStorage.setItem('pendingOrder', JSON.stringify(pendingOrder));
+        console.log('✅ Updated pending order with correct tax');
+    }
     
     console.log('✅ Totals updated (5% GST on products + delivery)');
+    
+   
 }
+
+
+    
 
     proceedToPayment(event) {
         if (event) event.preventDefault();
@@ -570,6 +584,7 @@ document.addEventListener('DOMContentLoaded', function() {
     window.checkoutManager = new CheckoutManager();
     window.checkoutManager.init();
 });
+
 
 
 
