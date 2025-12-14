@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Orders - MyBrand</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .admin-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .orders-table th {
+            background: #007bff;
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+        
+        .orders-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .orders-table tr:hover {
+            background: #f5f9ff;
+        }
+        
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-confirmed { background: #d4edda; color: #155724; }
+        .status-shipped { background: #cce5ff; color: #004085; }
+        
+        .action-btn {
+            padding: 6px 12px;
+            margin: 2px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .btn-view { background: #17a2b8; color: white; }
+        .btn-process { background: #28a745; color: white; }
+        .btn-cancel { background: #dc3545; color: white; }
+        
+        .order-summary {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <!-- Admin header -->
+        <nav class="navbar">
+            <div class="logo"><a href="index.html">MyBrand Admin</a></div>
+            <ul class="nav-links">
+                <li><a href="admin-orders.html" class="active">Orders</a></li>
+                <li><a href="admin-products.html">Products</a></li>
+                <li><a href="index.html">View Site</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <div class="admin-container">
+        <h1>📦 Order Management</h1>
+        
+        <div class="order-summary">
+            <h3>Today's Summary</h3>
+            <div id="orderStats">
+                <!-- Stats will load here -->
+            </div>
+        </div>
+        
+        <div id="ordersList">
+            <!-- Orders will load here -->
+        </div>
+    </div>
+    
+    <script>
+        function loadAdminOrders() {
+            // For now, load from localStorage. In production, this would be from backend
+            const orders = JSON.parse(localStorage.getItem('orderHistory') || '[]');
+            
+            // Calculate stats
+            const today = new Date().toDateString();
+            const todayOrders = orders.filter(order => 
+                new Date(order.orderDate).toDateString() === today
+            );
+            const totalRevenue = orders.reduce((sum, order) => 
+                sum + (order.financials?.grandTotal || order.grandTotal || 0), 0
+            );
+            const todayRevenue = todayOrders.reduce((sum, order) => 
+                sum + (order.financials?.grandTotal || order.grandTotal || 0), 0
+            );
+            
+            // Display stats
+            document.getElementById('orderStats').innerHTML = `
+                <p>Total Orders: ${orders.length} | Today: ${todayOrders.length}</p>
+                <p>Total Revenue: ₹${totalRevenue.toFixed(2)} | Today: ₹${todayRevenue.toFixed(2)}</p>
+                <p>Pending Fulfillment: ${orders.filter(o => o.status === 'confirmed').length}</p>
+            `;
+            
+            // Display orders table
+            if (orders.length === 0) {
+                document.getElementById('ordersList').innerHTML = `
+                    <div style="text-align: center; padding: 40px; background: white; border-radius: 8px;">
+                        <h3>No orders yet</h3>
+                        <p>Orders will appear here when customers make purchases.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const ordersHTML = orders.map(order => `
+                <tr>
+                    <td>
+                        <strong>${order.orderNumber || order.orderId}</strong><br>
+                        <small>${new Date(order.orderDate).toLocaleDateString()}</small>
+                    </td>
+                    <td>
+                        ${order.customer?.name || 'Guest'}<br>
+                        <small>${order.customer?.email || ''}</small><br>
+                        <small>${order.customer?.phone || ''}</small>
+                    </td>
+                    <td>
+                        ${order.items ? order.items.map(item => 
+                            `${item.quantity}x ${item.name}`).join(', ') : 'No items'}
+                    </td>
+                    <td>
+                        <span class="status-badge status-${order.status || 'confirmed'}">
+                            ${order.status || 'Confirmed'}
+                        </span>
+                    </td>
+                    <td>₹${(order.financials?.grandTotal || order.grandTotal || 0).toFixed(2)}</td>
+                    <td>
+                        <button class="action-btn btn-view" onclick="viewOrder('${order.orderId}')">
+                            View
+                        </button>
+                        <button class="action-btn btn-process" onclick="processOrder('${order.orderId}')">
+                            Process
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+            
+            document.getElementById('ordersList').innerHTML = `
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Items</th>
+                            <th>Status</th>
+                            <th>Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${ordersHTML}
+                    </tbody>
+                </table>
+            `;
+        }
+        
+        function viewOrder(orderId) {
+            window.open(`order-details.html?order=${orderId}`, '_blank');
+        }
+        
+        function processOrder(orderId) {
+            const orders = JSON.parse(localStorage.getItem('orderHistory') || '[]');
+            const orderIndex = orders.findIndex(o => o.orderId === orderId);
+            
+            if (orderIndex !== -1) {
+                orders[orderIndex].status = 'processing';
+                orders[orderIndex].fulfillment = orders[orderIndex].fulfillment || {};
+                orders[orderIndex].fulfillment.status = 'processing';
+                orders[orderIndex].fulfillment.updatedAt = new Date().toISOString();
+                
+                localStorage.setItem('orderHistory', JSON.stringify(orders));
+                alert(`Order ${orderId} marked as processing.`);
+                loadAdminOrders();
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', loadAdminOrders);
+    </script>
+</body>
+</html>
