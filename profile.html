@@ -493,73 +493,204 @@
       loadOrderStatistics(currentUser.email);
     }
     
-    function loadOrderStatistics(userEmail) {
-  // FIXED: Get orders from the correct localStorage key 'orderHistory'
-  const orders = JSON.parse(localStorage.getItem('orderHistory') || '[]');
-  const userOrders = orders.filter(order => order.userEmail === userEmail || order.userId === userEmail);
-      
-      const totalOrders = userOrders.length;
-      const totalSpent = userOrders.reduce((sum, order) => sum + (order.total || 0), 0);
-      
-      const totalOrdersElement = document.getElementById('totalOrders');
-      const totalSpentElement = document.getElementById('totalSpent');
-      
-      if (totalOrdersElement) totalOrdersElement.textContent = totalOrders;
-      if (totalSpentElement) totalSpentElement.textContent = `₹${totalSpent.toFixed(2)}`;
-      
-      // Display recent orders (last 3)
-      displayRecentOrders(userOrders);
-    }
+ // Update the loadOrderStatistics function in profile.html
+function loadOrderStatistics(userEmail) {
+    // FIXED: Get orders from 'orderHistory' (where paymentManager saves them)
+    const orders = JSON.parse(localStorage.getItem('orderHistory') || '[]');
+    const userOrders = orders.filter(order => {
+        // Match by email or userId
+        return order.userEmail === userEmail || 
+               (order.customer && order.customer.email === userEmail) ||
+               order.userId === userEmail;
+    });
     
-    function displayRecentOrders(userOrders) {
-      const recentOrdersContainer = document.getElementById('recentOrders');
-      if (!recentOrdersContainer) return;
-      
-      if (userOrders.length === 0) {
+    console.log('📊 Found user orders:', userOrders.length);
+    console.log('User email:', userEmail);
+    console.log('All orders:', orders);
+    
+    // Calculate total spent - FIXED: Use grandTotal instead of total
+    const totalOrders = userOrders.length;
+    const totalSpent = userOrders.reduce((sum, order) => {
+        // Try different possible amount fields
+        const amount = order.grandTotal ||          // New field from paymentManager
+                      order.total ||               // Old field
+                      order.amount ||              // Alternative field
+                      (order.breakdown && order.breakdown.total) || // From breakdown
+                      0;
+        
+        console.log(`Order ${order.orderId}: amount = ${amount}`);
+        return sum + Number(amount);
+    }, 0);
+    
+    const totalOrdersElement = document.getElementById('totalOrders');
+    const totalSpentElement = document.getElementById('totalSpent');
+    
+    if (totalOrdersElement) totalOrdersElement.textContent = totalOrders;
+    if (totalSpentElement) totalSpentElement.textContent = `₹${totalSpent.toFixed(2)}`;
+    
+    // Display recent orders
+    displayRecentOrders(userOrders);
+}
+
+// Update displayRecentOrders function
+function displayRecentOrders(userOrders) {
+    const recentOrdersContainer = document.getElementById('recentOrders');
+    if (!recentOrdersContainer) return;
+    
+    if (userOrders.length === 0) {
         recentOrdersContainer.innerHTML = `
-          <div class="empty-orders">
-            <p>You have no orders yet.</p>
-            <a href="shop.html" class="btn">Start Shopping</a>
-          </div>
+            <div class="empty-orders">
+                <p>You have no orders yet.</p>
+                <a href="shop.html" class="btn">Start Shopping</a>
+            </div>
         `;
         return;
-      }
-      
-      // Sort by date (newest first) and take last 3
-      const sortedOrders = userOrders.sort((a, b) => 
-        new Date(b.orderDate || b.date) - new Date(a.orderDate || a.date)
-      ).slice(0, 3);
-      
-      recentOrdersContainer.innerHTML = sortedOrders.map(order => `
-        <div class="order-item" style="border: 1px solid #eee; padding: 15px; margin-bottom: 10px; border-radius: 6px;">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-            <strong>Order #${order.orderId || order.id || 'N/A'}</strong>
-            <span style="color: #28a745; font-weight: bold;">₹${order.total || order.amount || 0}</span>
-          </div>
-          <div style="color: #666; font-size: 14px;">
-            <div>Date: ${new Date(order.orderDate || order.date || Date.now()).toLocaleDateString()}</div>
-            <div>Status: <span style="color: #007bff; font-weight: bold;">${order.status || 'Completed'}</span></div>
-            <div>Items: ${order.items ? order.items.length : order.quantity || 1}</div>
-          </div>
-          <button onclick="viewOrderDetails('${order.orderId || order.id}')" 
-                  class="btn" 
-                  style="margin-top: 10px; padding: 6px 12px; font-size: 13px;">
-            View Details
-          </button>
-        </div>
-      `).join('');
-      
-      // Add "View All" button if there are more than 3 orders
-      if (userOrders.length > 3) {
-        recentOrdersContainer.innerHTML += `
-          <div style="text-align: center; margin-top: 15px;">
-            <button onclick="viewAllOrders()" class="btn" style="padding: 8px 20px;">
-              View All Orders (${userOrders.length})
-            </button>
-          </div>
-        `;
-      }
     }
+    
+    // Sort by date (newest first) and take last 3
+    const sortedOrders = userOrders.sort((a, b) => {
+        const dateA = new Date(a.paymentDate || a.orderDate || a.date || Date.now());
+        const dateB = new Date(b.paymentDate || b.orderDate || b.date || Date.now());
+        return dateB - dateA;
+    }).slice(0, 3);
+    
+    recentOrdersContainer.innerHTML = sortedOrders.map(order => {
+        // Get the correct amount for display
+        const orderAmount = order.grandTotal || order.total || order.amount || 0;
+        const orderDate = order.paymentDate || order.orderDate || order.date || Date.now();
+        const orderId = order.orderId || order.id || 'N/A';
+        const itemCount = order.items ? order.items.length : (order.quantity || 1);
+        const orderStatus = order.paymentStatus || order.status || 'Paid';
+        
+        return `
+            <div class="order-item" style="border: 1px solid #eee; padding: 15px; margin-bottom: 10px; border-radius: 6px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <strong>Order #${orderId}</strong>
+                    <span style="color: #28a745; font-weight: bold;">₹${orderAmount.toFixed(2)}</span>
+                </div>
+                <div style="color: #666; font-size: 14px;">
+                    <div>Date: ${new Date(orderDate).toLocaleDateString()}</div>
+                    <div>Status: <span style="color: #007bff; font-weight: bold;">${orderStatus}</span></div>
+                    <div>Items: ${itemCount}</div>
+                    ${order.paymentId ? `<div style="font-size: 12px; color: #888;">Payment ID: ${order.paymentId.substring(0, 8)}...</div>` : ''}
+                </div>
+                <button onclick="viewOrderDetails('${orderId}')" 
+                        class="btn" 
+                        style="margin-top: 10px; padding: 6px 12px; font-size: 13px;">
+                    View Details
+                </button>
+            </div>
+        `;
+    }).join('');
+    
+    // Add "View All" button if there are more than 3 orders
+    if (userOrders.length > 3) {
+        recentOrdersContainer.innerHTML += `
+            <div style="text-align: center; margin-top: 15px;">
+                <button onclick="viewAllOrders()" class="btn" style="padding: 8px 20px;">
+                    View All Orders (${userOrders.length})
+                </button>
+            </div>
+        `;
+    }
+}
+
+// Update viewAllOrders function
+function viewAllOrders() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser) return;
+    
+    // FIXED: Get orders from 'orderHistory' 
+    const orders = JSON.parse(localStorage.getItem('orderHistory') || '[]');
+    const userOrders = orders.filter(order => 
+        order.userEmail === currentUser.email || 
+        (order.customer && order.customer.email === currentUser.email) ||
+        order.userId === currentUser.email
+    );
+    
+    if (userOrders.length === 0) {
+        alert('You have no order history yet.\n\nStart shopping to place your first order!');
+        return;
+    }
+    
+    // Sort by date (newest first)
+    const sortedOrders = userOrders.sort((a, b) => {
+        const dateA = new Date(a.paymentDate || a.orderDate || a.date || Date.now());
+        const dateB = new Date(b.paymentDate || b.orderDate || b.date || Date.now());
+        return dateB - dateA;
+    });
+    
+    const orderList = sortedOrders.map((order, index) => {
+        const orderAmount = order.grandTotal || order.total || order.amount || 0;
+        const orderDate = new Date(order.paymentDate || order.orderDate || order.date || Date.now()).toLocaleDateString();
+        const orderId = order.orderId || order.id || 'N/A';
+        const orderStatus = order.paymentStatus || order.status || 'Paid';
+        
+        return `${index + 1}. Order #${orderId} - ₹${orderAmount.toFixed(2)} - ${orderDate} - ${orderStatus}`;
+    }).join('\n\n');
+    
+    // Calculate total spent
+    const totalSpent = userOrders.reduce((sum, order) => {
+        const amount = order.grandTotal || order.total || order.amount || 0;
+        return sum + Number(amount);
+    }, 0);
+    
+    alert(`📦 YOUR ORDER HISTORY (${userOrders.length} orders)\n\n${orderList}\n\nTotal Amount Spent: ₹${totalSpent.toFixed(2)}`);
+}
+
+// Update viewOrderDetails function
+function viewOrderDetails(orderId) {
+    // FIXED: Look in orderHistory first, then orders
+    const orderHistory = JSON.parse(localStorage.getItem('orderHistory') || '[]');
+    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    
+    // Search in orderHistory first (where paymentManager saves them)
+    let order = orderHistory.find(o => o.orderId === orderId || o.id === orderId);
+    
+    // If not found in orderHistory, search in orders
+    if (!order) {
+        order = orders.find(o => o.orderId === orderId || o.id === orderId);
+    }
+    
+    if (!order) {
+        alert('Order details not found.');
+        return;
+    }
+    
+    // Get amount details
+    const orderAmount = order.grandTotal || order.total || order.amount || 0;
+    const subtotal = order.subtotal || 0;
+    const deliveryCharge = order.deliveryCharge || 0;
+    const taxAmount = order.taxAmount || 0;
+    
+    const itemsList = order.items ? 
+        order.items.map(item => 
+            `• ${item.name || 'Item'} (Qty: ${item.quantity || 1}) - ₹${(item.price || 0) * (item.quantity || 1)}`
+        ).join('\n') : 
+        'Single item purchase';
+    
+    // Build detailed alert
+    let alertText = `📋 ORDER DETAILS\n\n` +
+                   `Order ID: ${order.orderId || order.id}\n` +
+                   `Date: ${new Date(order.paymentDate || order.orderDate || order.date || Date.now()).toLocaleString()}\n` +
+                   `Status: ${order.paymentStatus || order.status || 'Completed'}\n` +
+                   `Payment ID: ${order.paymentId || 'N/A'}\n\n` +
+                   `📊 AMOUNT BREAKDOWN:\n` +
+                   `Subtotal: ₹${subtotal.toFixed(2)}\n` +
+                   `Delivery: ₹${deliveryCharge.toFixed(2)}\n` +
+                   `GST (5%): ₹${taxAmount.toFixed(2)}\n` +
+                   `Total: ₹${orderAmount.toFixed(2)}\n\n` +
+                   `🛒 ITEMS:\n${itemsList}\n\n`;
+    
+    // Add shipping address if available
+    if (order.shippingAddress) {
+        alertText += `🚚 Shipping Address:\n${order.shippingAddress}`;
+    } else if (order.userAddress) {
+        alertText += `🚚 Shipping Address:\n${order.userAddress}`;
+    }
+    
+    alert(alertText);
+}
     
     function editProfile() {
       const currentUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -741,6 +872,7 @@
 </body>
 
 </html>
+
 
 
 
