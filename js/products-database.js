@@ -4,7 +4,7 @@ const productDatabase = {
     '1': {
         id: 1,
         name: 'Classic White Hoodie',
-        price: 1,
+        price: 529,
         images: ['product1.jpg', 'product1-back.jpg', 'product1-detail.jpg', 'product1-side.jpg'],
         description: 'Premium cotton blend hoodie with a comfortable fit. Perfect for casual wear and everyday comfort.',
         details: {
