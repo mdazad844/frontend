@@ -301,6 +301,66 @@ class PaymentManager {
         console.error('❌ Failed to save order:', error);
     }
 }
+
+
+  // Add these methods to your PaymentManager class
+
+// Method to select payment method
+selectPaymentMethod(method) {
+    console.log('💳 Selected payment method:', method);
+    
+    const razorpayBtn = document.getElementById('razorpayButton');
+    const codBtn = document.getElementById('codButton');
+    
+    if (method === 'razorpay') {
+        // Show Razorpay button, hide COD button
+        if (razorpayBtn) razorpayBtn.style.display = 'block';
+        if (codBtn) codBtn.style.display = 'none';
+        
+        // Update UI
+        this.updatePaymentMethodUI('razorpay');
+    } else if (method === 'cod') {
+        // Show COD button, hide Razorpay button
+        if (razorpayBtn) razorpayBtn.style.display = 'none';
+        if (codBtn) codBtn.style.display = 'block';
+        
+        // Update UI
+        this.updatePaymentMethodUI('cod');
+    }
+}
+
+// Method to update UI for selected payment method
+updatePaymentMethodUI(method) {
+    // Update radio button selection
+    document.querySelectorAll('.payment-method').forEach(element => {
+        element.classList.remove('selected');
+    });
+    
+    const selectedElement = document.querySelector(`.payment-method input[value="${method}"]`);
+    if (selectedElement && selectedElement.parentElement.parentElement) {
+        selectedElement.parentElement.parentElement.classList.add('selected');
+    }
+    
+    // Update button text based on method
+    const codBtn = document.getElementById('codButton');
+    if (codBtn && method === 'cod') {
+        codBtn.innerHTML = `📦 Confirm Cash on Delivery Order (₹${this.orderData.grandTotal})`;
+    }
+}
+
+// Method for COD orders
+confirmCODOrder() {
+    const button = document.getElementById('codButton');
+    if (button) button.disabled = true;
+    
+    this.showError('Cash on Delivery is currently not available. Please use online payment.');
+    
+    // Re-enable button after 2 seconds
+    setTimeout(() => {
+        if (button) button.disabled = false;
+    }, 2000);
+}
+  
   showError(message) {
     const messageElement = document.getElementById('paymentMessage');
     if (messageElement) {
@@ -404,6 +464,7 @@ function showGlobalError(message) {
         messageElement.style.display = 'block';
     }
 }
+
 
 
 
