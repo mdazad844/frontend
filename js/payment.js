@@ -321,24 +321,89 @@ class PaymentManager {
 }
 
 // Initialize when page loads
+// Initialize when page loads
 document.addEventListener('DOMContentLoaded', () => {
-  if (typeof Razorpay !== 'undefined') {
-    window.paymentManager = new PaymentManager();
-  } else {
-    console.error('❌ Razorpay not loaded');
+    console.log('🔄 Payment page loaded, initializing...');
     
-    // Load Razorpay script if not loaded
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.onload = () => {
-      window.paymentManager = new PaymentManager();
+    // Function to initialize PaymentManager
+    const initializePaymentManager = () => {
+        if (typeof Razorpay !== 'undefined') {
+            console.log('✅ Razorpay loaded, creating PaymentManager...');
+            try {
+                window.paymentManager = new PaymentManager();
+                console.log('✅ PaymentManager initialized successfully');
+                
+                // Show shipping info if available
+                const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+                if (currentUser?.address) {
+                    const shippingInfo = document.getElementById('shippingInfo');
+                    const shippingAddress = document.getElementById('shippingAddress');
+                    if (shippingInfo && shippingAddress) {
+                        shippingInfo.style.display = 'block';
+                        shippingAddress.innerHTML = `
+                            <p>${currentUser.address.line1}</p>
+                            ${currentUser.address.line2 ? `<p>${currentUser.address.line2}</p>` : ''}
+                            <p>${currentUser.address.city}, ${currentUser.address.state} - ${currentUser.address.pincode}</p>
+                            <p>${currentUser.address.country}</p>
+                            <p>Phone: ${currentUser.phone || 'Not provided'}</p>
+                        `;
+                    }
+                }
+                
+            } catch (error) {
+                console.error('❌ Failed to create PaymentManager:', error);
+                showGlobalError('Failed to initialize payment system. Please refresh.');
+            }
+        } else {
+            console.log('⏳ Razorpay not loaded yet, waiting...');
+        }
     };
-    script.onerror = () => {
-      alert('Payment system not available. Please refresh the page.');
-    };
-    document.head.appendChild(script);
-  }
+    
+    // Try immediately
+    initializePaymentManager();
+    
+    // If not loaded, wait and try again
+    if (!window.paymentManager) {
+        setTimeout(() => {
+            console.log('🕒 Retrying initialization...');
+            initializePaymentManager();
+        }, 1000);
+    }
+    
+    // Last resort: load Razorpay manually
+    if (typeof Razorpay === 'undefined' && !document.querySelector('script[src*="razorpay"]')) {
+        console.log('📥 Loading Razorpay script...');
+        const script = document.createElement('script');
+        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+        script.onload = () => {
+            console.log('✅ Razorpay script loaded manually');
+            setTimeout(initializePaymentManager, 500);
+        };
+        script.onerror = () => {
+            console.error('❌ Failed to load Razorpay script');
+            showGlobalError('Payment system unavailable. Please refresh or try again later.');
+        };
+        document.head.appendChild(script);
+    }
 });
+
+// Global error display function
+function showGlobalError(message) {
+    const messageElement = document.getElementById('paymentMessage');
+    if (messageElement) {
+        messageElement.innerHTML = `
+            <div class="error-message">
+                <strong>Error</strong>
+                <p>${message}</p>
+                <button onclick="window.location.reload()" 
+                        style="margin-top: 10px; padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                    Refresh Page
+                </button>
+            </div>
+        `;
+        messageElement.style.display = 'block';
+    }
+}
 
 
 
