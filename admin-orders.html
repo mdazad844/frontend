@@ -5,13 +5,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Orders Dashboard</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
+        /* Add these styles */
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0;
+            padding: 0;
+            background: #f8f9fa;
+        }
+        .admin-navbar {
+            background: #343a40;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .brand {
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+        .nav-link {
+            color: #adb5bd;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        .nav-link:hover {
+            color: white;
+            background: #495057;
+        }
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .logout-btn:hover {
+            background: #c82333;
+        }
+        .container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* Existing styles */
         .order-card {
             border: 1px solid #ddd;
             padding: 15px;
             margin: 10px 0;
             border-radius: 8px;
             background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
         .order-header {
             display: flex;
@@ -21,8 +79,22 @@
             border-radius: 5px;
             margin-bottom: 10px;
         }
-        .status-confirmed { color: green; font-weight: bold; }
-        .status-pending { color: orange; font-weight: bold; }
+        .status-confirmed { 
+            color: #28a745; 
+            font-weight: bold; 
+            background: #d4edda;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+        .status-pending { 
+            color: #ffc107; 
+            font-weight: bold; 
+            background: #fff3cd;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
         .item-row {
             display: flex;
             justify-content: space-between;
@@ -34,30 +106,118 @@
             border-top: 2px solid #333;
             padding-top: 10px;
             margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .stats-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: flex;
+            justify-content: space-around;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        .refresh-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 10px 0;
+            transition: background 0.3s;
+        }
+        .refresh-btn:hover {
+            background: #218838;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+            font-size: 18px;
+        }
+        .error-box {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #f5c6cb;
+            margin: 20px 0;
+        }
+        
+        /* Session timer */
+        .session-timer {
+            background: #17a2b8;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-   <div class="stats-box">
-    <div class="stat-item">
-        <div class="stat-value" id="totalOrdersCount">0</div>
-        <div class="stat-label">Total Orders</div>
+    <!-- Admin Navigation Bar -->
+    <div class="admin-navbar">
+        <div class="nav-left">
+            <a href="admin-orders.html" class="brand">📊 MyBrand Admin</a>
+            <a href="admin-orders.html" class="nav-link">📦 Orders</a>
+            <a href="#" class="nav-link">📈 Analytics</a>
+            <a href="#" class="nav-link">👥 Customers</a>
+            <a href="#" class="nav-link">🛍️ Products</a>
+        </div>
+        <div class="nav-right">
+            <span class="session-timer" id="sessionTimer">Session: Active</span>
+            <button class="logout-btn" onclick="logoutAdmin()">🚪 Logout</button>
+        </div>
     </div>
-    <div class="stat-item">
-        <div class="stat-value" id="totalRevenue">₹0</div>
-        <div class="stat-label">Total Revenue</div>
+    
+    <div class="container">
+        <h1>📦 Orders Dashboard</h1>
+        <p>Monitor all customer orders and manage your store.</p>
+        
+        <div class="stats-box">
+            <div class="stat-item">
+                <div class="stat-value" id="totalOrdersCount">0</div>
+                <div class="stat-label">Total Orders</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="totalRevenue">₹0</div>
+                <div class="stat-label">Total Revenue</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="avgOrderValue">₹0</div>
+                <div class="stat-label">Average Order</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="uniqueCustomers">0</div>
+                <div class="stat-label">Customers</div>
+            </div>
+        </div>
+        
+        <button class="refresh-btn" onclick="loadOrders()">🔄 Refresh Orders</button>
+        <button class="refresh-btn" onclick="exportToCSV()" style="background: #17a2b8; margin-left: 10px;">📥 Export CSV</button>
+        
+        <div id="ordersContainer" class="loading">
+            Loading orders...
+        </div>
     </div>
-    <div class="stat-item">
-        <div class="stat-value" id="avgOrderValue">₹0</div>
-        <div class="stat-label">Average Order</div>
-    </div>
-</div>
-
-<button class="refresh-btn" onclick="loadOrders()">🔄 Refresh Orders</button>
-
-<div id="ordersContainer" class="loading">
-    Loading orders...
-</div>
     
     <script>
 const BACKEND_URL = 'https://backend-production-c281a.up.railway.app';
@@ -66,6 +226,52 @@ const BACKEND_URL = 'https://backend-production-c281a.up.railway.app';
 if (!localStorage.getItem('adminLoggedIn') || localStorage.getItem('adminLoggedIn') !== 'true') {
     window.location.href = 'admin-login.html';
 }
+
+// Session timer
+let sessionTimerInterval;
+function startSessionTimer() {
+    const loginTime = localStorage.getItem('adminLoginTime');
+    if (!loginTime) return;
+    
+    sessionTimerInterval = setInterval(() => {
+        const loginDate = new Date(loginTime);
+        const now = new Date();
+        const diffMs = now - loginDate;
+        const diffMins = Math.floor(diffMs / 60000);
+        
+        if (diffMins > 120) { // Auto logout after 2 hours
+            logoutAdmin();
+        } else {
+            document.getElementById('sessionTimer').textContent = `Session: ${diffMins}m`;
+        }
+    }, 60000); // Update every minute
+}
+
+function logoutAdmin() {
+    if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('adminLoggedIn');
+        localStorage.removeItem('adminLoginTime');
+        if (sessionTimerInterval) clearInterval(sessionTimerInterval);
+        window.location.href = 'admin-login.html';
+    }
+}
+
+// Auto logout if idle for 15 minutes
+let idleTimer;
+function resetIdleTimer() {
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => {
+        alert('Session expired due to inactivity');
+        logoutAdmin();
+    }, 15 * 60 * 1000); // 15 minutes
+}
+
+// Track user activity
+document.addEventListener('mousemove', resetIdleTimer);
+document.addEventListener('keypress', resetIdleTimer);
+document.addEventListener('click', resetIdleTimer);
+
+let allOrders = []; // Store orders for export
 
 async function loadOrders() {
     const container = document.getElementById('ordersContainer');
@@ -84,53 +290,9 @@ async function loadOrders() {
         console.log('📊 API Response:', data);
         
         if (data.success && data.orders && data.orders.length > 0) {
-            container.innerHTML = data.orders.map(order => `
-                <div class="order-card">
-                    <div class="order-header">
-                        <div>
-                            <strong>Order #${order.orderId}</strong>
-                            <br>
-                            <small>${new Date(order.createdAt).toLocaleString()}</small>
-                            <br>
-                            <small>${order.customer.email}</small>
-                        </div>
-                        <div>
-                            <span class="status-${order.status}">${order.status.toUpperCase()}</span>
-                            <br>
-                            <strong style="font-size: 18px;">₹${order.pricing?.total || 0}</strong>
-                        </div>
-                    </div>
-                    
-                    <div><strong>Customer:</strong> ${order.customer.name} (${order.customer.phone || 'No phone'})</div>
-                    
-                    <div style="margin: 10px 0;">
-                        <strong>Items (${order.items.length}):</strong>
-                        ${order.items.map(item => `
-                            <div class="item-row">
-                                <span>${item.name} × ${item.quantity}</span>
-                                <span>₹${item.total}</span>
-                            </div>
-                        `).join('')}
-                    </div>
-                    
-                    <div class="total-row">
-                        <span>Subtotal: ₹${order.pricing?.subtotal || 0}</span>
-                        <span>Delivery: ₹${order.pricing?.deliveryCharge || 0}</span>
-                        <span>Tax: ₹${order.pricing?.taxAmount || 0}</span>
-                        <span><strong>Total: ₹${order.pricing?.total || 0}</strong></span>
-                    </div>
-                    
-                    <div style="margin-top: 10px; font-size: 12px; color: #666;">
-                        <strong>Payment:</strong> ${order.paymentStatus} via ${order.paymentMethod}
-                        ${order.paidAt ? `<br><strong>Paid at:</strong> ${new Date(order.paidAt).toLocaleString()}` : ''}
-                        ${order.shippingAddress.line1 ? `<br><strong>Address:</strong> ${order.shippingAddress.line1}, ${order.shippingAddress.city}` : ''}
-                    </div>
-                </div>
-            `).join('');
-            
-            // Update stats
+            allOrders = data.orders; // Store for export
+            displayOrders(data.orders);
             updateStats(data.orders);
-            
         } else {
             container.innerHTML = `
                 <div class="error-box">
@@ -148,60 +310,157 @@ async function loadOrders() {
                 <h3>⚠️ Error Loading Orders</h3>
                 <p><strong>Error:</strong> ${error.message}</p>
                 <p>Trying to fetch from: ${BACKEND_URL}/api/ordersdash/all-orders</p>
-                <p>Possible issues:</p>
-                <ul>
-                    <li>ordersdash.js file not created</li>
-                    <li>ordersdash route not added to app.js</li>
-                    <li>Backend not deployed</li>
-                    <li>CORS issue</li>
-                </ul>
                 <button onclick="testBackend()" class="refresh-btn">Test Backend Connection</button>
             </div>
         `;
     }
 }
 
+function displayOrders(orders) {
+    const container = document.getElementById('ordersContainer');
+    
+    container.innerHTML = orders.map(order => `
+        <div class="order-card">
+            <div class="order-header">
+                <div>
+                    <strong>Order #${order.orderId}</strong>
+                    <br>
+                    <small>${new Date(order.createdAt).toLocaleString()}</small>
+                    <br>
+                    <small>${order.customer.email}</small>
+                </div>
+                <div>
+                    <span class="status-${order.status}">${order.status.toUpperCase()}</span>
+                    <br>
+                    <strong style="font-size: 18px;">₹${order.pricing?.total || 0}</strong>
+                </div>
+            </div>
+            
+            <div><strong>Customer:</strong> ${order.customer.name} (${order.customer.phone || 'No phone'})</div>
+            
+            <div style="margin: 10px 0;">
+                <strong>Items (${order.items.length}):</strong>
+                ${order.items.map(item => `
+                    <div class="item-row">
+                        <span>${item.name} × ${item.quantity}</span>
+                        <span>₹${item.total}</span>
+                    </div>
+                `).join('')}
+            </div>
+            
+            <div class="total-row">
+                <span>Subtotal: ₹${order.pricing?.subtotal || 0}</span>
+                <span>Delivery: ₹${order.pricing?.deliveryCharge || 0}</span>
+                <span>Tax: ₹${order.pricing?.taxAmount || 0}</span>
+                <span><strong>Total: ₹${order.pricing?.total || 0}</strong></span>
+            </div>
+            
+            <div style="margin-top: 10px; font-size: 12px; color: #666;">
+                <strong>Payment:</strong> ${order.paymentStatus} via ${order.paymentMethod}
+                ${order.paidAt ? `<br><strong>Paid at:</strong> ${new Date(order.paidAt).toLocaleString()}` : ''}
+                ${order.shippingAddress.line1 ? `<br><strong>Address:</strong> ${order.shippingAddress.line1}, ${order.shippingAddress.city}` : ''}
+            </div>
+            
+            <div style="margin-top: 10px; display: flex; gap: 10px;">
+                <button onclick="updateStatus('${order.orderId}', 'processing')" style="padding: 5px 10px; background: #17a2b8; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">Mark as Processing</button>
+                <button onclick="updateStatus('${order.orderId}', 'shipped')" style="padding: 5px 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">Mark as Shipped</button>
+                <button onclick="viewOrderDetails('${order.orderId}')" style="padding: 5px 10px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">View Details</button>
+            </div>
+        </div>
+    `).join('');
+}
+
 function updateStats(orders) {
     const totalOrders = orders.length;
     const totalRevenue = orders.reduce((sum, order) => sum + (order.pricing?.total || 0), 0);
-    const avgOrderValue = totalRevenue / totalOrders;
+    const avgOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+    const uniqueCustomers = [...new Set(orders.map(order => order.customer.email))].length;
     
     document.getElementById('totalOrdersCount').textContent = totalOrders;
     document.getElementById('totalRevenue').textContent = `₹${totalRevenue.toFixed(2)}`;
     document.getElementById('avgOrderValue').textContent = `₹${avgOrderValue.toFixed(2)}`;
+    document.getElementById('uniqueCustomers').textContent = uniqueCustomers;
+}
+
+function updateStatus(orderId, status) {
+    if (confirm(`Mark order #${orderId} as ${status}?`)) {
+        alert(`Order #${orderId} marked as ${status}.\n\nNote: This is a frontend-only update. Backend integration needed for persistence.`);
+        // TODO: Connect to backend to update status
+    }
+}
+
+function viewOrderDetails(orderId) {
+    const order = allOrders.find(o => o.orderId === orderId);
+    if (!order) return;
+    
+    const itemsText = order.items.map(item => 
+        `${item.name} (Qty: ${item.quantity}) - ₹${item.total}`
+    ).join('\n');
+    
+    alert(`📋 ORDER DETAILS\n\n` +
+          `Order ID: ${order.orderId}\n` +
+          `Customer: ${order.customer.name}\n` +
+          `Email: ${order.customer.email}\n` +
+          `Phone: ${order.customer.phone || 'Not provided'}\n` +
+          `Date: ${new Date(order.createdAt).toLocaleString()}\n` +
+          `Status: ${order.status}\n` +
+          `Payment: ${order.paymentStatus} via ${order.paymentMethod}\n` +
+          `Total: ₹${order.pricing?.total}\n\n` +
+          `ITEMS:\n${itemsText}\n\n` +
+          `ADDRESS:\n${order.shippingAddress.line1}\n` +
+          `${order.shippingAddress.city}, ${order.shippingAddress.state} - ${order.shippingAddress.pincode}`);
+}
+
+function exportToCSV() {
+    if (allOrders.length === 0) {
+        alert('No orders to export');
+        return;
+    }
+    
+    const csvContent = [
+        ['Order ID', 'Date', 'Customer Name', 'Customer Email', 'Customer Phone', 'Items', 'Subtotal', 'Delivery', 'Tax', 'Total', 'Status', 'Payment Method', 'Shipping Address'],
+        ...allOrders.map(order => [
+            order.orderId,
+            new Date(order.createdAt).toLocaleDateString(),
+            order.customer.name,
+            order.customer.email,
+            order.customer.phone || 'N/A',
+            order.items.map(item => `${item.name} x${item.quantity}`).join('; '),
+            `₹${order.pricing?.subtotal || 0}`,
+            `₹${order.pricing?.deliveryCharge || 0}`,
+            `₹${order.pricing?.taxAmount || 0}`,
+            `₹${order.pricing?.total || 0}`,
+            order.status,
+            order.paymentMethod,
+            `${order.shippingAddress.line1}, ${order.shippingAddress.city}`
+        ])
+    ].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `orders_export_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
 }
 
 async function testBackend() {
     try {
-        // Test multiple endpoints
-        const endpoints = [
-            {url: `${BACKEND_URL}/api/ordersdash`, name: 'Orders Dashboard'},
-            {url: `${BACKEND_URL}/api/ordersdash/all-orders`, name: 'All Orders'},
-            {url: `${BACKEND_URL}/api/payments`, name: 'Payments'},
-            {url: `${BACKEND_URL}/api/orders`, name: 'Orders'}
-        ];
-        
-        let results = '🔧 Backend Status Test:\n\n';
-        for (const endpoint of endpoints) {
-            try {
-                const res = await fetch(endpoint.url);
-                const data = await res.json();
-                results += `✅ ${endpoint.name}: ${data.message || 'Working'}\n`;
-            } catch (e) {
-                results += `❌ ${endpoint.name}: ${e.message}\n`;
-            }
-        }
-        
-        alert(results);
+        const response = await fetch(`${BACKEND_URL}/api/ordersdash`);
+        const data = await response.json();
+        alert(`✅ Backend is working!\n\nMessage: ${data.message}`);
     } catch (error) {
-        alert(`❌ Test failed: ${error.message}`);
+        alert(`❌ Backend test failed:\n\n${error.message}`);
     }
 }
 
-// Load orders when page loads
-document.addEventListener('DOMContentLoaded', loadOrders);
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    startSessionTimer();
+    resetIdleTimer();
+    loadOrders();
+});
     </script>
 </body>
 </html>
-
-
