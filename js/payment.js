@@ -246,9 +246,9 @@ class PaymentManager {
             this.saveOrderToHistory(paymentResponse);
             
             // Redirect to success page
-            setTimeout(() => {
-                window.location.href = `order-success.html?order=${data.orderId}&payment=${paymentResponse.razorpay_payment_id}`;
-            }, 2000);
+           setTimeout(() => {
+    window.location.href = `order-success.html?order=${data.orderId || this.orderData.orderId}&payment=${paymentResponse.razorpay_payment_id}`;
+}, 2000);
             
         } else {
             throw new Error(data.error || 'Payment verification failed');
@@ -339,5 +339,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.head.appendChild(script);
   }
 });
+
 
 
