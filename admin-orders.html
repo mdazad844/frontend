@@ -38,71 +38,170 @@
     </style>
 </head>
 <body>
-    <h1>📊 Orders Dashboard</h1>
-    <div id="ordersContainer">Loading orders...</div>
+   <div class="stats-box">
+    <div class="stat-item">
+        <div class="stat-value" id="totalOrdersCount">0</div>
+        <div class="stat-label">Total Orders</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-value" id="totalRevenue">₹0</div>
+        <div class="stat-label">Total Revenue</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-value" id="avgOrderValue">₹0</div>
+        <div class="stat-label">Average Order</div>
+    </div>
+</div>
+
+<button class="refresh-btn" onclick="loadOrders()">🔄 Refresh Orders</button>
+
+<div id="ordersContainer" class="loading">
+    Loading orders...
+</div>
     
     <script>
-      
+const BACKEND_URL = 'https://backend-production-c281a.up.railway.app';
+
 // Add this at the top of admin-orders.html
 if (!localStorage.getItem('adminLoggedIn') || localStorage.getItem('adminLoggedIn') !== 'true') {
     window.location.href = 'admin-login.html';
 }
 
-        async function loadOrders() {
-            try {
-                const response = await fetch('https://backend-production-c281a.up.railway.app/api/orders/all-orders');
-                const data = await response.json();
-                
-                if (data.success && data.orders.length > 0) {
-                    const container = document.getElementById('ordersContainer');
-                    container.innerHTML = data.orders.map(order => `
-                        <div class="order-card">
-                            <div class="order-header">
-                                <div>
-                                    <strong>Order #${order.orderId}</strong>
-                                    <br>
-                                    <small>${new Date(order.createdAt).toLocaleString()}</small>
-                                </div>
-                                <div>
-                                    <span class="status-${order.status}">${order.status.toUpperCase()}</span>
-                                    <br>
-                                    <strong>₹${order.pricing?.total || 0}</strong>
-                                </div>
-                            </div>
-                            
-                            <div><strong>Customer:</strong> ${order.customer.name} (${order.customer.email})</div>
-                            
-                            <div style="margin: 10px 0;">
-                                <strong>Items:</strong>
-                                ${order.items.map(item => `
-                                    <div class="item-row">
-                                        <span>${item.name} × ${item.quantity}</span>
-                                        <span>₹${item.total}</span>
-                                    </div>
-                                `).join('')}
-                            </div>
-                            
-                            <div class="total-row">
-                                <span>Total:</span>
-                                <span>₹${order.pricing?.total || 0}</span>
-                            </div>
-                            
-                            <div style="margin-top: 10px; font-size: 12px; color: #666;">
-                                Payment: ${order.paymentStatus} via ${order.paymentMethod}
-                            </div>
+async function loadOrders() {
+    const container = document.getElementById('ordersContainer');
+    container.innerHTML = '<div class="loading">🔄 Loading orders...</div>';
+    
+    try {
+        console.log('🔄 Fetching orders from:', `${BACKEND_URL}/api/ordersdash/all-orders`);
+        
+        const response = await fetch(`${BACKEND_URL}/api/ordersdash/all-orders`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        console.log('📊 API Response:', data);
+        
+        if (data.success && data.orders && data.orders.length > 0) {
+            container.innerHTML = data.orders.map(order => `
+                <div class="order-card">
+                    <div class="order-header">
+                        <div>
+                            <strong>Order #${order.orderId}</strong>
+                            <br>
+                            <small>${new Date(order.createdAt).toLocaleString()}</small>
+                            <br>
+                            <small>${order.customer.email}</small>
                         </div>
-                    `).join('');
-                } else {
-                    document.getElementById('ordersContainer').innerHTML = 'No orders found';
-                }
-            } catch (error) {
-                console.error('Error loading orders:', error);
-                document.getElementById('ordersContainer').innerHTML = 'Error loading orders';
+                        <div>
+                            <span class="status-${order.status}">${order.status.toUpperCase()}</span>
+                            <br>
+                            <strong style="font-size: 18px;">₹${order.pricing?.total || 0}</strong>
+                        </div>
+                    </div>
+                    
+                    <div><strong>Customer:</strong> ${order.customer.name} (${order.customer.phone || 'No phone'})</div>
+                    
+                    <div style="margin: 10px 0;">
+                        <strong>Items (${order.items.length}):</strong>
+                        ${order.items.map(item => `
+                            <div class="item-row">
+                                <span>${item.name} × ${item.quantity}</span>
+                                <span>₹${item.total}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="total-row">
+                        <span>Subtotal: ₹${order.pricing?.subtotal || 0}</span>
+                        <span>Delivery: ₹${order.pricing?.deliveryCharge || 0}</span>
+                        <span>Tax: ₹${order.pricing?.taxAmount || 0}</span>
+                        <span><strong>Total: ₹${order.pricing?.total || 0}</strong></span>
+                    </div>
+                    
+                    <div style="margin-top: 10px; font-size: 12px; color: #666;">
+                        <strong>Payment:</strong> ${order.paymentStatus} via ${order.paymentMethod}
+                        ${order.paidAt ? `<br><strong>Paid at:</strong> ${new Date(order.paidAt).toLocaleString()}` : ''}
+                        ${order.shippingAddress.line1 ? `<br><strong>Address:</strong> ${order.shippingAddress.line1}, ${order.shippingAddress.city}` : ''}
+                    </div>
+                </div>
+            `).join('');
+            
+            // Update stats
+            updateStats(data.orders);
+            
+        } else {
+            container.innerHTML = `
+                <div class="error-box">
+                    <h3>No Orders Found</h3>
+                    <p>No orders have been placed yet.</p>
+                    <p><em>Make sure your backend is connected to MongoDB.</em></p>
+                </div>
+            `;
+        }
+        
+    } catch (error) {
+        console.error('❌ Error loading orders:', error);
+        container.innerHTML = `
+            <div class="error-box">
+                <h3>⚠️ Error Loading Orders</h3>
+                <p><strong>Error:</strong> ${error.message}</p>
+                <p>Trying to fetch from: ${BACKEND_URL}/api/ordersdash/all-orders</p>
+                <p>Possible issues:</p>
+                <ul>
+                    <li>ordersdash.js file not created</li>
+                    <li>ordersdash route not added to app.js</li>
+                    <li>Backend not deployed</li>
+                    <li>CORS issue</li>
+                </ul>
+                <button onclick="testBackend()" class="refresh-btn">Test Backend Connection</button>
+            </div>
+        `;
+    }
+}
+
+function updateStats(orders) {
+    const totalOrders = orders.length;
+    const totalRevenue = orders.reduce((sum, order) => sum + (order.pricing?.total || 0), 0);
+    const avgOrderValue = totalRevenue / totalOrders;
+    
+    document.getElementById('totalOrdersCount').textContent = totalOrders;
+    document.getElementById('totalRevenue').textContent = `₹${totalRevenue.toFixed(2)}`;
+    document.getElementById('avgOrderValue').textContent = `₹${avgOrderValue.toFixed(2)}`;
+}
+
+async function testBackend() {
+    try {
+        // Test multiple endpoints
+        const endpoints = [
+            {url: `${BACKEND_URL}/api/ordersdash`, name: 'Orders Dashboard'},
+            {url: `${BACKEND_URL}/api/ordersdash/all-orders`, name: 'All Orders'},
+            {url: `${BACKEND_URL}/api/payments`, name: 'Payments'},
+            {url: `${BACKEND_URL}/api/orders`, name: 'Orders'}
+        ];
+        
+        let results = '🔧 Backend Status Test:\n\n';
+        for (const endpoint of endpoints) {
+            try {
+                const res = await fetch(endpoint.url);
+                const data = await res.json();
+                results += `✅ ${endpoint.name}: ${data.message || 'Working'}\n`;
+            } catch (e) {
+                results += `❌ ${endpoint.name}: ${e.message}\n`;
             }
         }
         
-        loadOrders();
+        alert(results);
+    } catch (error) {
+        alert(`❌ Test failed: ${error.message}`);
+    }
+}
+
+// Load orders when page loads
+document.addEventListener('DOMContentLoaded', loadOrders);
     </script>
 </body>
 </html>
+
 
