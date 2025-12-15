@@ -493,45 +493,54 @@
       loadOrderStatistics(currentUser.email);
     }
     
- // Update the loadOrderStatistics function in profile.html
-// In profile.html - Update the loadOrderStatistics function
-// Update the loadOrderStatistics function in profile.html
-function loadOrderStatistics(userEmail) {
-    // FIXED: Get orders from 'orderHistory' (where paymentManager saves them)
-    const orders = JSON.parse(localStorage.getItem('orderHistory') || '[]');
-    const userOrders = orders.filter(order => {
-        // Match by email or userId
-        return order.userEmail === userEmail || 
-               (order.customer && order.customer.email === userEmail) ||
-               order.userId === userEmail;
+ // Replace the loadOrderStatistics function with this:
+async function loadOrderStatistics(userEmail) {
+  try {
+    // Fetch orders from database API
+    const response = await fetch('https://backend-production-c281a.up.railway.app/api/orders/user-orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: userEmail })
     });
     
-    console.log('📊 Found user orders:', userOrders.length);
-    console.log('User email:', userEmail);
-    console.log('All orders:', orders);
-    
-    // Calculate total spent - FIXED: Use grandTotal instead of total
-    const totalOrders = userOrders.length;
-    const totalSpent = userOrders.reduce((sum, order) => {
-        // Try different possible amount fields
-        const amount = order.grandTotal ||          // New field from paymentManager
-                      order.total ||               // Old field
-                      order.amount ||              // Alternative field
-                      (order.breakdown && order.breakdown.total) || // From breakdown
-                      0;
+    if (response.ok) {
+      const data = await response.json();
+      
+      if (data.success && data.orders) {
+        // Display database orders
+        const totalOrders = data.orders.length;
+        const totalSpent = data.orders.reduce((sum, order) => {
+          return sum + (order.pricing?.total || order.total || 0);
+        }, 0);
         
-        console.log(`Order ${order.orderId}: amount = ${amount}`);
-        return sum + Number(amount);
-    }, 0);
-    
-    const totalOrdersElement = document.getElementById('totalOrders');
-    const totalSpentElement = document.getElementById('totalSpent');
-    
-    if (totalOrdersElement) totalOrdersElement.textContent = totalOrders;
-    if (totalSpentElement) totalSpentElement.textContent = `₹${totalSpent.toFixed(2)}`;
-    
-    // Display recent orders
-    displayRecentOrders(userOrders);
+        document.getElementById('totalOrders').textContent = totalOrders;
+        document.getElementById('totalSpent').textContent = `₹${totalSpent.toFixed(2)}`;
+        
+        displayRecentOrders(data.orders);
+        return;
+      }
+    }
+  } catch (error) {
+    console.error('Failed to fetch database orders:', error);
+  }
+  
+  // Fallback to localStorage if database fails
+  const orders = JSON.parse(localStorage.getItem('orderHistory') || '[]');
+  const userOrders = orders.filter(order => 
+    order.userEmail === userEmail || 
+    (order.customer && order.customer.email === userEmail)
+  );
+  
+  const totalOrders = userOrders.length;
+  const totalSpent = userOrders.reduce((sum, order) => {
+    const amount = order.grandTotal || order.total || order.amount || 0;
+    return sum + Number(amount);
+  }, 0);
+  
+  document.getElementById('totalOrders').textContent = totalOrders;
+  document.getElementById('totalSpent').textContent = `₹${totalSpent.toFixed(2)}`;
+  
+  displayRecentOrders(userOrders);
 }
 
 // Update displayRecentOrders function
@@ -874,6 +883,7 @@ function viewOrderDetails(orderId) {
 </body>
 
 </html>
+
 
 
 
