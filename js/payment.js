@@ -186,29 +186,68 @@ class PaymentManager {
     try {
         console.log('🔍 Verifying payment...');
 
+        // ✅ PREPARE COMPLETE ORDER DATA
+        const completeOrderData = {
+            orderId: this.orderData.orderId,
+            customer: {
+                name: this.currentUser?.name || '',
+                email: this.currentUser?.email || '',
+                phone: this.currentUser?.phone || ''
+            },
+            shippingAddress: this.currentUser?.address || {
+                line1: 'Not provided',
+                city: 'Not provided',
+                state: 'Not provided',
+                pincode: '000000',
+                country: 'India'
+            },
+            items: this.orderData.items?.map(item => ({
+                productId: item.id || item.productId || '',
+                name: item.name || 'Product',
+                price: item.price || 0,
+                quantity: item.quantity || 1,
+                size: item.size || '',
+                color: item.color || '',
+                image: item.image || item.img || ''
+            })) || [],
+            pricing: {
+                subtotal: this.orderData.subtotal || 0,
+                deliveryCharge: this.orderData.deliveryCharge || 0,
+                taxAmount: this.orderData.taxAmount || 0,
+                total: this.orderData.grandTotal || 0
+            }
+        };
+
+        console.log('📦 Complete order data:', completeOrderData);
+
+        // ✅ SEND PAYMENT DATA + ORDER DATA TO BACKEND
+        const verificationData = {
+            razorpay_payment_id: paymentResponse.razorpay_payment_id,
+            razorpay_order_id: paymentResponse.razorpay_order_id,
+            razorpay_signature: paymentResponse.razorpay_signature,
+            orderData: completeOrderData  // THIS IS CRITICAL!
+        };
+
+        console.log('📤 Sending to backend:', verificationData);
+
         const verificationResponse = await fetch(`${this.backendUrl}/api/payments/verify-payment`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(paymentResponse)
+            body: JSON.stringify(verificationData)
         });
 
         const data = await verificationResponse.json();
         
         if (data.success) {
-            console.log('🎉 Payment verified successfully!');
-            this.showSuccess('Payment successful! Redirecting...');
+            console.log('🎉 Payment verified and order saved to database!');
+            this.showSuccess('Payment successful! Order saved.');
             
-            // Add user email to order before saving
-            this.orderData.userEmail = this.currentUser?.email || 'guest';
-            this.orderData.userName = this.currentUser?.name || 'Guest';
-            this.orderData.paymentId = paymentResponse.razorpay_payment_id;
-            
-            // Save order to history
+            // Save to localStorage as backup
             this.saveOrderToHistory(paymentResponse);
             
             // Redirect to success page
             setTimeout(() => {
-                window.location.href = `order-success.html?order=${this.orderData.orderId}&payment=${paymentResponse.razorpay_payment_id}`;
+                window.location.href = `order-success.html?order=${data.orderId}&payment=${paymentResponse.razorpay_payment_id}`;
             }, 2000);
             
         } else {
@@ -300,4 +339,5 @@ document.addEventListener('DOMContentLoaded', () => {
     document.head.appendChild(script);
   }
 });
+
 
