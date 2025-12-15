@@ -5,31 +5,143 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login</title>
     <style>
-        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f5f5f5; }
-        .login-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 300px; }
-        input { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ddd; border-radius: 4px; }
-        button { width: 100%; padding: 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        body { 
+            font-family: Arial, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .login-box { 
+            background: white; 
+            padding: 40px; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
+            width: 350px;
+            text-align: center;
+        }
+        h2 { 
+            color: #333; 
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+        input { 
+            width: 100%; 
+            padding: 12px; 
+            margin: 10px 0; 
+            border: 2px solid #ddd; 
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border 0.3s;
+            box-sizing: border-box;
+        }
+        input:focus { 
+            border-color: #007bff; 
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+        }
+        button { 
+            width: 100%; 
+            padding: 12px; 
+            background: #007bff; 
+            color: white; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        #errorMsg { 
+            color: #dc3545; 
+            display: none;
+            margin-top: 10px;
+            padding: 8px;
+            background: #f8d7da;
+            border-radius: 4px;
+            border: 1px solid #f5c6cb;
+        }
+        .brand {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .forgot {
+            margin-top: 15px;
+            font-size: 12px;
+            color: #666;
+        }
+        .forgot a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .forgot a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
     <div class="login-box">
-        <h2>Admin Login</h2>
-        <input type="password" id="adminPassword" placeholder="Enter admin password">
+        <div class="brand">MyBrand</div>
+        <div class="subtitle">Admin Dashboard</div>
+        
+        <h2>🔐 Admin Login</h2>
+        <input type="password" id="adminPassword" placeholder="Enter admin password" autocomplete="current-password">
         <button onclick="loginAdmin()">Login</button>
-        <p id="errorMsg" style="color: red; display: none;">Incorrect password</p>
+        <p id="errorMsg">Incorrect password</p>
+        
+        <div class="forgot">
+            <a href="javascript:void(0)" onclick="resetPassword()">Forgot password?</a> | 
+            <a href="index.html">Back to Store</a>
+        </div>
     </div>
     
     <script>
+        // Check if already logged in
+        if (localStorage.getItem('adminLoggedIn') === 'true') {
+            window.location.href = 'admin-orders.html';
+        }
+        
         function loginAdmin() {
             const password = document.getElementById('adminPassword').value;
-            // Simple password check - you can make this more secure
-            if (password === '123@Abc') { // Change this password!
+            const errorMsg = document.getElementById('errorMsg');
+            
+            // Simple password check
+            if (password === '123@Abc') { // Change this to your secure password
                 localStorage.setItem('adminLoggedIn', 'true');
+                localStorage.setItem('adminLoginTime', new Date().toISOString());
                 window.location.href = 'admin-orders.html';
             } else {
-                document.getElementById('errorMsg').style.display = 'block';
+                errorMsg.style.display = 'block';
+                document.getElementById('adminPassword').value = '';
+                document.getElementById('adminPassword').focus();
             }
         }
+        
+        // Allow Enter key to login
+        document.getElementById('adminPassword').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                loginAdmin();
+            }
+        });
+        
+        function resetPassword() {
+            alert('Please contact the system administrator to reset your password.');
+        }
+        
+        // Auto-focus on password field
+        document.getElementById('adminPassword').focus();
     </script>
 </body>
 </html>
