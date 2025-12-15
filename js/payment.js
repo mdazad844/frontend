@@ -179,14 +179,14 @@ class PaymentManager {
     }
   }
 
-  async handlePaymentSuccess(paymentResponse) {
+ async handlePaymentSuccess(paymentResponse) {
     const loadingElement = document.getElementById('paymentLoading');
     if (loadingElement) loadingElement.style.display = 'block';
 
     try {
         console.log('🔍 Verifying payment...');
 
-        // ✅ PREPARE COMPLETE ORDER DATA
+        // ✅ STEP 1: Prepare COMPLETE order data
         const completeOrderData = {
             orderId: this.orderData.orderId,
             customer: {
@@ -194,22 +194,8 @@ class PaymentManager {
                 email: this.currentUser?.email || '',
                 phone: this.currentUser?.phone || ''
             },
-            shippingAddress: this.currentUser?.address || {
-                line1: 'Not provided',
-                city: 'Not provided',
-                state: 'Not provided',
-                pincode: '000000',
-                country: 'India'
-            },
-            items: this.orderData.items?.map(item => ({
-                productId: item.id || item.productId || '',
-                name: item.name || 'Product',
-                price: item.price || 0,
-                quantity: item.quantity || 1,
-                size: item.size || '',
-                color: item.color || '',
-                image: item.image || item.img || ''
-            })) || [],
+            shippingAddress: this.currentUser?.address || {},
+            items: this.orderData.items || [],
             pricing: {
                 subtotal: this.orderData.subtotal || 0,
                 deliveryCharge: this.orderData.deliveryCharge || 0,
@@ -218,18 +204,19 @@ class PaymentManager {
             }
         };
 
-        console.log('📦 Complete order data:', completeOrderData);
+        console.log('📦 Complete order data prepared:', completeOrderData);
 
-        // ✅ SEND PAYMENT DATA + ORDER DATA TO BACKEND
+        // ✅ STEP 2: Send payment data + order data
         const verificationData = {
             razorpay_payment_id: paymentResponse.razorpay_payment_id,
             razorpay_order_id: paymentResponse.razorpay_order_id,
             razorpay_signature: paymentResponse.razorpay_signature,
-            orderData: completeOrderData  // THIS IS CRITICAL!
+            orderData: completeOrderData  // ← ADDING THIS!
         };
 
-        console.log('📤 Sending to backend:', verificationData);
+        console.log('📤 Sending verification data:', verificationData);
 
+        // ✅ STEP 3: Send to backend
         const verificationResponse = await fetch(`${this.backendUrl}/api/payments/verify-payment`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -242,13 +229,13 @@ class PaymentManager {
             console.log('🎉 Payment verified and order saved to database!');
             this.showSuccess('Payment successful! Order saved.');
             
-            // Save to localStorage as backup
+            // ✅ STEP 4: Save to localStorage as backup
             this.saveOrderToHistory(paymentResponse);
             
-            // Redirect to success page
-           setTimeout(() => {
-    window.location.href = `order-success.html?order=${data.orderId || this.orderData.orderId}&payment=${paymentResponse.razorpay_payment_id}`;
-}, 2000);
+            // ✅ STEP 5: Redirect
+            setTimeout(() => {
+                window.location.href = `order-success.html?order=${this.orderData.orderId}&payment=${paymentResponse.razorpay_payment_id}`;
+            }, 2000);
             
         } else {
             throw new Error(data.error || 'Payment verification failed');
@@ -301,66 +288,6 @@ class PaymentManager {
         console.error('❌ Failed to save order:', error);
     }
 }
-
-
-  // Add these methods to your PaymentManager class
-
-// Method to select payment method
-selectPaymentMethod(method) {
-    console.log('💳 Selected payment method:', method);
-    
-    const razorpayBtn = document.getElementById('razorpayButton');
-    const codBtn = document.getElementById('codButton');
-    
-    if (method === 'razorpay') {
-        // Show Razorpay button, hide COD button
-        if (razorpayBtn) razorpayBtn.style.display = 'block';
-        if (codBtn) codBtn.style.display = 'none';
-        
-        // Update UI
-        this.updatePaymentMethodUI('razorpay');
-    } else if (method === 'cod') {
-        // Show COD button, hide Razorpay button
-        if (razorpayBtn) razorpayBtn.style.display = 'none';
-        if (codBtn) codBtn.style.display = 'block';
-        
-        // Update UI
-        this.updatePaymentMethodUI('cod');
-    }
-}
-
-// Method to update UI for selected payment method
-updatePaymentMethodUI(method) {
-    // Update radio button selection
-    document.querySelectorAll('.payment-method').forEach(element => {
-        element.classList.remove('selected');
-    });
-    
-    const selectedElement = document.querySelector(`.payment-method input[value="${method}"]`);
-    if (selectedElement && selectedElement.parentElement.parentElement) {
-        selectedElement.parentElement.parentElement.classList.add('selected');
-    }
-    
-    // Update button text based on method
-    const codBtn = document.getElementById('codButton');
-    if (codBtn && method === 'cod') {
-        codBtn.innerHTML = `📦 Confirm Cash on Delivery Order (₹${this.orderData.grandTotal})`;
-    }
-}
-
-// Method for COD orders
-confirmCODOrder() {
-    const button = document.getElementById('codButton');
-    if (button) button.disabled = true;
-    
-    this.showError('Cash on Delivery is currently not available. Please use online payment.');
-    
-    // Re-enable button after 2 seconds
-    setTimeout(() => {
-        if (button) button.disabled = false;
-    }, 2000);
-}
-  
   showError(message) {
     const messageElement = document.getElementById('paymentMessage');
     if (messageElement) {
@@ -381,90 +308,21 @@ confirmCODOrder() {
 }
 
 // Initialize when page loads
-// Initialize when page loads
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('🔄 Payment page loaded, initializing...');
+  if (typeof Razorpay !== 'undefined') {
+    window.paymentManager = new PaymentManager();
+  } else {
+    console.error('❌ Razorpay not loaded');
     
-    // Function to initialize PaymentManager
-    const initializePaymentManager = () => {
-        if (typeof Razorpay !== 'undefined') {
-            console.log('✅ Razorpay loaded, creating PaymentManager...');
-            try {
-                window.paymentManager = new PaymentManager();
-                console.log('✅ PaymentManager initialized successfully');
-                
-                // Show shipping info if available
-                const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-                if (currentUser?.address) {
-                    const shippingInfo = document.getElementById('shippingInfo');
-                    const shippingAddress = document.getElementById('shippingAddress');
-                    if (shippingInfo && shippingAddress) {
-                        shippingInfo.style.display = 'block';
-                        shippingAddress.innerHTML = `
-                            <p>${currentUser.address.line1}</p>
-                            ${currentUser.address.line2 ? `<p>${currentUser.address.line2}</p>` : ''}
-                            <p>${currentUser.address.city}, ${currentUser.address.state} - ${currentUser.address.pincode}</p>
-                            <p>${currentUser.address.country}</p>
-                            <p>Phone: ${currentUser.phone || 'Not provided'}</p>
-                        `;
-                    }
-                }
-                
-            } catch (error) {
-                console.error('❌ Failed to create PaymentManager:', error);
-                showGlobalError('Failed to initialize payment system. Please refresh.');
-            }
-        } else {
-            console.log('⏳ Razorpay not loaded yet, waiting...');
-        }
+    // Load Razorpay script if not loaded
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.onload = () => {
+      window.paymentManager = new PaymentManager();
     };
-    
-    // Try immediately
-    initializePaymentManager();
-    
-    // If not loaded, wait and try again
-    if (!window.paymentManager) {
-        setTimeout(() => {
-            console.log('🕒 Retrying initialization...');
-            initializePaymentManager();
-        }, 1000);
-    }
-    
-    // Last resort: load Razorpay manually
-    if (typeof Razorpay === 'undefined' && !document.querySelector('script[src*="razorpay"]')) {
-        console.log('📥 Loading Razorpay script...');
-        const script = document.createElement('script');
-        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-        script.onload = () => {
-            console.log('✅ Razorpay script loaded manually');
-            setTimeout(initializePaymentManager, 500);
-        };
-        script.onerror = () => {
-            console.error('❌ Failed to load Razorpay script');
-            showGlobalError('Payment system unavailable. Please refresh or try again later.');
-        };
-        document.head.appendChild(script);
-    }
+    script.onerror = () => {
+      alert('Payment system not available. Please refresh the page.');
+    };
+    document.head.appendChild(script);
+  }
 });
-
-// Global error display function
-function showGlobalError(message) {
-    const messageElement = document.getElementById('paymentMessage');
-    if (messageElement) {
-        messageElement.innerHTML = `
-            <div class="error-message">
-                <strong>Error</strong>
-                <p>${message}</p>
-                <button onclick="window.location.reload()" 
-                        style="margin-top: 10px; padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                    Refresh Page
-                </button>
-            </div>
-        `;
-        messageElement.style.display = 'block';
-    }
-}
-
-
-
-
