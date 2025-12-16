@@ -551,9 +551,14 @@ async function loadOrderStatistics(userEmail) {
 // Update displayRecentOrders function
 function displayRecentOrders(userOrders) {
     const recentOrdersContainer = document.getElementById('recentOrders');
-    if (!recentOrdersContainer) return;
+    if (!recentOrdersContainer) {
+        console.error('❌ recentOrders container not found!');
+        return;
+    }
     
-    if (userOrders.length === 0) {
+    console.log('🔄 Displaying orders:', userOrders);
+    
+    if (!userOrders || userOrders.length === 0) {
         recentOrdersContainer.innerHTML = `
             <div class="empty-orders">
                 <p>You have no orders yet.</p>
@@ -565,36 +570,119 @@ function displayRecentOrders(userOrders) {
     
     // Sort by date (newest first) and take last 3
     const sortedOrders = userOrders.sort((a, b) => {
-        const dateA = new Date(a.paymentDate || a.orderDate || a.date || Date.now());
-        const dateB = new Date(b.paymentDate || b.orderDate || b.date || Date.now());
+        const dateA = new Date(a.createdAt || a.paidAt || Date.now());
+        const dateB = new Date(b.createdAt || b.paidAt || Date.now());
         return dateB - dateA;
     }).slice(0, 3);
     
+    console.log('📦 Sorted orders to display:', sortedOrders);
+    
     recentOrdersContainer.innerHTML = sortedOrders.map(order => {
-        // Get the correct amount for display
-        const orderAmount = order.grandTotal || order.total || order.amount || 0;
-        const orderDate = order.paymentDate || order.orderDate || order.date || Date.now();
-        const orderId = order.orderId || order.id || 'N/A';
-        const itemCount = order.items ? order.items.length : (order.quantity || 1);
-        const orderStatus = order.paymentStatus || order.status || 'Paid';
+        console.log('🔍 Processing order:', order);
+        
+        // Extract data with fallbacks
+        const orderId = order.orderId || 'N/A';
+        const orderDate = order.createdAt || order.paidAt || Date.now();
+        const orderStatus = order.status || order.paymentStatus || 'confirmed';
+        const paymentStatus = order.paymentStatus || 'paid';
+        const paymentMethod = order.paymentMethod || 'razorpay';
+        
+        // Get pricing information
+        const subtotal = order.pricing?.subtotal || 0;
+        const deliveryCharge = order.pricing?.deliveryCharge || 0;
+        const taxAmount = order.pricing?.taxAmount || 0;
+        const total = order.pricing?.total || order.total || 0;
+        
+        // Get items information
+        const items = order.items || [];
+        const itemCount = items.length;
+        const firstItem = items[0] || {};
         
         return `
-            <div class="order-item" style="border: 1px solid #eee; padding: 15px; margin-bottom: 10px; border-radius: 6px;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                    <strong>Order #${orderId}</strong>
-                    <span style="color: #28a745; font-weight: bold;">₹${orderAmount.toFixed(2)}</span>
+            <div class="order-item" style="border: 1px solid #e0e0e0; padding: 20px; margin-bottom: 15px; border-radius: 10px; background: white; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                            <h3 style="margin: 0; color: #333; font-size: 18px;">Order #${orderId}</h3>
+                            <span style="background: ${orderStatus === 'confirmed' ? '#d4edda' : '#fff3cd'}; 
+                                      color: ${orderStatus === 'confirmed' ? '#155724' : '#856404'}; 
+                                      padding: 4px 10px; border-radius: 15px; font-size: 12px; font-weight: bold;">
+                                ${orderStatus.toUpperCase()}
+                            </span>
+                        </div>
+                        <div style="color: #666; font-size: 14px;">
+                            📅 ${new Date(orderDate).toLocaleDateString('en-IN', { 
+                                day: 'numeric', 
+                                month: 'short', 
+                                year: 'numeric' 
+                            })}
+                            &nbsp;|&nbsp;
+                            🕒 ${new Date(orderDate).toLocaleTimeString('en-IN', {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            })}
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="color: #28a745; font-weight: bold; font-size: 22px;">₹${total.toFixed(2)}</div>
+                        <div style="color: #666; font-size: 12px; margin-top: 5px;">
+                            Paid via ${paymentMethod}
+                        </div>
+                    </div>
                 </div>
-                <div style="color: #666; font-size: 14px;">
-                    <div>Date: ${new Date(orderDate).toLocaleDateString()}</div>
-                    <div>Status: <span style="color: #007bff; font-weight: bold;">${orderStatus}</span></div>
-                    <div>Items: ${itemCount}</div>
-                    ${order.paymentId ? `<div style="font-size: 12px; color: #888;">Payment ID: ${order.paymentId.substring(0, 8)}...</div>` : ''}
+                
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                    <div style="font-weight: bold; margin-bottom: 8px; color: #555;">📦 Items (${itemCount})</div>
+                    ${items.map(item => `
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; align-items: center;">
+                            <div>
+                                <div style="font-weight: 500;">${item.name || 'Product'}</div>
+                                <div style="color: #666; font-size: 13px;">
+                                    Size: ${item.size || 'Standard'} | Qty: ${item.quantity || 1}
+                                </div>
+                            </div>
+                            <div style="font-weight: bold; color: #333;">
+                                ₹${((item.price || 0) * (item.quantity || 1)).toFixed(2)}
+                            </div>
+                        </div>
+                    `).join('')}
                 </div>
-                <button onclick="viewOrderDetails('${orderId}')" 
-                        class="btn" 
-                        style="margin-top: 10px; padding: 6px 12px; font-size: 13px;">
-                    View Details
-                </button>
+                
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px;">
+                    <div style="background: #e7f3ff; padding: 10px; border-radius: 6px;">
+                        <div style="font-size: 12px; color: #666;">Subtotal</div>
+                        <div style="font-weight: bold;">₹${subtotal.toFixed(2)}</div>
+                    </div>
+                    <div style="background: #fff3cd; padding: 10px; border-radius: 6px;">
+                        <div style="font-size: 12px; color: #666;">Delivery</div>
+                        <div style="font-weight: bold;">₹${deliveryCharge.toFixed(2)}</div>
+                    </div>
+                    <div style="background: #d4edda; padding: 10px; border-radius: 6px;">
+                        <div style="font-size: 12px; color: #666;">GST (5%)</div>
+                        <div style="font-weight: bold;">₹${taxAmount.toFixed(2)}</div>
+                    </div>
+                    <div style="background: #f8d7da; padding: 10px; border-radius: 6px;">
+                        <div style="font-size: 12px; color: #666;">Total</div>
+                        <div style="font-weight: bold; color: #721c24;">₹${total.toFixed(2)}</div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="viewOrderDetails('${orderId}')" 
+                            style="flex: 1; padding: 10px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px;">
+                        📋 View Full Details
+                    </button>
+                    <button onclick="trackOrder('${orderId}')" 
+                            style="flex: 1; padding: 10px; background: #17a2b8; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px;">
+                        🚚 Track Order
+                    </button>
+                </div>
+                
+                ${order.paymentId ? `
+                    <div style="margin-top: 12px; font-size: 11px; color: #888; text-align: center;">
+                        Payment ID: ${order.paymentId.substring(0, 12)}...
+                    </div>
+                ` : ''}
             </div>
         `;
     }).join('');
@@ -602,9 +690,10 @@ function displayRecentOrders(userOrders) {
     // Add "View All" button if there are more than 3 orders
     if (userOrders.length > 3) {
         recentOrdersContainer.innerHTML += `
-            <div style="text-align: center; margin-top: 15px;">
-                <button onclick="viewAllOrders()" class="btn" style="padding: 8px 20px;">
-                    View All Orders (${userOrders.length})
+            <div style="text-align: center; margin-top: 20px;">
+                <button onclick="viewAllOrders()" 
+                        style="padding: 12px 30px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 15px;">
+                    📦 View All Orders (${userOrders.length})
                 </button>
             </div>
         `;
@@ -616,42 +705,126 @@ function viewAllOrders() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     if (!currentUser) return;
     
-    // FIXED: Get orders from 'orderHistory' 
-    const orders = JSON.parse(localStorage.getItem('orderHistory') || '[]');
-    const userOrders = orders.filter(order => 
-        order.userEmail === currentUser.email || 
-        (order.customer && order.customer.email === currentUser.email) ||
-        order.userId === currentUser.email
-    );
-    
-    if (userOrders.length === 0) {
-        alert('You have no order history yet.\n\nStart shopping to place your first order!');
-        return;
-    }
-    
-    // Sort by date (newest first)
-    const sortedOrders = userOrders.sort((a, b) => {
-        const dateA = new Date(a.paymentDate || a.orderDate || a.date || Date.now());
-        const dateB = new Date(b.paymentDate || b.orderDate || b.date || Date.now());
-        return dateB - dateA;
+    // Fetch all user orders from database
+    fetch('https://backend-production-c281a.up.railway.app/api/ordersdash/user-orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: currentUser.email })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success && data.orders && data.orders.length > 0) {
+            showAllOrdersModal(data.orders);
+        } else {
+            alert('You have no order history yet.\n\nStart shopping to place your first order!');
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching orders:', error);
+        alert('Unable to load orders. Please try again later.');
     });
+}
+
+function showAllOrdersModal(orders) {
+    // Create modal HTML
+    const modalHTML = `
+        <div id="allOrdersModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px;">
+            <div style="background: white; padding: 25px; border-radius: 12px; width: 95%; max-width: 900px; max-height: 85vh; overflow-y: auto;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <h2 style="margin: 0; color: #333;">📦 All Your Orders (${orders.length})</h2>
+                    <button onclick="closeAllOrdersModal()" style="background: none; border: none; font-size: 28px; cursor: pointer; color: #666;">&times;</button>
+                </div>
+                
+                <div style="display: grid; gap: 15px;">
+                    ${orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map(order => `
+                        <div style="border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; background: #f8f9fa;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                <div>
+                                    <div style="font-weight: bold; font-size: 16px; color: #333;">Order #${order.orderId}</div>
+                                    <div style="color: #666; font-size: 14px;">
+                                        ${new Date(order.createdAt).toLocaleDateString('en-IN', {
+                                            day: 'numeric',
+                                            month: 'long',
+                                            year: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit'
+                                        })}
+                                    </div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="color: #28a745; font-weight: bold; font-size: 18px;">₹${order.pricing?.total?.toFixed(2) || '0.00'}</div>
+                                    <div style="background: ${order.status === 'confirmed' ? '#d4edda' : '#fff3cd'}; 
+                                              color: ${order.status === 'confirmed' ? '#155724' : '#856404'}; 
+                                              padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; margin-top: 5px;">
+                                        ${order.status || 'Confirmed'}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 15px;">
+                                <div>
+                                    <div style="font-weight: bold; margin-bottom: 8px; color: #555;">Items</div>
+                                    ${order.items?.map(item => `
+                                        <div style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #eee;">
+                                            <span>${item.name} × ${item.quantity}</span>
+                                            <span style="font-weight: 500;">₹${(item.price * item.quantity).toFixed(2)}</span>
+                                        </div>
+                                    `).join('') || 'No items'}
+                                </div>
+                                <div>
+                                    <div style="font-weight: bold; margin-bottom: 8px; color: #555;">Summary</div>
+                                    <div style="display: grid; gap: 5px;">
+                                        <div style="display: flex; justify-content: space-between;">
+                                            <span>Subtotal:</span>
+                                            <span>₹${order.pricing?.subtotal?.toFixed(2) || '0.00'}</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between;">
+                                            <span>Delivery:</span>
+                                            <span>₹${order.pricing?.deliveryCharge?.toFixed(2) || '0.00'}</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between;">
+                                            <span>GST:</span>
+                                            <span>₹${order.pricing?.taxAmount?.toFixed(2) || '0.00'}</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; font-weight: bold; border-top: 1px solid #ddd; padding-top: 5px;">
+                                            <span>Total:</span>
+                                            <span>₹${order.pricing?.total?.toFixed(2) || '0.00'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                                <button onclick="viewOrderDetails('${order.orderId}')" 
+                                        style="padding: 8px 15px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 13px;">
+                                    View Details
+                                </button>
+                                <button onclick="trackOrder('${order.orderId}')" 
+                                        style="padding: 8px 15px; background: #17a2b8; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 13px;">
+                                    Track Order
+                                </button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div style="text-align: center; margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee;">
+                    <button onclick="closeAllOrdersModal()" 
+                            style="padding: 12px 30px; background: #6c757d; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
     
-    const orderList = sortedOrders.map((order, index) => {
-        const orderAmount = order.grandTotal || order.total || order.amount || 0;
-        const orderDate = new Date(order.paymentDate || order.orderDate || order.date || Date.now()).toLocaleDateString();
-        const orderId = order.orderId || order.id || 'N/A';
-        const orderStatus = order.paymentStatus || order.status || 'Paid';
-        
-        return `${index + 1}. Order #${orderId} - ₹${orderAmount.toFixed(2)} - ${orderDate} - ${orderStatus}`;
-    }).join('\n\n');
-    
-    // Calculate total spent
-    const totalSpent = userOrders.reduce((sum, order) => {
-        const amount = order.grandTotal || order.total || order.amount || 0;
-        return sum + Number(amount);
-    }, 0);
-    
-    alert(`📦 YOUR ORDER HISTORY (${userOrders.length} orders)\n\n${orderList}\n\nTotal Amount Spent: ₹${totalSpent.toFixed(2)}`);
+    // Add modal to page
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+}
+
+function closeAllOrdersModal() {
+    const modal = document.getElementById('allOrdersModal');
+    if (modal) modal.remove();
 }
 
 // Update viewOrderDetails function
@@ -941,6 +1114,7 @@ function viewOrderDetails(orderId) {
 </body>
 
 </html>
+
 
 
 
