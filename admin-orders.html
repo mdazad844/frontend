@@ -417,26 +417,29 @@ function exportToCSV() {
         return;
     }
     
+    // Create CSV content with UTF-8 BOM for Excel compatibility
     const csvContent = [
-        ['Order ID', 'Date', 'Customer Name', 'Customer Email', 'Customer Phone', 'Items', 'Subtotal', 'Delivery', 'Tax', 'Total', 'Status', 'Payment Method', 'Shipping Address'],
+        // Add UTF-8 BOM and header
+        '\ufeffOrder ID,Date,Customer Name,Customer Email,Customer Phone,Items,Subtotal,Delivery,Tax,Total,Status,Payment Method,Shipping Address',
         ...allOrders.map(order => [
             order.orderId,
             new Date(order.createdAt).toLocaleDateString(),
-            order.customer.name,
+            `"${order.customer.name.replace(/"/g, '""')}"`, // Escape quotes
             order.customer.email,
             order.customer.phone || 'N/A',
-            order.items.map(item => `${item.name} x${item.quantity}`).join('; '),
-            `₹${order.pricing?.subtotal || 0}`,
-            `₹${order.pricing?.deliveryCharge || 0}`,
-            `₹${order.pricing?.taxAmount || 0}`,
-            `₹${order.pricing?.total || 0}`,
+            `"${order.items.map(item => `${item.name} x${item.quantity}`).join('; ').replace(/"/g, '""')}"`, // Escape quotes
+            order.pricing?.subtotal || 0, // Use numbers without ₹ symbol
+            order.pricing?.deliveryCharge || 0,
+            order.pricing?.taxAmount || 0,
+            order.pricing?.total || 0,
             order.status,
             order.paymentMethod,
-            `${order.shippingAddress.line1}, ${order.shippingAddress.city}`
-        ])
-    ].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+            `"${order.shippingAddress.line1}, ${order.shippingAddress.city}".replace(/"/g, '""')` // Escape quotes
+        ].join(','))
+    ].join('\n');
     
-    const blob = new Blob([csvContent], { type: 'text/csv' });
+    // Create blob with UTF-8 encoding
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -464,3 +467,4 @@ document.addEventListener('DOMContentLoaded', function() {
     </script>
 </body>
 </html>
+
