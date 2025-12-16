@@ -882,12 +882,66 @@ function viewOrderDetails(orderId) {
     window.viewAllOrders = viewAllOrders;
     window.viewOrderDetails = viewOrderDetails;
     window.logoutFromProfile = logoutFromProfile;
+
+	
+	 
+	 
+	 async function testUserOrdersAPI() {
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  if (!currentUser) return;
+  
+  const BACKEND_URL = 'https://backend-production-c281a.up.railway.app';
+  
+  console.log('🧪 Testing user orders API...');
+  console.log('User email:', currentUser.email);
+  
+  try {
+    // Test 1: Check if ordersdash endpoint exists
+    console.log('Testing /api/ordersdash...');
+    const test1 = await fetch(`${BACKEND_URL}/api/ordersdash`);
+    const test1Data = await test1.json();
+    console.log('/api/ordersdash:', test1Data);
+    
+    // Test 2: Try to fetch user orders
+    console.log('Testing /api/ordersdash/user-orders...');
+    const test2 = await fetch(`${BACKEND_URL}/api/ordersdash/user-orders`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: currentUser.email })
+    });
+    
+    console.log('Response status:', test2.status);
+    
+    if (test2.ok) {
+      const test2Data = await test2.json();
+      console.log('User orders response:', test2Data);
+      
+      if (test2Data.success && test2Data.orders) {
+        alert(`✅ Found ${test2Data.orders.length} orders in database`);
+      } else {
+        alert('❌ No orders found in database for this user');
+      }
+    } else {
+      console.error('API error:', await test2.text());
+      alert(`❌ API error: ${test2.status} ${test2.statusText}`);
+    }
+    
+  } catch (error) {
+    console.error('Test failed:', error);
+    alert(`❌ Test failed: ${error.message}`);
+  }
+}
+
+// Add a test button to your profile HTML temporarily
+// Add this inside the profile-actions div:
+// <button onclick="testUserOrdersAPI()" class="btn">Test API</button>
 </script>
 <script src="js/auth.js"></script>
 <script src="js/script.js"></script>
 </body>
 
 </html>
+
 
 
 
