@@ -227,7 +227,10 @@ class PaymentManager {
             razorpay_signature: paymentResponse.razorpay_signature,
             orderData: completeOrderData  // THIS IS CRITICAL!
         };
-
+        
+      // Add this line before line 156 (before console.log('📤 Sending to backend:'))
+console.log('📧 Customer Email Check:', this.currentUser?.email);
+console.log('🛒 Items Array Check:', this.orderData.items);
         console.log('📤 Sending to backend:', verificationData);
 
         const verificationResponse = await fetch(`${this.backendUrl}/api/payments/verify-payment`, {
@@ -339,4 +342,5 @@ document.addEventListener('DOMContentLoaded', () => {
     document.head.appendChild(script);
   }
 });
+
 
