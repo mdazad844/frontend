@@ -925,635 +925,234 @@
   </footer>
 
   <script>
-    // Keep all your existing JavaScript functions
-    // They will work with the new design
-    // Just need to update the display functions
-    
-    function updateProfileDisplay(currentUser) {
-      // Update header
-      document.getElementById('profileUserName').textContent = currentUser.name || 'User';
-      document.getElementById('profileUserEmail').textContent = currentUser.email || '';
-      document.getElementById('headerMemberSince').textContent = 
-        new Date(currentUser.createdAt || Date.now()).toLocaleDateString('en-IN', {
-          month: 'short',
-          year: 'numeric'
-        });
-      
-      // Update personal info
-      document.getElementById('infoName').textContent = currentUser.name || 'Not provided';
-      document.getElementById('infoEmail').textContent = currentUser.email || 'Not provided';
-      document.getElementById('infoPhone').textContent = currentUser.phone || 'Not provided';
-      document.getElementById('infoMemberSince').textContent = 
-        new Date(currentUser.createdAt || Date.now()).toLocaleDateString('en-IN', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric'
-        });
-      
-      // Update address
-      const address = currentUser.address;
-      const addressText = address && address.line1 ? 
-        `${address.line1}${address.line2 ? '\n' + address.line2 : ''}\n${address.city}, ${address.state} - ${address.pincode}\n${address.country}${address.landmark ? '\nLandmark: ' + address.landmark : ''}` :
-        'No address saved. Please update your profile.';
-      document.getElementById('infoAddress').innerHTML = addressText.replace(/\n/g, '<br>');
-    }
-    
-    // Update your displayRecentOrders function to work with new design
-    function displayRecentOrders(userOrders) {
-        const recentOrdersContainer = document.getElementById('recentOrders');
-        if (!recentOrdersContainer) return;
-        
-        if (!userOrders || userOrders.length === 0) {
-            recentOrdersContainer.innerHTML = `
-                <div class="empty-state">
-                    <i class="fas fa-shopping-bag"></i>
-                    <h3>No Orders Yet</h3>
-                    <p>You haven't placed any orders yet.</p>
-                    <a href="shop.html" class="btn btn-primary">
-                        <i class="fas fa-shopping-cart"></i>
-                        Start Shopping
-                    </a>
-                </div>
-            `;
-            document.getElementById('viewAllButton').style.display = 'none';
-            return;
-        }
-        
-        // Sort by date (newest first) and take last 3
-        const sortedOrders = userOrders.sort((a, b) => {
-            const dateA = new Date(a.createdAt || a.paidAt || Date.now());
-            const dateB = new Date(b.createdAt || b.paidAt || Date.now());
-            return dateB - dateA;
-        }).slice(0, 3);
-        
-        recentOrdersContainer.innerHTML = sortedOrders.map(order => {
-            const orderId = order.orderId || 'N/A';
-            const orderDate = order.createdAt || order.paidAt || Date.now();
-            const orderStatus = order.status || order.paymentStatus || 'confirmed';
-            const paymentMethod = order.paymentMethod || 'razorpay';
-            const total = order.pricing?.total || order.total || 0;
-            const items = order.items || [];
-            const itemCount = items.length;
-            
-            return `
-                <div class="order-card">
-                    <div class="order-header">
-                        <div class="order-title">
-                            Order: <span class="order-id">#${orderId}</span>
-                        </div>
-                        <div class="order-amount">₹${total.toFixed(2)}</div>
-                    </div>
-                    
-                    <div class="order-meta">
-                        <span><i class="far fa-calendar"></i> ${new Date(orderDate).toLocaleDateString()}</span>
-                        <span><i class="far fa-clock"></i> ${new Date(orderDate).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                        <span class="order-status status-${orderStatus}">
-                            <i class="fas fa-circle" style="font-size: 8px;"></i>
-                            ${orderStatus.charAt(0).toUpperCase() + orderStatus.slice(1)}
-                        </span>
-                    </div>
-                    
-                    <div class="order-items">
-                        ${items.map(item => `
-                            <div class="order-item-row">
-                                <span>${item.name || 'Product'} × ${item.quantity || 1}</span>
-                                <span style="font-weight: 500;">₹${((item.price || 0) * (item.quantity || 1)).toFixed(2)}</span>
-                            </div>
-                        `).join('')}
-                    </div>
-                    
-                    <div class="order-actions">
-                        <button onclick="viewOrderDetails('${orderId}')" class="btn-sm btn-primary">
-                            <i class="fas fa-eye"></i> View Details
-                        </button>
-                        <button onclick="trackOrder('${orderId}')" class="btn-sm btn-secondary">
-                            <i class="fas fa-truck"></i> Track Order
-                        </button>
-                    </div>
-                </div>
-            `;
-        }).join('');
-        
-        // Show view all button if more than 3 orders
-        if (userOrders.length > 3) {
-            document.getElementById('viewAllButton').style.display = 'block';
-            document.getElementById('totalOrdersCount').textContent = `${userOrders.length} orders`;
-        } else {
-            document.getElementById('viewAllButton').style.display = 'none';
-            document.getElementById('totalOrdersCount').textContent = `${userOrders.length} order${userOrders.length !== 1 ? 's' : ''}`;
-        }
-    }
-    
-    function updateStats(orders) {
-        const totalOrders = orders.length;
-        const totalSpent = orders.reduce((sum, order) => sum + (order.pricing?.total || 0), 0);
-        
-        // Update all stat locations
-        document.getElementById('totalOrders').textContent = totalOrders;
-        document.getElementById('totalSpent').textContent = `₹${totalSpent.toFixed(2)}`;
-        document.getElementById('headerTotalOrders').textContent = totalOrders;
-        document.getElementById('headerTotalSpent').textContent = `₹${totalSpent.toFixed(2)}`;
-        document.getElementById('sidebarTotalOrders').textContent = totalOrders;
-        document.getElementById('sidebarTotalSpent').textContent = `₹${totalSpent.toFixed(2)}`;
-    }
-    
-    // Update your loadProfileInfo function
-    function loadProfileInfo() {
+    // Main profile loading function
+    async function loadProfileInfo() {
       const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-      const profileInfo = document.getElementById('profileInfo');
       
+      // Redirect to login if not logged in
       if (!currentUser) {
         window.location.href = 'login.html';
         return;
       }
       
-      // Update profile display
+      // Update profile display with new design
       updateProfileDisplay(currentUser);
       
       // Load order statistics
-      loadOrderStatistics(currentUser.email);
+      await loadOrderStatistics(currentUser.email);
     }
     
-    // Keep all your other functions (loadOrderStatistics, viewOrderDetails, etc.)
-    // They will work as-is
-	    // Profile page specific functionality
-    function loadProfileInfo() {
-      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-      const profileInfo = document.getElementById('profileInfo');
+    // Update profile display for new design
+    function updateProfileDisplay(currentUser) {
+      // Update header section
+      document.getElementById('profileUserName').textContent = currentUser.name || 'User';
+      document.getElementById('profileUserEmail').textContent = currentUser.email || '';
       
-      if (!currentUser) {
-        profileInfo.innerHTML = `
-          <div class="empty-profile">
-            <p>Please login to view your profile</p>
-            <a href="login.html" class="btn">Login Now</a>
-          </div>
-        `;
-        return;
+      const memberSince = new Date(currentUser.createdAt || Date.now());
+      document.getElementById('headerMemberSince').textContent = 
+        memberSince.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+      
+      // Update personal info section
+      document.getElementById('infoName').textContent = currentUser.name || 'Not provided';
+      document.getElementById('infoEmail').textContent = currentUser.email || 'Not provided';
+      document.getElementById('infoPhone').textContent = currentUser.phone || 'Not provided';
+      document.getElementById('infoMemberSince').textContent = 
+        memberSince.toLocaleDateString('en-IN', { 
+          day: 'numeric', 
+          month: 'long', 
+          year: 'numeric' 
+        });
+      
+      // Update address section
+      const address = currentUser.address || {};
+      const addressText = address && address.line1 ? 
+        `${address.line1}${address.line2 ? '\n' + address.line2 : ''}\n${address.city}, ${address.state} - ${address.pincode}\n${address.country}${address.landmark ? '\nLandmark: ' + address.landmark : ''}` :
+        'No address saved. Please update your profile.';
+      
+      document.getElementById('infoAddress').innerHTML = addressText.replace(/\n/g, '<br>');
+    }
+    
+    // Load order statistics - FIXED for new design
+    async function loadOrderStatistics(userEmail) {
+      const BACKEND_URL = 'https://backend-production-c281a.up.railway.app';
+      
+      try {
+        console.log(`📧 Fetching orders for: ${userEmail}`);
+        
+        // Try the ordersdash endpoint first
+        const response = await fetch(`${BACKEND_URL}/api/ordersdash/user-orders`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: userEmail })
+        });
+        
+        let userOrders = [];
+        
+        if (response.ok) {
+          const data = await response.json();
+          console.log('📊 Database orders response:', data);
+          
+          if (data.success && data.orders) {
+            userOrders = data.orders;
+          }
+        }
+      } catch (error) {
+        console.error('❌ Failed to fetch database orders:', error);
       }
       
-      const address = currentUser.address;
-      // FIXED: Added proper null checks for address
-      const addressText = address && address.line1 ? `
-        ${address.line1}${address.line2 ? '<br>' + address.line2 : ''}<br>
-        ${address.city}, ${address.state} - ${address.pincode}<br>
-        ${address.country}${address.landmark ? '<br><strong>Landmark:</strong> ' + address.landmark : ''}
-      ` : 'No address saved';
+      // Fallback to localStorage
+      if (userOrders.length === 0) {
+        console.log('🔄 Falling back to localStorage...');
+        const orders = JSON.parse(localStorage.getItem('orderHistory') || '[]');
+        userOrders = orders.filter(order => 
+          order.userEmail === userEmail || 
+          (order.customer && order.customer.email === userEmail)
+        );
+      }
       
-      profileInfo.innerHTML = `
-        <div class="profile-details">
-          <div class="profile-section">
-            <h3>Personal Information</h3>
-            <div class="profile-info">
-              <div class="info-item">
-                <span class="info-label">Full Name:</span>
-                <span class="info-value">${currentUser.name}</span>
-              </div>
-              <div class="info-item">
-                <span class="info-label">Email:</span>
-                <span class="info-value">${currentUser.email}</span>
-              </div>
-              <div class="info-item">
-                <span class="info-label">Phone:</span>
-                <span class="info-value">${currentUser.phone || 'Not provided'}</span>
-              </div>
-              <div class="info-item">
-                <span class="info-label">Member Since:</span>
-                <span class="info-value">${new Date(currentUser.createdAt || Date.now()).toLocaleDateString()}</span>
-              </div>
-            </div>
-          </div>
-          
-          <div class="profile-section">
-            <h3>Delivery Address</h3>
-            <div class="profile-info">
-              <div class="info-item">
-                <span class="info-label">Address:</span>
-                <span class="info-value">${addressText}</span>
-              </div>
-            </div>
-          </div>
-          
-          <div class="profile-section">
-            <h3>Order Statistics</h3>
-            <div class="profile-info">
-              <div class="info-item">
-                <span class="info-label">Total Orders:</span>
-                <span class="info-value" id="totalOrders">0</span>
-              </div>
-              <div class="info-item">
-                <span class="info-label">Total Spent:</span>
-                <span class="info-value" id="totalSpent">₹0</span>
-              </div>
-            </div>
-          </div>
-          
-          <div class="profile-section">
-            <h3>Recent Orders</h3>
-            <div class="profile-info" id="recentOrders">
-              <div class="empty-orders">Loading orders...</div>
-            </div>
-          </div>
-          
-          <div class="profile-actions">
-            <button onclick="editProfile()" class="btn btn-edit">Edit Profile</button>
-            <button onclick="viewAllOrders()" class="btn">View All Orders</button>
-            <button onclick="logoutFromProfile()" class="btn btn-logout">Logout</button>
-          </div>
-        </div>
-      `;
+      // Update stats for new design
+      updateStats(userOrders);
       
-      // Load order statistics and recent orders
-      loadOrderStatistics(currentUser.email);
+      // Display recent orders in new design
+      displayRecentOrders(userOrders);
     }
     
- // Replace the loadOrderStatistics function with this:
-async function loadOrderStatistics(userEmail) {
-  const BACKEND_URL = 'https://backend-production-c281a.up.railway.app';
-  
-  try {
-    console.log(`📧 Fetching orders for: ${userEmail}`);
-    
-    // Try the ordersdash endpoint first
-    const response = await fetch(`${BACKEND_URL}/api/ordersdash/user-orders`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: userEmail })
-    });
-    
-    if (response.ok) {
-      const data = await response.json();
-      console.log('📊 Database orders response:', data);
+    // Update stats for new design
+    function updateStats(userOrders) {
+      const totalOrders = userOrders.length;
+      const totalSpent = userOrders.reduce((sum, order) => {
+        const amount = order.pricing?.total || order.grandTotal || order.total || order.amount || 0;
+        return sum + Number(amount);
+      }, 0);
       
-      if (data.success && data.orders) {
-        // Display database orders
-        const totalOrders = data.orders.length;
-        const totalSpent = data.orders.reduce((sum, order) => {
-          return sum + (order.pricing?.total || 0);
-        }, 0);
-        
-        document.getElementById('totalOrders').textContent = totalOrders;
-        document.getElementById('totalSpent').textContent = `₹${totalSpent.toFixed(2)}`;
-        
-        displayRecentOrders(data.orders);
-        return;
+      // Update all stat locations in new design
+      const totalOrdersElements = [
+        'headerTotalOrders',
+        'sidebarTotalOrders'
+      ];
+      
+      const totalSpentElements = [
+        'headerTotalSpent',
+        'sidebarTotalSpent'
+      ];
+      
+      // Update total orders
+      totalOrdersElements.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) element.textContent = totalOrders;
+      });
+      
+      // Update total spent
+      totalSpentElements.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) element.textContent = `₹${totalSpent.toFixed(2)}`;
+      });
+      
+      // Update order count in recent orders header
+      const orderCountElement = document.getElementById('totalOrdersCount');
+      if (orderCountElement) {
+        orderCountElement.textContent = `${totalOrders} order${totalOrders !== 1 ? 's' : ''}`;
       }
     }
-  } catch (error) {
-    console.error('❌ Failed to fetch database orders:', error);
-  }
-  
-  // Fallback to localStorage
-  console.log('🔄 Falling back to localStorage...');
-  const orders = JSON.parse(localStorage.getItem('orderHistory') || '[]');
-  const userOrders = orders.filter(order => 
-    order.userEmail === userEmail || 
-    (order.customer && order.customer.email === userEmail)
-  );
-  
-  const totalOrders = userOrders.length;
-  const totalSpent = userOrders.reduce((sum, order) => {
-    const amount = order.grandTotal || order.total || order.amount || 0;
-    return sum + Number(amount);
-  }, 0);
-  
-  document.getElementById('totalOrders').textContent = totalOrders;
-  document.getElementById('totalSpent').textContent = `₹${totalSpent.toFixed(2)}`;
-  
-  displayRecentOrders(userOrders);
-}
-// Update displayRecentOrders function
-function displayRecentOrders(userOrders) {
-    const recentOrdersContainer = document.getElementById('recentOrders');
-    if (!recentOrdersContainer) {
+    
+    // Display recent orders for new design
+    function displayRecentOrders(userOrders) {
+      const recentOrdersContainer = document.getElementById('recentOrders');
+      if (!recentOrdersContainer) {
         console.error('❌ recentOrders container not found!');
         return;
-    }
-    
-    console.log('🔄 Displaying orders:', userOrders);
-    
-    if (!userOrders || userOrders.length === 0) {
+      }
+      
+      console.log('🔄 Displaying orders:', userOrders);
+      
+      if (!userOrders || userOrders.length === 0) {
         recentOrdersContainer.innerHTML = `
-            <div class="empty-orders">
-                <p>You have no orders yet.</p>
-                <a href="shop.html" class="btn">Start Shopping</a>
-            </div>
+          <div class="empty-state">
+            <i class="fas fa-shopping-bag"></i>
+            <h3>No Orders Yet</h3>
+            <p>You haven't placed any orders yet.</p>
+            <a href="shop.html" class="btn btn-primary">
+              <i class="fas fa-shopping-cart"></i>
+              Start Shopping
+            </a>
+          </div>
         `;
+        document.getElementById('viewAllButton').style.display = 'none';
         return;
-    }
-    
-    // Sort by date (newest first) and take last 3
-    const sortedOrders = userOrders.sort((a, b) => {
+      }
+      
+      // Sort by date (newest first) and take last 3
+      const sortedOrders = userOrders.sort((a, b) => {
         const dateA = new Date(a.createdAt || a.paidAt || Date.now());
         const dateB = new Date(b.createdAt || b.paidAt || Date.now());
         return dateB - dateA;
-    }).slice(0, 3);
-    
-    console.log('📦 Sorted orders to display:', sortedOrders);
-    
-    recentOrdersContainer.innerHTML = sortedOrders.map(order => {
-        console.log('🔍 Processing order:', order);
-        
-        // Extract data with fallbacks
+      }).slice(0, 3);
+      
+      recentOrdersContainer.innerHTML = sortedOrders.map(order => {
         const orderId = order.orderId || 'N/A';
         const orderDate = order.createdAt || order.paidAt || Date.now();
         const orderStatus = order.status || order.paymentStatus || 'confirmed';
-        const paymentStatus = order.paymentStatus || 'paid';
-        const paymentMethod = order.paymentMethod || 'razorpay';
-        
-        // Get pricing information
-        const subtotal = order.pricing?.subtotal || 0;
-        const deliveryCharge = order.pricing?.deliveryCharge || 0;
-        const taxAmount = order.pricing?.taxAmount || 0;
-        const total = order.pricing?.total || order.total || 0;
-        
-        // Get items information
+        const total = order.pricing?.total || order.grandTotal || order.total || 0;
         const items = order.items || [];
-        const itemCount = items.length;
-        const firstItem = items[0] || {};
+        
+        // Determine status class
+        let statusClass = 'status-confirmed';
+        if (orderStatus.toLowerCase() === 'pending') statusClass = 'status-pending';
+        if (orderStatus.toLowerCase() === 'processing') statusClass = 'status-processing';
+        if (orderStatus.toLowerCase() === 'cancelled') statusClass = 'status-cancelled';
         
         return `
-            <div class="order-item" style="border: 1px solid #e0e0e0; padding: 20px; margin-bottom: 15px; border-radius: 10px; background: white; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
-                    <div>
-                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-                            <h3 style="margin: 0; color: #333; font-size: 18px;">Order #${orderId}</h3>
-                            <span style="background: ${orderStatus === 'confirmed' ? '#d4edda' : '#fff3cd'}; 
-                                      color: ${orderStatus === 'confirmed' ? '#155724' : '#856404'}; 
-                                      padding: 4px 10px; border-radius: 15px; font-size: 12px; font-weight: bold;">
-                                ${orderStatus.toUpperCase()}
-                            </span>
-                        </div>
-                        <div style="color: #666; font-size: 14px;">
-                            📅 ${new Date(orderDate).toLocaleDateString('en-IN', { 
-                                day: 'numeric', 
-                                month: 'short', 
-                                year: 'numeric' 
-                            })}
-                            &nbsp;|&nbsp;
-                            🕒 ${new Date(orderDate).toLocaleTimeString('en-IN', {
-                                hour: '2-digit',
-                                minute: '2-digit'
-                            })}
-                        </div>
-                    </div>
-                    <div style="text-align: right;">
-                        <div style="color: #28a745; font-weight: bold; font-size: 22px;">₹${total.toFixed(2)}</div>
-                        <div style="color: #666; font-size: 12px; margin-top: 5px;">
-                            Paid via ${paymentMethod}
-                        </div>
-                    </div>
-                </div>
-                
-                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                    <div style="font-weight: bold; margin-bottom: 8px; color: #555;">📦 Items (${itemCount})</div>
-                    ${items.map(item => `
-                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; align-items: center;">
-                            <div>
-                                <div style="font-weight: 500;">${item.name || 'Product'}</div>
-                                <div style="color: #666; font-size: 13px;">
-                                    Size: ${item.size || 'Standard'} | Qty: ${item.quantity || 1}
-                                </div>
-                            </div>
-                            <div style="font-weight: bold; color: #333;">
-                                ₹${((item.price || 0) * (item.quantity || 1)).toFixed(2)}
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-                
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px;">
-                    <div style="background: #e7f3ff; padding: 10px; border-radius: 6px;">
-                        <div style="font-size: 12px; color: #666;">Subtotal</div>
-                        <div style="font-weight: bold;">₹${subtotal.toFixed(2)}</div>
-                    </div>
-                    <div style="background: #fff3cd; padding: 10px; border-radius: 6px;">
-                        <div style="font-size: 12px; color: #666;">Delivery</div>
-                        <div style="font-weight: bold;">₹${deliveryCharge.toFixed(2)}</div>
-                    </div>
-                    <div style="background: #d4edda; padding: 10px; border-radius: 6px;">
-                        <div style="font-size: 12px; color: #666;">GST (5%)</div>
-                        <div style="font-weight: bold;">₹${taxAmount.toFixed(2)}</div>
-                    </div>
-                    <div style="background: #f8d7da; padding: 10px; border-radius: 6px;">
-                        <div style="font-size: 12px; color: #666;">Total</div>
-                        <div style="font-weight: bold; color: #721c24;">₹${total.toFixed(2)}</div>
-                    </div>
-                </div>
-                
-                <div style="display: flex; gap: 10px;">
-                    <button onclick="viewOrderDetails('${orderId}')" 
-                            style="flex: 1; padding: 10px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px;">
-                        📋 View Full Details
-                    </button>
-                    <button onclick="trackOrder('${orderId}')" 
-                            style="flex: 1; padding: 10px; background: #17a2b8; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px;">
-                        🚚 Track Order
-                    </button>
-                </div>
-                
-                ${order.paymentId ? `
-                    <div style="margin-top: 12px; font-size: 11px; color: #888; text-align: center;">
-                        Payment ID: ${order.paymentId.substring(0, 12)}...
-                    </div>
-                ` : ''}
+          <div class="order-card">
+            <div class="order-header">
+              <div class="order-title">
+                Order: <span class="order-id">#${orderId}</span>
+              </div>
+              <div class="order-amount">₹${total.toFixed(2)}</div>
             </div>
-        `;
-    }).join('');
-    
-    // Add "View All" button if there are more than 3 orders
-    if (userOrders.length > 3) {
-        recentOrdersContainer.innerHTML += `
-            <div style="text-align: center; margin-top: 20px;">
-                <button onclick="viewAllOrders()" 
-                        style="padding: 12px 30px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 15px;">
-                    📦 View All Orders (${userOrders.length})
-                </button>
+            
+            <div class="order-meta">
+              <span><i class="far fa-calendar"></i> ${new Date(orderDate).toLocaleDateString()}</span>
+              <span><i class="far fa-clock"></i> ${new Date(orderDate).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+              <span class="order-status ${statusClass}">
+                <i class="fas fa-circle" style="font-size: 8px;"></i>
+                ${orderStatus.charAt(0).toUpperCase() + orderStatus.slice(1)}
+              </span>
             </div>
+            
+            <div class="order-items">
+              ${items.slice(0, 2).map(item => `
+                <div class="order-item-row">
+                  <span>${item.name || 'Product'} × ${item.quantity || 1}</span>
+                  <span style="font-weight: 500;">₹${((item.price || 0) * (item.quantity || 1)).toFixed(2)}</span>
+                </div>
+              `).join('')}
+              ${items.length > 2 ? `<div style="text-align: center; color: #666; font-size: 13px; padding: 5px;">+ ${items.length - 2} more items</div>` : ''}
+            </div>
+            
+            <div class="order-actions">
+              <button onclick="viewOrderDetails('${orderId}')" class="btn-sm btn-primary">
+                <i class="fas fa-eye"></i> View Details
+              </button>
+              <button onclick="trackOrder('${orderId}')" class="btn-sm btn-secondary">
+                <i class="fas fa-truck"></i> Track Order
+              </button>
+            </div>
+          </div>
         `;
-    }
-}
-
-// Update viewAllOrders function
-function viewAllOrders() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    if (!currentUser) return;
-    
-    // Fetch all user orders from database
-    fetch('https://backend-production-c281a.up.railway.app/api/ordersdash/user-orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: currentUser.email })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success && data.orders && data.orders.length > 0) {
-            showAllOrdersModal(data.orders);
+      }).join('');
+      
+      // Show view all button if more than 3 orders
+      const viewAllButton = document.getElementById('viewAllButton');
+      if (viewAllButton) {
+        if (userOrders.length > 3) {
+          viewAllButton.style.display = 'block';
         } else {
-            alert('You have no order history yet.\n\nStart shopping to place your first order!');
+          viewAllButton.style.display = 'none';
         }
-    })
-    .catch(error => {
-        console.error('Error fetching orders:', error);
-        alert('Unable to load orders. Please try again later.');
-    });
-}
-
-function showAllOrdersModal(orders) {
-    // Create modal HTML
-    const modalHTML = `
-        <div id="allOrdersModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px;">
-            <div style="background: white; padding: 25px; border-radius: 12px; width: 95%; max-width: 900px; max-height: 85vh; overflow-y: auto;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-                    <h2 style="margin: 0; color: #333;">📦 All Your Orders (${orders.length})</h2>
-                    <button onclick="closeAllOrdersModal()" style="background: none; border: none; font-size: 28px; cursor: pointer; color: #666;">&times;</button>
-                </div>
-                
-                <div style="display: grid; gap: 15px;">
-                    ${orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map(order => `
-                        <div style="border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; background: #f8f9fa;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                <div>
-                                    <div style="font-weight: bold; font-size: 16px; color: #333;">Order #${order.orderId}</div>
-                                    <div style="color: #666; font-size: 14px;">
-                                        ${new Date(order.createdAt).toLocaleDateString('en-IN', {
-                                            day: 'numeric',
-                                            month: 'long',
-                                            year: 'numeric',
-                                            hour: '2-digit',
-                                            minute: '2-digit'
-                                        })}
-                                    </div>
-                                </div>
-                                <div style="text-align: right;">
-                                    <div style="color: #28a745; font-weight: bold; font-size: 18px;">₹${order.pricing?.total?.toFixed(2) || '0.00'}</div>
-                                    <div style="background: ${order.status === 'confirmed' ? '#d4edda' : '#fff3cd'}; 
-                                              color: ${order.status === 'confirmed' ? '#155724' : '#856404'}; 
-                                              padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; margin-top: 5px;">
-                                        ${order.status || 'Confirmed'}
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 15px;">
-                                <div>
-                                    <div style="font-weight: bold; margin-bottom: 8px; color: #555;">Items</div>
-                                    ${order.items?.map(item => `
-                                        <div style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #eee;">
-                                            <span>${item.name} × ${item.quantity}</span>
-                                            <span style="font-weight: 500;">₹${(item.price * item.quantity).toFixed(2)}</span>
-                                        </div>
-                                    `).join('') || 'No items'}
-                                </div>
-                                <div>
-                                    <div style="font-weight: bold; margin-bottom: 8px; color: #555;">Summary</div>
-                                    <div style="display: grid; gap: 5px;">
-                                        <div style="display: flex; justify-content: space-between;">
-                                            <span>Subtotal:</span>
-                                            <span>₹${order.pricing?.subtotal?.toFixed(2) || '0.00'}</span>
-                                        </div>
-                                        <div style="display: flex; justify-content: space-between;">
-                                            <span>Delivery:</span>
-                                            <span>₹${order.pricing?.deliveryCharge?.toFixed(2) || '0.00'}</span>
-                                        </div>
-                                        <div style="display: flex; justify-content: space-between;">
-                                            <span>GST:</span>
-                                            <span>₹${order.pricing?.taxAmount?.toFixed(2) || '0.00'}</span>
-                                        </div>
-                                        <div style="display: flex; justify-content: space-between; font-weight: bold; border-top: 1px solid #ddd; padding-top: 5px;">
-                                            <span>Total:</span>
-                                            <span>₹${order.pricing?.total?.toFixed(2) || '0.00'}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div style="display: flex; gap: 10px; margin-top: 15px;">
-                                <button onclick="viewOrderDetails('${order.orderId}')" 
-                                        style="padding: 8px 15px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 13px;">
-                                    View Details
-                                </button>
-                                <button onclick="trackOrder('${order.orderId}')" 
-                                        style="padding: 8px 15px; background: #17a2b8; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 13px;">
-                                    Track Order
-                                </button>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-                
-                <div style="text-align: center; margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee;">
-                    <button onclick="closeAllOrdersModal()" 
-                            style="padding: 12px 30px; background: #6c757d; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
-                        Close
-                    </button>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    // Add modal to page
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
-}
-
-function closeAllOrdersModal() {
-    const modal = document.getElementById('allOrdersModal');
-    if (modal) modal.remove();
-}
-
-// Update viewOrderDetails function
-function viewOrderDetails(orderId) {
-    // FIXED: Look in orderHistory first, then orders
-    const orderHistory = JSON.parse(localStorage.getItem('orderHistory') || '[]');
-    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-    
-    // Search in orderHistory first (where paymentManager saves them)
-    let order = orderHistory.find(o => o.orderId === orderId || o.id === orderId);
-    
-    // If not found in orderHistory, search in orders
-    if (!order) {
-        order = orders.find(o => o.orderId === orderId || o.id === orderId);
+      }
     }
     
-    if (!order) {
-        alert('Order details not found.');
-        return;
-    }
-    
-    // Get amount details
-    const orderAmount = order.grandTotal || order.total || order.amount || 0;
-    const subtotal = order.subtotal || 0;
-    const deliveryCharge = order.deliveryCharge || 0;
-    const taxAmount = order.taxAmount || 0;
-    
-    const itemsList = order.items ? 
-        order.items.map(item => 
-            `• ${item.name || 'Item'} (Qty: ${item.quantity || 1}) - ₹${(item.price || 0) * (item.quantity || 1)}`
-        ).join('\n') : 
-        'Single item purchase';
-    
-    // Build detailed alert
-    let alertText = `📋 ORDER DETAILS\n\n` +
-                   `Order ID: ${order.orderId || order.id}\n` +
-                   `Date: ${new Date(order.paymentDate || order.orderDate || order.date || Date.now()).toLocaleString()}\n` +
-                   `Status: ${order.paymentStatus || order.status || 'Completed'}\n` +
-                   `Payment ID: ${order.paymentId || 'N/A'}\n\n` +
-                   `📊 AMOUNT BREAKDOWN:\n` +
-                   `Subtotal: ₹${subtotal.toFixed(2)}\n` +
-                   `Delivery: ₹${deliveryCharge.toFixed(2)}\n` +
-                   `GST (5%): ₹${taxAmount.toFixed(2)}\n` +
-                   `Total: ₹${orderAmount.toFixed(2)}\n\n` +
-                   `🛒 ITEMS:\n${itemsList}\n\n`;
-    
-    // Add shipping address if available
-    if (order.shippingAddress) {
-        alertText += `🚚 Shipping Address:\n${order.shippingAddress}`;
-    } else if (order.userAddress) {
-        alertText += `🚚 Shipping Address:\n${order.userAddress}`;
-    }
-    
-    alert(alertText);
-}
-    
+    // Edit Profile Function
     function editProfile() {
       const currentUser = JSON.parse(localStorage.getItem('currentUser'));
       if (!currentUser) return;
@@ -1620,11 +1219,6 @@ function viewOrderDetails(orderId) {
       // Update currentUser in localStorage
       localStorage.setItem('currentUser', JSON.stringify(updatedUser));
       
-      // Also update in AppState if it exists
-      if (typeof window.AppState !== 'undefined') {
-        window.AppState.setUser(updatedUser);
-      }
-      
       // Close modal and refresh profile
       closeEditModal();
       loadProfileInfo();
@@ -1632,66 +1226,222 @@ function viewOrderDetails(orderId) {
       alert('Profile updated successfully!');
     }
     
-    function viewAllOrders() {
+    // View all orders function
+    async function viewAllOrders() {
       const currentUser = JSON.parse(localStorage.getItem('currentUser'));
       if (!currentUser) return;
       
-      // FIXED: Get orders from 'orders' key
-      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-      const userOrders = orders.filter(order => order.userEmail === currentUser.email || order.userId === currentUser.email);
-      
-      if (userOrders.length === 0) {
-        alert('You have no order history yet.\n\nStart shopping to place your first order!');
-        return;
+      try {
+        // Fetch all user orders from database
+        const response = await fetch('https://backend-production-c281a.up.railway.app/api/ordersdash/user-orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: currentUser.email })
+        });
+        
+        let userOrders = [];
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.orders) {
+            userOrders = data.orders;
+          }
+        }
+        
+        // Fallback to localStorage
+        if (userOrders.length === 0) {
+          const orders = JSON.parse(localStorage.getItem('orderHistory') || '[]');
+          userOrders = orders.filter(order => 
+            order.userEmail === currentUser.email || 
+            (order.customer && order.customer.email === currentUser.email)
+          );
+        }
+        
+        if (userOrders.length === 0) {
+          alert('You have no order history yet.\n\nStart shopping to place your first order!');
+          return;
+        }
+        
+        showAllOrdersModal(userOrders);
+        
+      } catch (error) {
+        console.error('Error fetching orders:', error);
+        alert('Unable to load orders. Please try again later.');
       }
-      
-      // Sort by date (newest first)
-      const sortedOrders = userOrders.sort((a, b) => 
-        new Date(b.orderDate || b.date) - new Date(a.orderDate || a.date)
-      );
-      
-      const orderList = sortedOrders.map((order, index) => 
-        `${index + 1}. Order #${order.orderId || order.id || 'N/A'} - ₹${order.total || order.amount || 0} - ${new Date(order.orderDate || order.date || Date.now()).toLocaleDateString()} - ${order.status || 'Completed'}`
-      ).join('\n\n');
-      
-      alert(`📦 YOUR ORDER HISTORY (${userOrders.length} orders)\n\n${orderList}\n\nTotal Amount Spent: ₹${userOrders.reduce((sum, order) => sum + (order.total || 0), 0).toFixed(2)}`);
     }
     
+    function showAllOrdersModal(orders) {
+      // Create modal HTML
+      const modalHTML = `
+        <div id="allOrdersModal" class="modal">
+          <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+              <h2><i class="fas fa-shopping-bag"></i> All Your Orders (${orders.length})</h2>
+              <button class="close-modal" onclick="closeAllOrdersModal()">&times;</button>
+            </div>
+            
+            <div style="max-height: 60vh; overflow-y: auto; padding: 10px;">
+              ${orders.sort((a, b) => new Date(b.createdAt || b.paidAt) - new Date(a.createdAt || a.paidAt)).map(order => {
+                const orderId = order.orderId || 'N/A';
+                const orderDate = order.createdAt || order.paidAt || Date.now();
+                const orderStatus = order.status || order.paymentStatus || 'confirmed';
+                const total = order.pricing?.total || order.grandTotal || order.total || 0;
+                const items = order.items || [];
+                
+                let statusClass = 'status-confirmed';
+                if (orderStatus.toLowerCase() === 'pending') statusClass = 'status-pending';
+                
+                return `
+                  <div style="border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 20px; margin-bottom: 15px; background: #f8f9fa;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                      <div>
+                        <div style="font-weight: bold; font-size: 16px; color: var(--dark-color);">Order #${orderId}</div>
+                        <div style="color: var(--secondary-color); font-size: 14px;">
+                          ${new Date(orderDate).toLocaleDateString('en-IN', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </div>
+                      </div>
+                      <div style="text-align: right;">
+                        <div style="color: var(--success-color); font-weight: bold; font-size: 18px;">₹${total.toFixed(2)}</div>
+                        <span class="order-status ${statusClass}" style="margin-top: 5px; display: inline-block;">
+                          ${orderStatus.charAt(0).toUpperCase() + orderStatus.slice(1)}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 15px; margin-bottom: 15px;">
+                      <div>
+                        <div style="font-weight: bold; margin-bottom: 8px; color: var(--dark-color);">Items (${items.length})</div>
+                        ${items.map(item => `
+                          <div style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid var(--border-color);">
+                            <span>${item.name || 'Product'} × ${item.quantity || 1}</span>
+                            <span style="font-weight: 500;">₹${((item.price || 0) * (item.quantity || 1)).toFixed(2)}</span>
+                          </div>
+                        `).join('')}
+                      </div>
+                      <div>
+                        <div style="font-weight: bold; margin-bottom: 8px; color: var(--dark-color);">Order Summary</div>
+                        <div style="display: grid; gap: 5px;">
+                          <div style="display: flex; justify-content: space-between;">
+                            <span>Subtotal:</span>
+                            <span>₹${order.pricing?.subtotal || 0}</span>
+                          </div>
+                          <div style="display: flex; justify-content: space-between;">
+                            <span>Delivery:</span>
+                            <span>₹${order.pricing?.deliveryCharge || 0}</span>
+                          </div>
+                          <div style="display: flex; justify-content: space-between;">
+                            <span>Tax:</span>
+                            <span>₹${order.pricing?.taxAmount || 0}</span>
+                          </div>
+                          <div style="display: flex; justify-content: space-between; font-weight: bold; border-top: 1px solid var(--border-color); padding-top: 5px;">
+                            <span>Total:</span>
+                            <span>₹${total.toFixed(2)}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px;">
+                      <button onclick="viewOrderDetails('${orderId}')" class="btn-sm btn-primary">
+                        <i class="fas fa-eye"></i> View Details
+                      </button>
+                      <button onclick="trackOrder('${orderId}')" class="btn-sm btn-secondary">
+                        <i class="fas fa-truck"></i> Track Order
+                      </button>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+            
+            <div style="text-align: center; margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--border-color);">
+              <button onclick="closeAllOrdersModal()" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Close
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      // Add modal to page
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+    }
+    
+    function closeAllOrdersModal() {
+      const modal = document.getElementById('allOrdersModal');
+      if (modal) modal.remove();
+    }
+    
+    // View order details function
     function viewOrderDetails(orderId) {
-      // FIXED: Get orders from 'orders' key
+      // Look in orderHistory first, then orders
+      const orderHistory = JSON.parse(localStorage.getItem('orderHistory') || '[]');
       const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-      const order = orders.find(o => o.orderId === orderId || o.id === orderId);
+      
+      // Search in orderHistory first (where paymentManager saves them)
+      let order = orderHistory.find(o => o.orderId === orderId || o.id === orderId);
+      
+      // If not found in orderHistory, search in orders
+      if (!order) {
+        order = orders.find(o => o.orderId === orderId || o.id === orderId);
+      }
       
       if (!order) {
         alert('Order details not found.');
         return;
       }
       
+      // Get amount details
+      const orderAmount = order.grandTotal || order.total || order.amount || 0;
+      const subtotal = order.subtotal || order.pricing?.subtotal || 0;
+      const deliveryCharge = order.deliveryCharge || order.pricing?.deliveryCharge || 0;
+      const taxAmount = order.taxAmount || order.pricing?.taxAmount || 0;
+      
       const itemsList = order.items ? 
         order.items.map(item => 
-          `• ${item.name} (Qty: ${item.quantity || 1}) - ₹${item.price || 0}`
+          `• ${item.name || 'Item'} (Qty: ${item.quantity || 1}) - ₹${(item.price || 0) * (item.quantity || 1)}`
         ).join('\n') : 
         'Single item purchase';
       
-      alert(`📋 ORDER DETAILS\n\n` +
-            `Order ID: ${order.orderId || order.id}\n` +
-            `Date: ${new Date(order.orderDate || order.date || Date.now()).toLocaleString()}\n` +
-            `Status: ${order.status || 'Completed'}\n` +
-            `Total: ₹${order.total || order.amount || 0}\n\n` +
-            `ITEMS:\n${itemsList}\n\n` +
-            `Shipping Address:\n${order.shippingAddress || 'Not specified'}`);
+      // Build detailed alert
+      let alertText = `📋 ORDER DETAILS\n\n` +
+                     `Order ID: ${order.orderId || order.id}\n` +
+                     `Date: ${new Date(order.paymentDate || order.orderDate || order.date || Date.now()).toLocaleString()}\n` +
+                     `Status: ${order.paymentStatus || order.status || 'Completed'}\n` +
+                     `Payment ID: ${order.paymentId || 'N/A'}\n\n` +
+                     `📊 AMOUNT BREAKDOWN:\n` +
+                     `Subtotal: ₹${subtotal.toFixed(2)}\n` +
+                     `Delivery: ₹${deliveryCharge.toFixed(2)}\n` +
+                     `GST (5%): ₹${taxAmount.toFixed(2)}\n` +
+                     `Total: ₹${orderAmount.toFixed(2)}\n\n` +
+                     `🛒 ITEMS:\n${itemsList}\n\n`;
+      
+      // Add shipping address if available
+      if (order.shippingAddress) {
+        alertText += `🚚 Shipping Address:\n${order.shippingAddress}`;
+      } else if (order.userAddress) {
+        alertText += `🚚 Shipping Address:\n${order.userAddress}`;
+      }
+      
+      alert(alertText);
     }
     
-    // FIXED: Renamed to avoid conflict with auth.js logout function
+    // Track order function
+    function trackOrder(orderId) {
+      alert(`Tracking for order #${orderId} is not available yet.\n\nThis feature will be available soon!`);
+    }
+    
+    // Logout function
     function logoutFromProfile() {
       if (confirm('Are you sure you want to logout?')) {
         localStorage.removeItem('currentUser');
         
-        // Clear cart and wishlist if you want a fresh start on logout
-        // localStorage.removeItem('cart');
-        // localStorage.removeItem('wishlist');
-        
-        // Update AppState if exists
         if (typeof window.AppState !== 'undefined') {
           window.AppState.setUser(null);
         }
@@ -1721,13 +1471,15 @@ function viewOrderDetails(orderId) {
       }
     });
     
-   // Make functions available globally
+    // Make functions available globally
     window.editProfile = editProfile;
     window.closeEditModal = closeEditModal;
     window.saveProfileChanges = saveProfileChanges;
     window.viewAllOrders = viewAllOrders;
     window.viewOrderDetails = viewOrderDetails;
+    window.trackOrder = trackOrder;
     window.logoutFromProfile = logoutFromProfile;
+    window.closeAllOrdersModal = closeAllOrdersModal;
   </script>
   
  
@@ -1736,3 +1488,4 @@ function viewOrderDetails(orderId) {
   <script src="js/script.js"></script>
 </body>
 </html>
+
