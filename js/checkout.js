@@ -184,15 +184,20 @@ async loadDeliveryOptions() {
 
     // KEEP ALL YOUR EXISTING METHODS BELOW - they remain the same
     async init() {
-        console.log('🚀 Initializing checkout...');
-        
-        await this.checkAuthentication();
-        this.loadOrderSummary();
-        this.loadAddresses();
-        this.setupEventListeners();
-        
-        await this.testBackendConnection();
+    console.log('🚀 Initializing checkout...');
+    
+    // Check authentication first - if fails, it will redirect
+    const isAuthenticated = this.checkAuthentication();
+    if (!isAuthenticated) {
+        return; // Stop initialization if not authenticated
     }
+    
+    this.loadOrderSummary();
+    this.loadAddresses();
+    this.setupEventListeners();
+    
+    await this.testBackendConnection();
+}
 
     async testBackendConnection() {
         try {
@@ -210,30 +215,22 @@ async loadDeliveryOptions() {
 
     checkAuthentication() {
         if (!this.currentUser) {
-            // Create test user
-            this.currentUser = {
-                name: "Test User",
-                email: "test@example.com",
-                address: {
-                    line1: "123 Test Street",
-                    city: "Delhi", 
-                    state: "DL",
-                    pincode: "110001",
-                    country: "India"
-                }
-            };
-            localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-        }
-
-        if (this.cart.length === 0) {
-            // Create test cart
-            this.cart = [
-                { id: 1, name: "Classic T-Shirt", price: 799, quantity: 2 },
-                { id: 2, name: "Premium T-Shirt", price: 1299, quantity: 1 }
-            ];
-            localStorage.setItem('cart', JSON.stringify(this.cart));
-        }
+        console.log('🔒 User not logged in, redirecting to login...');
+        alert('Please login to continue with checkout.');
+        window.location.href = 'login.html?redirect=checkout.html';
+        return false;
     }
+
+    // NEW: Check if cart has items
+    if (this.cart.length === 0) {
+        console.log('🛒 Cart is empty, redirecting to shop...');
+        alert('Your cart is empty. Please add items to proceed.');
+        window.location.href = 'shop.html';
+        return false;
+    }
+
+    return true; // Authentication successful
+}
 
     loadOrderSummary() {
         console.log('📊 Loading order summary...');
@@ -584,6 +581,7 @@ document.addEventListener('DOMContentLoaded', function() {
     window.checkoutManager = new CheckoutManager();
     window.checkoutManager.init();
 });
+
 
 
 
