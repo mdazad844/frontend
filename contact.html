@@ -357,26 +357,37 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // Configuration
+  // Configuration - Update this URL to match your backend
   const CONFIG = {
-    API_ENDPOINT: 'https://your-backend-domain.com/api/contact', // Replace with your backend URL
-    EMAIL_SERVICE: 'Resend',
-    MAX_RETRIES: 3,
-    RETRY_DELAY: 2000,
-    OFFLINE_STORAGE_KEY: 'pending_contact_messages',
-    SESSION_STORAGE_KEY: 'contact_form_data'
+    API_BASE: 'https://your-backend-domain.com/api', // Replace with your backend URL
+    CONTACT_ENDPOINT: '/contact/submit',
+    FRONTEND_URL: 'https://blinkberrys.com',
+    OFFLINE_KEY: 'blinkberrys_pending_contacts',
+    SESSION_KEY: 'blinkberrys_contact_form'
   };
   
   // DOM Elements
   const contactForm = document.getElementById('contactForm');
   const successMessage = document.getElementById('successMessage');
-  const submitBtn = document.getElementById('submitBtn');
-  const formStatus = document.getElementById('formStatus');
+  const submitBtn = contactForm?.querySelector('.submit-btn');
+  const formStatus = document.createElement('div');
+  formStatus.id = 'formStatus';
+  formStatus.style.cssText = `
+    margin-top: 15px;
+    padding: 12px 15px;
+    border-radius: 6px;
+    font-size: 14px;
+    display: none;
+  `;
+  
+  if (contactForm) {
+    contactForm.appendChild(formStatus);
+  }
   
   // Initialize form
   initializeForm();
   
-  // Form submission handler
+  // Form submission
   if (contactForm) {
     contactForm.addEventListener('submit', async function(e) {
       e.preventDefault();
@@ -384,11 +395,12 @@ document.addEventListener('DOMContentLoaded', function() {
       // Validate form
       if (!validateForm()) return;
       
-      // Disable submit button
-      setFormState('sending');
-      
       // Get form data
       const formData = getFormData();
+      
+      // Show sending state
+      showFormStatus('Sending your message...', 'info');
+      setSubmitButtonState(true);
       
       try {
         // Send to backend
@@ -396,55 +408,47 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (result.success) {
           // Success
-          showSuccess(result);
-          
-          // Save to session for analytics
-          trackSubmission(formData, result);
-          
-          // Reset form
+          showSuccess(result.data.ticketId);
           contactForm.reset();
           clearSessionData();
-          
         } else {
-          // Error from backend
           throw new Error(result.message || 'Submission failed');
         }
         
       } catch (error) {
-        // Handle error
-        handleSubmissionError(error, formData);
+        console.error('Submission error:', error);
+        
+        // Check if offline
+        if (!navigator.onLine) {
+          saveForLater(formData);
+          showFormStatus('⚠️ You\'re offline. Message saved and will be sent when you\'re back online.', 'warning');
+        } else {
+          showFormStatus('❌ Failed to send message. Please try again or contact us directly.', 'error');
+          saveForLater(formData); // Save as backup
+        }
       } finally {
-        // Re-enable submit button
-        setFormState('idle');
+        setSubmitButtonState(false);
       }
     });
   }
   
   // Form initialization
   function initializeForm() {
-    // Restore form data from session
+    // Restore form data
     restoreFormData();
     
-    // Auto-save form data on change
-    contactForm.addEventListener('input', debounce(saveFormData, 1000));
-    
-    // Phone number formatting
-    const phoneInput = document.getElementById('phone');
-    if (phoneInput) {
-      phoneInput.addEventListener('input', formatPhoneNumber);
+    // Auto-save on input
+    if (contactForm) {
+      contactForm.addEventListener('input', debounce(saveFormData, 1000));
     }
     
-    // Show current business status
+    // Add business hours status
     updateBusinessStatus();
     
     // Sync pending messages if online
     if (navigator.onLine) {
       syncPendingMessages();
     }
-    
-    // Monitor online/offline status
-    window.addEventListener('online', handleOnlineStatus);
-    window.addEventListener('offline', handleOfflineStatus);
   }
   
   // Get form data
@@ -454,19 +458,15 @@ document.addEventListener('DOMContentLoaded', function() {
       email: document.getElementById('email').value.trim().toLowerCase(),
       phone: document.getElementById('phone').value.trim(),
       subject: document.getElementById('subject').value,
-      order_type: document.getElementById('order_type').value,
-      quantity: document.getElementById('quantity').value ? parseInt(document.getElementById('quantity').value) : null,
+      order_type: document.getElementById('order_type')?.value || '',
+      estimatedQuantity: document.getElementById('quantity')?.value || null,
       message: document.getElementById('message').value.trim(),
-      website: document.getElementById('website').value, // Honeypot
       metadata: {
-        userAgent: navigator.userAgent,
-        language: navigator.language,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        screenSize: `${window.screen.width}x${window.screen.height}`,
         pageUrl: window.location.href,
-        referrer: document.referrer || 'direct'
-      },
-      timestamp: new Date().toISOString()
+        referrer: document.referrer || 'direct',
+        screenSize: `${window.screen.width}x${window.screen.height}`,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+      }
     };
   }
   
@@ -477,22 +477,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const phone = document.getElementById('phone').value.trim();
     const subject = document.getElementById('subject').value;
     const message = document.getElementById('message').value.trim();
-    const website = document.getElementById('website').value; // Honeypot
     
-    // Check honeypot
-    if (website) {
-      console.log('Spam detected: honeypot field filled');
-      return false;
-    }
-    
-    // Validation messages
     const errors = [];
     
     if (!name || name.length < 2) {
       errors.push('Name must be at least 2 characters');
     }
     
-    if (!email || !isValidEmail(email)) {
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       errors.push('Please enter a valid email address');
     }
     
@@ -508,7 +500,6 @@ document.addEventListener('DOMContentLoaded', function() {
       errors.push('Message must be at least 10 characters');
     }
     
-    // Show errors if any
     if (errors.length > 0) {
       showFormStatus(errors.join('<br>'), 'error');
       return false;
@@ -517,44 +508,14 @@ document.addEventListener('DOMContentLoaded', function() {
     return true;
   }
   
-  // Email validation
-  function isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  }
-  
-  // Phone number formatting
-  function formatPhoneNumber(e) {
-    let value = e.target.value.replace(/\D/g, '');
-    
-    if (value.length > 10) {
-      value = value.substring(0, 10);
-    }
-    
-    if (value.length > 6) {
-      value = value.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
-    } else if (value.length > 3) {
-      value = value.replace(/(\d{3})(\d{1,3})/, '$1-$2');
-    }
-    
-    e.target.value = value;
-  }
-  
   // Send to backend
   async function sendToBackend(formData) {
-    // Remove honeypot field before sending
-    const { website, ...cleanData } = formData;
-    
-    // Add verification token
-    cleanData.verificationToken = generateVerificationToken();
-    
-    const response = await fetch(CONFIG.API_ENDPOINT, {
+    const response = await fetch(`${CONFIG.API_BASE}${CONFIG.CONTACT_ENDPOINT}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-API-Key': 'your-api-key-here' // Add if needed
       },
-      body: JSON.stringify(cleanData)
+      body: JSON.stringify(formData)
     });
     
     if (!response.ok) {
@@ -564,65 +525,37 @@ document.addEventListener('DOMContentLoaded', function() {
     return await response.json();
   }
   
-  // Generate verification token
-  function generateVerificationToken() {
-    return Array.from(crypto.getRandomValues(new Uint8Array(16)))
-      .map(b => b.toString(16).padStart(2, '0'))
-      .join('');
-  }
-  
-  // Show success
-  function showSuccess(result) {
-    // Update success message with ticket ID if available
-    if (result.ticketId) {
+  // Show success message
+  function showSuccess(ticketId) {
+    if (successMessage) {
       successMessage.innerHTML = `
-        ✅ Thank you! Message #${result.ticketId} received.<br>
-        We'll respond within 24 hours. Confirmation email sent to your inbox.
+        ✅ Thank you! Ticket #${ticketId} created.<br>
+        We'll respond within 24 hours. Check your email for confirmation.
       `;
+      successMessage.style.display = 'block';
+      
+      // Scroll to success message
+      successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      
+      // Hide after 8 seconds
+      setTimeout(() => {
+        successMessage.style.display = 'none';
+      }, 8000);
     }
     
-    successMessage.style.display = 'block';
-    
-    // Scroll to success message
-    successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    
-    // Hide after 8 seconds
-    setTimeout(() => {
-      successMessage.style.display = 'none';
-    }, 8000);
+    showFormStatus('Message sent successfully!', 'success');
     
     // Show notification
     showNotification('Message sent successfully!', 'success');
   }
   
-  // Handle submission error
-  function handleSubmissionError(error, formData) {
-    console.error('Submission error:', error);
-    
-    // Check if offline
-    if (!navigator.onLine) {
-      // Save for later submission
-      saveForLater(formData);
-      showFormStatus('⚠️ You\'re offline. Message saved and will be sent when you\'re back online.', 'warning');
-      showNotification('Message saved offline', 'warning');
-    } else {
-      // Server error
-      showFormStatus('❌ Failed to send message. Please try again or contact us directly.', 'error');
-      showNotification('Failed to send message', 'error');
-      
-      // Save to local storage as backup
-      saveForLater(formData);
-    }
-  }
-  
-  // Save form data for later submission
+  // Save for later (offline)
   function saveForLater(formData) {
     try {
-      const pending = JSON.parse(localStorage.getItem(CONFIG.OFFLINE_STORAGE_KEY) || '[]');
+      const pending = JSON.parse(localStorage.getItem(CONFIG.OFFLINE_KEY) || '[]');
       formData.savedAt = new Date().toISOString();
-      formData.retryCount = 0;
       pending.push(formData);
-      localStorage.setItem(CONFIG.OFFLINE_STORAGE_KEY, JSON.stringify(pending));
+      localStorage.setItem(CONFIG.OFFLINE_KEY, JSON.stringify(pending));
       console.log('Message saved for later:', formData);
     } catch (error) {
       console.error('Error saving to localStorage:', error);
@@ -632,44 +565,33 @@ document.addEventListener('DOMContentLoaded', function() {
   // Sync pending messages
   async function syncPendingMessages() {
     try {
-      const pending = JSON.parse(localStorage.getItem(CONFIG.OFFLINE_STORAGE_KEY) || '[]');
+      const pending = JSON.parse(localStorage.getItem(CONFIG.OFFLINE_KEY) || '[]');
       
       if (pending.length === 0) return;
       
-      console.log(`🔄 Syncing ${pending.length} pending messages...`);
+      console.log(`Syncing ${pending.length} pending messages...`);
       
       const successful = [];
       const failed = [];
       
       for (const message of pending) {
-        if (message.retryCount >= CONFIG.MAX_RETRIES) {
-          failed.push(message);
-          continue;
-        }
-        
         try {
           const result = await sendToBackend(message);
           if (result.success) {
             successful.push(message);
-            console.log('✅ Synced message:', message.email);
           } else {
-            message.retryCount = (message.retryCount || 0) + 1;
             failed.push(message);
           }
         } catch (error) {
-          message.retryCount = (message.retryCount || 0) + 1;
           failed.push(message);
         }
-        
-        // Small delay between requests
-        await new Promise(resolve => setTimeout(resolve, 500));
       }
       
       // Update localStorage
-      localStorage.setItem(CONFIG.OFFLINE_STORAGE_KEY, JSON.stringify(failed));
+      localStorage.setItem(CONFIG.OFFLINE_KEY, JSON.stringify(failed));
       
       if (successful.length > 0) {
-        showNotification(`✅ ${successful.length} pending messages sent!`, 'success');
+        showNotification(`${successful.length} pending messages sent!`, 'success');
       }
       
     } catch (error) {
@@ -677,29 +599,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
   
-  // Form state management
-  function setFormState(state) {
-    switch (state) {
-      case 'sending':
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = 'Sending...';
-        formStatus.style.display = 'none';
-        break;
-      case 'idle':
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = 'Send Message';
-        break;
-      case 'error':
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = 'Send Message';
-        break;
-    }
-  }
-  
-  // Show form status
+  // Form status display
   function showFormStatus(message, type = 'info') {
     formStatus.innerHTML = message;
-    formStatus.className = 'form-status';
+    formStatus.style.display = 'block';
     
     const colors = {
       error: '#dc3545',
@@ -708,38 +611,38 @@ document.addEventListener('DOMContentLoaded', function() {
       info: '#17a2b8'
     };
     
-    formStatus.style.cssText = `
-      display: block;
-      padding: 10px 15px;
-      border-radius: 6px;
-      background: ${colors[type]}15;
-      border-left: 4px solid ${colors[type]};
-      color: ${colors[type]};
-      font-size: 14px;
-      margin-top: 15px;
-    `;
+    formStatus.style.background = `${colors[type]}15`;
+    formStatus.style.borderLeft = `4px solid ${colors[type]}`;
+    formStatus.style.color = colors[type];
   }
   
-  // Auto-save form data
+  // Submit button state
+  function setSubmitButtonState(sending) {
+    if (submitBtn) {
+      submitBtn.disabled = sending;
+      submitBtn.innerHTML = sending ? 'Sending...' : 'Send Message';
+    }
+  }
+  
+  // Save form data to session
   function saveFormData() {
     const data = {
       name: document.getElementById('name').value,
       email: document.getElementById('email').value,
       phone: document.getElementById('phone').value,
       subject: document.getElementById('subject').value,
-      order_type: document.getElementById('order_type').value,
-      quantity: document.getElementById('quantity').value,
-      message: document.getElementById('message').value,
-      timestamp: new Date().toISOString()
+      order_type: document.getElementById('order_type')?.value || '',
+      quantity: document.getElementById('quantity')?.value || '',
+      message: document.getElementById('message').value
     };
     
-    sessionStorage.setItem(CONFIG.SESSION_STORAGE_KEY, JSON.stringify(data));
+    sessionStorage.setItem(CONFIG.SESSION_KEY, JSON.stringify(data));
   }
   
   // Restore form data
   function restoreFormData() {
     try {
-      const saved = JSON.parse(sessionStorage.getItem(CONFIG.SESSION_STORAGE_KEY));
+      const saved = JSON.parse(sessionStorage.getItem(CONFIG.SESSION_KEY));
       if (saved) {
         if (saved.name) document.getElementById('name').value = saved.name;
         if (saved.email) document.getElementById('email').value = saved.email;
@@ -756,7 +659,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Clear session data
   function clearSessionData() {
-    sessionStorage.removeItem(CONFIG.SESSION_STORAGE_KEY);
+    sessionStorage.removeItem(CONFIG.SESSION_KEY);
   }
   
   // Update business status
@@ -764,13 +667,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const now = new Date();
     const hour = now.getHours();
     const day = now.getDay();
-    const statusEl = document.createElement('div');
+    const businessHours = document.querySelector('.business-hours');
+    
+    if (!businessHours) return;
     
     let status = 'Closed';
     let color = '#dc3545';
     let icon = '🔒';
     
-    // Business hours logic
     if (day >= 1 && day <= 5) { // Mon-Fri
       if (hour >= 9 && hour < 18) {
         status = 'Open Now';
@@ -785,6 +689,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
     
+    const statusEl = document.createElement('div');
     statusEl.innerHTML = `${icon} <strong>${status}</strong> (Local time: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')})`;
     statusEl.style.cssText = `
       margin-top: 15px;
@@ -796,46 +701,7 @@ document.addEventListener('DOMContentLoaded', function() {
       font-size: 14px;
     `;
     
-    const businessHours = document.querySelector('.business-hours');
-    if (businessHours) {
-      businessHours.appendChild(statusEl);
-    }
-  }
-  
-  // Track submission for analytics
-  function trackSubmission(formData, result) {
-    // Send to Google Analytics if available
-    if (typeof gtag !== 'undefined') {
-      gtag('event', 'contact_submit', {
-        'event_category': 'Contact',
-        'event_label': formData.subject,
-        'value': 1
-      });
-    }
-    
-    // Send to custom analytics
-    const analyticsData = {
-      action: 'contact_form_submission',
-      timestamp: new Date().toISOString(),
-      subject: formData.subject,
-      order_type: formData.order_type,
-      has_quantity: !!formData.quantity,
-      success: result.success,
-      ticket_id: result.ticketId,
-      source: formData.metadata.referrer
-    };
-    
-    console.log('📊 Analytics:', analyticsData);
-  }
-  
-  // Online/offline handlers
-  function handleOnlineStatus() {
-    showNotification('✅ You\'re back online! Syncing messages...', 'success');
-    syncPendingMessages();
-  }
-  
-  function handleOfflineStatus() {
-    showNotification('⚠️ You\'re offline. Messages will be saved locally.', 'warning');
+    businessHours.appendChild(statusEl);
   }
   
   // Debounce function
@@ -903,6 +769,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   `;
   document.head.appendChild(style);
+  
+  // Listen for online event
+  window.addEventListener('online', syncPendingMessages);
 });
 </script>
 
@@ -910,6 +779,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <script src="js/script.js"></script>
 </body>
 </html>
+
 
 
 
