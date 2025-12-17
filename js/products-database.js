@@ -5,8 +5,8 @@ const productDatabase = {
         id: 1,
         name: 'Classic White Hoodie',
         price: 529,
-        images: ['product1.jpg'],
-    // images: ['product1.jpg', 'product1-back.jpg', 'product1-detail.jpg', 'product1-side.jpg'],
+       // images: ['product1.jpg'],
+    images: ['product1.jpg', 'product1-back.jpg', 'product1-detail.jpg', 'product1-side.jpg'],
         description: 'Premium cotton blend hoodie with a comfortable fit. Perfect for casual wear and everyday comfort.',
         details: {
             material: '88% Cotton, 12% Polyester',
