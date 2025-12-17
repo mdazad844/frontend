@@ -1,8 +1,8 @@
-
-// Authentication functionality - works across all pages
+// Authentication functionality with MongoDB backend
 class AuthSystem {
     constructor() {
         this.currentUser = null;
+        this.backendUrl = 'https://backend-production-c281a.up.railway.app'; // Your Railway URL
         this.init();
     }
 
@@ -30,21 +30,96 @@ class AuthSystem {
         if (signupForm) {
             signupForm.addEventListener('submit', (e) => this.handleSignup(e));
         }
+
+        // Forgot password form
+        const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+        if (forgotPasswordForm) {
+            forgotPasswordForm.addEventListener('submit', (e) => this.handleForgotPassword(e));
+        }
+
+        // Reset password form
+        const resetPasswordForm = document.getElementById('resetPasswordForm');
+        if (resetPasswordForm) {
+            resetPasswordForm.addEventListener('submit', (e) => this.handleResetPassword(e));
+        }
     }
 
-    handleLogin(e) {
+    async handleLogin(e) {
         e.preventDefault();
         
-        const email = document.getElementById('email').value;
+        const email = document.getElementById('email').value.trim().toLowerCase();
         const password = document.getElementById('password').value;
-
-        // Simple validation
+        const loginBtn = document.querySelector('#loginForm button[type="submit"]');
+        
         if (!email || !password) {
-            alert('Please fill in all fields');
+            this.showAlert('Please fill in all fields', 'error');
             return;
         }
 
-        // Check if user exists
+        // Show loading state
+        const originalText = loginBtn.textContent;
+        loginBtn.disabled = true;
+        loginBtn.textContent = 'Logging in...';
+        
+        try {
+            const response = await fetch(`${this.backendUrl}/api/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await response.json();
+            
+            if (data.success) {
+                // Save user data
+                this.currentUser = {
+                    _id: data.user._id,
+                    name: data.user.name,
+                    email: data.user.email,
+                    phone: data.user.phone,
+                    address: data.user.address,
+                    createdAt: data.user.createdAt,
+                    token: data.token // JWT token for future requests
+                };
+                
+                localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                localStorage.setItem('authToken', data.token); // Store token separately
+                
+                this.updateNavbar();
+                this.showAlert(`Welcome back, ${data.user.name}!`, 'success');
+                
+                // Check for redirect URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const redirectUrl = urlParams.get('redirect');
+                
+                // Delay redirect slightly for better UX
+                setTimeout(() => {
+                    window.location.href = redirectUrl || 'index.html';
+                }, 1000);
+                
+            } else {
+                this.showAlert(data.message || 'Invalid email or password', 'error');
+            }
+            
+        } catch (error) {
+            console.error('Login error:', error);
+            this.showAlert('Network error. Please try again.', 'error');
+            
+            // Fallback to localStorage if backend is down
+            this.fallbackToLocalLogin(email, password);
+            
+        } finally {
+            // Restore button state
+            loginBtn.disabled = false;
+            loginBtn.textContent = originalText;
+        }
+    }
+
+    // Fallback method if backend is down
+    fallbackToLocalLogin(email, password) {
+        console.log('Trying local storage fallback...');
         const users = JSON.parse(localStorage.getItem('users') || '[]');
         const user = users.find(u => u.email === email && u.password === password);
 
@@ -59,133 +134,313 @@ class AuthSystem {
             
             localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
             this.updateNavbar();
+            this.showAlert('Logged in (offline mode)', 'warning');
             
-            // Redirect to home page
-            window.location.href = 'index.html';
-        } else {
-            alert('Invalid email or password');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1000);
         }
     }
 
-    handleSignup(e) {
+    async handleSignup(e) {
         e.preventDefault();
         
         // Get form values
-        const name = document.getElementById('signupName').value;
-        const email = document.getElementById('signupEmail').value;
-        const phone = document.getElementById('signupPhone').value;
+        const name = document.getElementById('signupName').value.trim();
+        const email = document.getElementById('signupEmail').value.trim().toLowerCase();
+        const phone = document.getElementById('signupPhone').value.trim();
         const password = document.getElementById('signupPassword').value;
         const confirmPassword = document.getElementById('confirmPassword').value;
         
         // Address fields
-        const addressLine1 = document.getElementById('addressLine1').value;
-        const addressLine2 = document.getElementById('addressLine2').value;
-        const city = document.getElementById('city').value;
-        const state = document.getElementById('state').value;
-        const pincode = document.getElementById('pincode').value;
-        const country = document.getElementById('country').value;
-        const landmark = document.getElementById('landmark').value;
+        const addressLine1 = document.getElementById('addressLine1').value.trim();
+        const addressLine2 = document.getElementById('addressLine2').value.trim();
+        const city = document.getElementById('city').value.trim();
+        const state = document.getElementById('state').value.trim();
+        const pincode = document.getElementById('pincode').value.trim();
+        const country = document.getElementById('country').value.trim() || 'India';
+        const landmark = document.getElementById('landmark').value.trim();
 
         // Validation
-        if (!name || !email || !phone || !password || !confirmPassword || 
-            !addressLine1 || !city || !state || !pincode) {
-            alert('Please fill in all required fields');
+        const errors = [];
+        if (!name) errors.push('Name is required');
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.push('Valid email is required');
+        if (!phone || !/^\d{10}$/.test(phone)) errors.push('Valid 10-digit phone number is required');
+        if (!password || password.length < 6) errors.push('Password must be at least 6 characters');
+        if (password !== confirmPassword) errors.push('Passwords do not match');
+        if (!addressLine1) errors.push('Address line 1 is required');
+        if (!city) errors.push('City is required');
+        if (!state) errors.push('State is required');
+        if (!pincode || !/^\d{6}$/.test(pincode)) errors.push('Valid 6-digit PIN code is required');
+
+        if (errors.length > 0) {
+            this.showAlert(errors.join('<br>'), 'error');
             return;
         }
 
-        if (password !== confirmPassword) {
-            alert('Passwords do not match');
-            return;
-        }
+        const signupBtn = document.querySelector('#signupForm button[type="submit"]');
+        const originalText = signupBtn.textContent;
+        signupBtn.disabled = true;
+        signupBtn.textContent = 'Creating account...';
+        
+        try {
+            // Create address object
+            const address = {
+                line1: addressLine1,
+                line2: addressLine2,
+                city: city,
+                state: state,
+                pincode: pincode,
+                country: country,
+                landmark: landmark,
+                type: 'home',
+                isDefault: true
+            };
 
-        if (password.length < 6) {
-            alert('Password must be at least 6 characters long');
-            return;
-        }
+            const response = await fetch(`${this.backendUrl}/api/auth/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name,
+                    email,
+                    phone,
+                    password,
+                    address
+                })
+            });
 
-        if (!/^\d{10}$/.test(phone)) {
-            alert('Please enter a valid 10-digit phone number');
-            return;
+            const data = await response.json();
+            
+            if (data.success) {
+                // Auto login after successful signup
+                this.currentUser = {
+                    _id: data.user._id,
+                    name: data.user.name,
+                    email: data.user.email,
+                    phone: data.user.phone,
+                    address: data.user.address,
+                    createdAt: data.user.createdAt,
+                    token: data.token
+                };
+                
+                localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                localStorage.setItem('authToken', data.token);
+                
+                this.updateNavbar();
+                this.showAlert(`Welcome to MyBrand, ${name}! Your account has been created successfully.`, 'success');
+                
+                // Send welcome email via backend
+                this.sendWelcomeEmail(email, name);
+                
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+                
+            } else {
+                this.showAlert(data.message || 'Registration failed', 'error');
+            }
+            
+        } catch (error) {
+            console.error('Signup error:', error);
+            this.showAlert('Network error. Please try again.', 'error');
+            
+            // Fallback to localStorage signup
+            this.fallbackToLocalSignup(name, email, phone, password, address);
+            
+        } finally {
+            signupBtn.disabled = false;
+            signupBtn.textContent = originalText;
         }
+    }
 
-        if (!/^\d{6}$/.test(pincode)) {
-            alert('Please enter a valid 6-digit PIN code');
-            return;
-        }
-
-        // Check if user already exists
+    // Fallback to localStorage if backend is down
+    fallbackToLocalSignup(name, email, phone, password, address) {
         const users = JSON.parse(localStorage.getItem('users') || '[]');
+        
+        // Check if user already exists
         if (users.find(u => u.email === email)) {
-            alert('User with this email already exists');
+            this.showAlert('User with this email already exists', 'error');
             return;
         }
 
-        // Create address object
-        const address = {
-            line1: addressLine1,
-            line2: addressLine2,
-            city: city,
-            state: state,
-            pincode: pincode,
-            country: country,
-            landmark: landmark
-        };
-
-        // Create new user
         const newUser = {
-            name: name,
-            email: email,
-            phone: phone,
-            password: password,
-            address: address,
+            name,
+            email,
+            phone,
+            password, // Note: In production, never store plain passwords
+            address,
             createdAt: new Date().toISOString()
         };
 
         users.push(newUser);
         localStorage.setItem('users', JSON.stringify(users));
 
-        // Auto login after signup
         this.currentUser = {
-            name: name,
-            email: email,
-            phone: phone,
-            address: address,
+            name,
+            email,
+            phone,
+            address,
             createdAt: newUser.createdAt
         };
+        
         localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-
         this.updateNavbar();
-        alert(`Welcome to MyBrand, ${name}! Your account has been created successfully.`);
-        window.location.href = 'index.html';
+        
+        this.showAlert(`Account created (offline mode). Data will sync when online.`, 'warning');
+        
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 1500);
+    }
+
+    // Send welcome email via backend
+    async sendWelcomeEmail(email, name) {
+        try {
+            await fetch(`${this.backendUrl}/api/emails/send-welcome`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, name })
+            });
+        } catch (error) {
+            console.error('Failed to send welcome email:', error);
+        }
+    }
+
+    // Forgot password functionality
+    async handleForgotPassword(e) {
+        e.preventDefault();
+        
+        const email = document.getElementById('forgotEmail').value.trim().toLowerCase();
+        const forgotBtn = document.querySelector('#forgotPasswordForm button[type="submit"]');
+        
+        if (!email) {
+            this.showAlert('Please enter your email address', 'error');
+            return;
+        }
+
+        const originalText = forgotBtn.textContent;
+        forgotBtn.disabled = true;
+        forgotBtn.textContent = 'Sending reset link...';
+        
+        try {
+            const response = await fetch(`${this.backendUrl}/api/auth/forgot-password`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+
+            const data = await response.json();
+            
+            if (data.success) {
+                this.showAlert('Password reset link sent to your email!', 'success');
+                // Clear form
+                document.getElementById('forgotEmail').value = '';
+                
+                // Show check email message
+                const form = document.getElementById('forgotPasswordForm');
+                form.innerHTML = `
+                    <div style="text-align: center; padding: 20px;">
+                        <h3>✅ Check Your Email</h3>
+                        <p>We've sent a password reset link to <strong>${email}</strong></p>
+                        <p>Click the link in the email to reset your password.</p>
+                        <button type="button" class="btn" onclick="window.location.reload()">Back to Login</button>
+                    </div>
+                `;
+                
+            } else {
+                this.showAlert(data.message || 'Failed to send reset link', 'error');
+            }
+            
+        } catch (error) {
+            console.error('Forgot password error:', error);
+            this.showAlert('Network error. Please try again.', 'error');
+        } finally {
+            forgotBtn.disabled = false;
+            forgotBtn.textContent = originalText;
+        }
+    }
+
+    // Reset password (when user clicks email link)
+    async handleResetPassword(e) {
+        e.preventDefault();
+        
+        const password = document.getElementById('resetPassword').value;
+        const confirmPassword = document.getElementById('confirmResetPassword').value;
+        const token = new URLSearchParams(window.location.search).get('token');
+        const resetBtn = document.querySelector('#resetPasswordForm button[type="submit"]');
+        
+        if (!token) {
+            this.showAlert('Invalid reset link', 'error');
+            return;
+        }
+
+        if (!password || password.length < 6) {
+            this.showAlert('Password must be at least 6 characters', 'error');
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            this.showAlert('Passwords do not match', 'error');
+            return;
+        }
+
+        const originalText = resetBtn.textContent;
+        resetBtn.disabled = true;
+        resetBtn.textContent = 'Resetting password...';
+        
+        try {
+            const response = await fetch(`${this.backendUrl}/api/auth/reset-password`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token, password })
+            });
+
+            const data = await response.json();
+            
+            if (data.success) {
+                this.showAlert('Password reset successful! You can now login with your new password.', 'success');
+                
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+                
+            } else {
+                this.showAlert(data.message || 'Failed to reset password', 'error');
+            }
+            
+        } catch (error) {
+            console.error('Reset password error:', error);
+            this.showAlert('Network error. Please try again.', 'error');
+        } finally {
+            resetBtn.disabled = false;
+            resetBtn.textContent = originalText;
+        }
     }
 
     logout() {
+        // Clear all auth data
         this.currentUser = null;
         localStorage.removeItem('currentUser');
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('pendingOrders'); // Optional: clear pending orders
+        
         this.updateNavbar();
-        window.location.href = 'index.html';
+        this.showAlert('Logged out successfully', 'success');
+        
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 500);
     }
 
     updateNavbar() {
-        console.log('=== updateNavbar DEBUG ===');
-        console.log('Current user:', this.currentUser);
-        
         const authLink = document.getElementById('authLink');
         const profileNavItem = document.getElementById('profileNavItem');
         const profileLink = document.querySelector('a[href="profile.html"]');
         
-        console.log('Auth link found:', !!authLink);
-        console.log('Profile nav item found:', !!profileNavItem);
-        console.log('Profile link found:', !!profileLink);
-        
-        if (!authLink) {
-            console.log('No auth link found, returning early');
-            return;
-        }
+        if (!authLink) return;
 
         if (this.currentUser) {
-            console.log('User is logged in, showing Profile and Logout');
-            // User is logged in - show Logout and show Profile link
+            // User is logged in
             authLink.textContent = 'Logout';
             authLink.href = '#';
             authLink.onclick = (e) => {
@@ -195,36 +450,96 @@ class AuthSystem {
             
             // Show profile link
             if (profileNavItem) {
-                console.log('Setting profile nav item to display: list-item');
                 profileNavItem.style.display = 'list-item';
-            } else {
-                console.log('Profile nav item NOT found!');
             }
             
-            // Show profile link as active if we're on profile page
             if (profileLink && window.location.pathname.includes('profile.html')) {
                 profileLink.classList.add('active');
             }
         } else {
-            console.log('User is NOT logged in, hiding Profile and showing Login');
-            // User is not logged in - show Login and hide Profile link
+            // User is not logged in
             authLink.textContent = 'Login';
             authLink.href = 'login.html';
             authLink.onclick = null;
             
             // Hide profile link
             if (profileNavItem) {
-                console.log('Setting profile nav item to display: none');
                 profileNavItem.style.display = 'none';
             }
             
-            // Remove active class from profile link
             if (profileLink) {
                 profileLink.classList.remove('active');
             }
         }
+    }
+
+    // Check if user is logged in (for protected pages)
+    requireAuth(redirectTo = 'login.html') {
+        if (!this.currentUser) {
+            const currentPage = window.location.pathname.split('/').pop();
+            window.location.href = `${redirectTo}?redirect=${currentPage}`;
+            return false;
+        }
+        return true;
+    }
+
+    // Get auth headers for API requests
+    getAuthHeaders() {
+        const token = localStorage.getItem('authToken');
+        return {
+            'Content-Type': 'application/json',
+            'Authorization': token ? `Bearer ${token}` : ''
+        };
+    }
+
+    // Show notification alerts
+    showAlert(message, type = 'info') {
+        // Remove existing alerts
+        const existingAlert = document.querySelector('.auth-alert');
+        if (existingAlert) existingAlert.remove();
         
-        console.log('=== END DEBUG ===');
+        const alert = document.createElement('div');
+        alert.className = `auth-alert auth-alert-${type}`;
+        alert.innerHTML = message;
+        
+        // Add styles if not already present
+        if (!document.querySelector('#auth-alert-styles')) {
+            const style = document.createElement('style');
+            style.id = 'auth-alert-styles';
+            style.textContent = `
+                .auth-alert {
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    padding: 15px 20px;
+                    border-radius: 8px;
+                    color: white;
+                    z-index: 10000;
+                    animation: slideIn 0.3s ease;
+                    max-width: 400px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                }
+                .auth-alert-success { background: #28a745; }
+                .auth-alert-error { background: #dc3545; }
+                .auth-alert-warning { background: #ffc107; color: #333; }
+                .auth-alert-info { background: #17a2b8; }
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        document.body.appendChild(alert);
+        
+        // Auto-remove after 5 seconds
+        setTimeout(() => {
+            if (alert.parentNode) {
+                alert.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => alert.remove(), 300);
+            }
+        }, 5000);
     }
 
     isLoggedIn() {
@@ -244,4 +559,17 @@ class AuthSystem {
 let authSystem;
 document.addEventListener('DOMContentLoaded', function() {
     authSystem = new AuthSystem();
+    
+    // Check for password reset token
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('token') && window.location.pathname.includes('reset-password.html')) {
+        // Pre-fill token in hidden field if exists
+        const tokenField = document.getElementById('resetToken');
+        if (tokenField) {
+            tokenField.value = urlParams.get('token');
+        }
+    }
 });
+
+// Make authSystem globally accessible
+window.authSystem = authSystem;
