@@ -358,13 +358,14 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   // Configuration - Update this URL to match your backend
-  const CONFIG = {
-    API_BASE: 'https://backend-production-c281a.up.railway.app', // Replace with your backend URL
-    CONTACT_ENDPOINT: '/contact/submit',
-    FRONTEND_URL: 'https://blinkberrys.com',
-    OFFLINE_KEY: 'blinkberrys_pending_contacts',
-    SESSION_KEY: 'blinkberrys_contact_form'
-  };
+  // Configuration - Update this URL to match your backend
+const CONFIG = {
+  API_BASE: 'https://backend-production-c281a.up.railway.app',
+  CONTACT_ENDPOINT: '/api/contact/submit', // FIXED ENDPOINT
+  FRONTEND_URL: 'https://blinkberrys.com',
+  OFFLINE_KEY: 'blinkberrys_pending_contacts',
+  SESSION_KEY: 'blinkberrys_contact_form'
+};
   
   // DOM Elements
   const contactForm = document.getElementById('contactForm');
@@ -509,21 +510,25 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   // Send to backend
-  async function sendToBackend(formData) {
-    const response = await fetch(`${CONFIG.API_BASE}${CONFIG.CONTACT_ENDPOINT}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData)
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    return await response.json();
+  // Send to backend
+async function sendToBackend(formData) {
+  const endpoint = `${CONFIG.API_BASE}${CONFIG.CONTACT_ENDPOINT}`;
+  console.log('📤 Sending to:', endpoint);
+  
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(formData)
+  });
+  
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
   }
+  
+  return await response.json();
+}
   
   // Show success message
   function showSuccess(ticketId) {
@@ -779,6 +784,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <script src="js/script.js"></script>
 </body>
 </html>
+
 
 
 
