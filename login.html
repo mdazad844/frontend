@@ -1,516 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Login - MyBrand</title>
-  <link rel="stylesheet" href="css/style.css"/>
-  <style>
-    /* Forgot Password Modal Styles - SIMPLIFIED */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0,0,0,0.5);
-    }
-    
-    .modal-content {
-      background-color: white;
-      margin: 10% auto;
-      padding: 30px;
-      border-radius: 10px;
-      width: 90%;
-      max-width: 500px;
-      box-shadow: 0 5px 30px rgba(0,0,0,0.3);
-    }
-    
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      padding-bottom: 15px;
-      border-bottom: 2px solid #007bff;
-    }
-    
-    .modal-header h2 {
-      margin: 0;
-      color: #333;
-      font-size: 24px;
-    }
-    
-    .close-modal {
-      background: none;
-      border: none;
-      font-size: 28px;
-      cursor: pointer;
-      color: #666;
-      line-height: 1;
-    }
-    
-    .close-modal:hover {
-      color: #333;
-    }
-    
-    .form-group {
-      margin-bottom: 20px;
-    }
-    
-    .form-group label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
-      color: #555;
-      font-size: 14px;
-    }
-    
-    .form-control {
-      width: 100%;
-      padding: 12px 15px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      font-size: 16px;
-      box-sizing: border-box;
-      transition: all 0.3s ease;
-    }
-    
-    .form-control:focus {
-      outline: none;
-      border-color: #007bff;
-      box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
-    }
-    
-    .modal-actions {
-      display: flex;
-      gap: 15px;
-      justify-content: flex-end;
-      margin-top: 25px;
-      padding-top: 20px;
-      border-top: 1px solid #eee;
-    }
-    
-    .btn {
-      padding: 12px 25px;
-      border-radius: 5px;
-      border: none;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-size: 16px;
-    }
-    
-    .btn-primary {
-      background: #007bff;
-      color: white;
-    }
-    
-    .btn-primary:hover {
-      background: #0056b3;
-    }
-    
-    .btn-primary:disabled {
-      background: #6c757d;
-      cursor: not-allowed;
-    }
-    
-    .btn-success {
-      background: #28a745;
-      color: white;
-    }
-    
-    .btn-success:hover {
-      background: #218838;
-    }
-    
-    .btn-secondary {
-      background: #6c757d;
-      color: white;
-    }
-    
-    .btn-secondary:hover {
-      background: #545b62;
-    }
-    
-    .forgot-password-link {
-      text-align: center;
-      margin-top: 20px;
-    }
-    
-    .forgot-password-link a {
-      color: #007bff;
-      text-decoration: none;
-      font-weight: 500;
-    }
-    
-    .forgot-password-link a:hover {
-      text-decoration: underline;
-    }
-    
-    .message {
-      padding: 12px;
-      border-radius: 5px;
-      margin-bottom: 20px;
-      font-weight: 500;
-      display: none;
-      text-align: center;
-    }
-    
-    .message.success {
-      background-color: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
-      display: block;
-    }
-    
-    .message.error {
-      background-color: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-      display: block;
-    }
-    
-    .message.info {
-      background-color: #cce5ff;
-      color: #004085;
-      border: 1px solid #b8daff;
-      display: block;
-    }
-    
-    .modal-icon {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    
-    .modal-icon img {
-      width: 80px;
-      height: 80px;
-      margin-bottom: 15px;
-    }
-    
-    .modal-icon .icon {
-      font-size: 60px;
-      color: #007bff;
-      margin-bottom: 15px;
-    }
-    
-
-
-
-
-    
-    
-    /* Success state */
-    .success-state {
-      text-align: center;
-      padding: 20px 0;
-    }
-    
-    .success-icon {
-      font-size: 60px;
-      color: #28a745;
-      margin-bottom: 20px;
-    }
-    
-    .success-state h3 {
-      color: #28a745;
-      margin-bottom: 10px;
-    }
-    
-    .success-state p {
-      color: #666;
-      line-height: 1.6;
-    }
-    
-    /* Responsive */
-    @media (max-width: 600px) {
-      .modal-content {
-        margin: 5% auto;
-        padding: 20px;
-      }
-      
-      .modal-actions {
-        flex-direction: column;
-      }
-      
-      .modal-actions .btn {
-        width: 100%;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <style>
+        /* ... keep your existing styles ... */
+    </style>
 </head>
 <body>
-<header>
-    <nav class="navbar">
-        <div class="logo"><a href="index.html">MyBrand</a></div>
-        <ul class="nav-links" id="navLinks">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="shop.html">Shop</a></li>
-            <li><a href="bulktshirts.html">Bulk plain T-shirts</a></li>
-            <li>
-                <a href="cart.html">Cart 
-                    <span class="cart-count" id="cartCount">0</span>
-                </a>
-            </li>
-            <li>
-                <a href="wishlist.html">Wishlist 
-                    <span class="wishlist-count" id="wishlistCount">0</span>
-                </a>
-            </li>
-            <li><a href="about.html">About</a></li>
-            <li><a href="contact.html">Contact</a></li>
-            <li><a href="profile.html">Profile</a></li>
-            <li><a href="login.html" id="authLink">Login</a></li>
-        </ul>
-        <div class="menu-icon" id="menuToggle">☰</div>
-    </nav>
-</header>
-
-  <!-- Login Section -->
-  <section class="login-section">
-    <div class="login-container">
-      <div class="login-form">
-        <h2>Login to Your Account</h2>
-        <form id="loginForm">
-          <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-          </div>
-          <div class="form-group">
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-          </div>
-          <button type="submit" class="btn btn-login">Login</button>
-        </form>
+    <div class="login-box">
+        <div class="brand">MyBrand</div>
+        <div class="subtitle">Admin Dashboard</div>
         
-        <div class="forgot-password-link">
-          <a href="#" onclick="showForgotPasswordModal()">Forgot Password?</a>
+        <h2>🔐 Admin Login</h2>
+        <input type="text" id="username" placeholder="Username" autocomplete="username">
+        <input type="password" id="password" placeholder="Password" autocomplete="current-password">
+        <button onclick="loginAdmin()">Login</button>
+        <p id="errorMsg"></p>
+        
+        <div class="forgot">
+            <a href="index.html">Back to Store</a>
         </div>
-        
-        <p class="signup-link">Don't have an account? <a href="signup.html">Sign up here</a></p>
-      </div>
     </div>
-  </section>
-
-  <!-- Forgot Password Modal - SIMPLIFIED VERSION -->
-  <div id="forgotPasswordModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>Reset Your Password</h2>
-        <button class="close-modal" onclick="closeForgotPasswordModal()">&times;</button>
-      </div>
-      
-      <div class="modal-icon">
-        <div class="icon">🔐</div>
-      </div>
-      
-      <!-- Email Form (Initial State) -->
-      <div id="emailForm">
-        <div id="message" class="message"></div>
-        
-        <p style="text-align: center; color: #666; margin-bottom: 20px;">
-          Enter your registered email address and we'll send you a password reset link.
-        </p>
-        
-       
-        
-        <form id="forgotPasswordForm">
-          <div class="form-group">
-            <label for="forgotEmail">Email Address:</label>
-            <input type="email" id="forgotEmail" name="email" class="form-control" 
-                   required placeholder="your.email@example.com">
-          </div>
-          
-          <div class="modal-actions">
-            <button type="button" class="btn btn-secondary" onclick="closeForgotPasswordModal()">Cancel</button>
-            <button type="submit" class="btn btn-primary" id="submitBtn">Send Reset Link</button>
-          </div>
-        </form>
-      </div>
-      
-      <!-- Success State (Hidden initially) -->
-      <div id="successState" class="success-state" style="display: none;">
-        <div class="success-icon">✅</div>
-        <h3>Reset Link Sent!</h3>
-        <p>We've sent a password reset link to <strong id="sentEmail"></strong></p>
-        <p>Please check your email inbox (and spam folder) for the reset link.</p>
-        <p><small>The link will expire in 1 hour for security.</small></p>
-        
-        <div class="modal-actions" style="margin-top: 30px;">
-          <button type="button" class="btn btn-primary" onclick="closeForgotPasswordModal()">Close</button>
-          <button type="button" class="btn btn-secondary" onclick="showEmailFormAgain()">Send to another email</button>
-        </div>
-      </div>
-      
-    </div>
-  </div>
-
-  <footer>
-    <p>© 2025 MyBrand. All Rights Reserved.</p>
-  </footer>
-
-  <script>
-    // Forgot Password Modal - Simple email link flow
     
-    function showForgotPasswordModal() {
-      const modal = document.getElementById('forgotPasswordModal');
-      modal.style.display = 'block';
-      resetModal();
-    }
-    
-    function closeForgotPasswordModal() {
-      document.getElementById('forgotPasswordModal').style.display = 'none';
-      resetModal();
-    }
-    
-    function resetModal() {
-      // Show email form, hide success state
-      document.getElementById('emailForm').style.display = 'block';
-      document.getElementById('successState').style.display = 'none';
-      
-      // Reset form
-      document.getElementById('forgotEmail').value = '';
-      document.getElementById('message').textContent = '';
-      document.getElementById('message').className = 'message';
-      document.getElementById('message').style.display = 'none';
-      
-      // Reset button
-      const submitBtn = document.getElementById('submitBtn');
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Send Reset Link';
-      submitBtn.className = 'btn btn-primary';
-    }
-    
-    function showSuccessState(email) {
-      document.getElementById('emailForm').style.display = 'none';
-      document.getElementById('successState').style.display = 'block';
-      document.getElementById('sentEmail').textContent = email;
-    }
-    
-    function showEmailFormAgain() {
-      document.getElementById('emailForm').style.display = 'block';
-      document.getElementById('successState').style.display = 'none';
-      document.getElementById('forgotEmail').value = '';
-      document.getElementById('forgotEmail').focus();
-    }
-    
-    // Handle forgot password form submission
-    document.getElementById('forgotPasswordForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      
-      const email = document.getElementById('forgotEmail').value.trim().toLowerCase();
-      const submitBtn = document.getElementById('submitBtn');
-      const messageElement = document.getElementById('message');
-      
-      // Validation
-      if (!email) {
-        showMessage('Please enter your email address', 'error');
-        return;
-      }
-      
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        showMessage('Please enter a valid email address', 'error');
-        return;
-      }
-      
-      // Disable button and show loading
-      submitBtn.disabled = true;
-      const originalText = submitBtn.textContent;
-      submitBtn.textContent = 'Sending...';
-      
-      // Clear previous messages
-      messageElement.style.display = 'none';
-      
-      try {
-        // Call backend API
-        const response = await fetch('https://backend-production-c281a.up.railway.app/api/auth/forgot-password', {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify({ email })
-        });
+    <script>
+        const BACKEND_URL = 'https://backend-production-c281a.up.railway.app';
         
-        const data = await response.json();
-        
-        if (data.success) {
-          // Show success state only if backend says it's successful
-          showSuccessState(email);
-          
-        } else {
-          // Show error message from backend
-          showMessage(data.message || 'No account found with this email address', 'error');
-          
-          // Re-enable button
-          submitBtn.disabled = false;
-          submitBtn.textContent = originalText;
+        // Check if already logged in
+        if (localStorage.getItem('adminToken')) {
+            // Validate token
+            validateToken();
         }
         
-      } catch (error) {
-        console.error('Forgot password error:', error);
-        
-        // Show error message
-        showMessage('Network error. Please check your connection and try again.', 'error');
-        
-        // Re-enable button
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalText;
-      }
-    });
-    
-    function showMessage(text, type) {
-      const messageElement = document.getElementById('message');
-      messageElement.textContent = text;
-      messageElement.className = `message ${type}`;
-      messageElement.style.display = 'block';
-      
-      // Scroll to message if it's not visible
-      messageElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-    
-    // Close modal when clicking outside
-    window.addEventListener('click', function(e) {
-      const modal = document.getElementById('forgotPasswordModal');
-      if (e.target === modal) {
-        closeForgotPasswordModal();
-      }
-    });
-    
-    // Close modal with Escape key
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
-        closeForgotPasswordModal();
-      }
-    });
-    
-    // Auto-focus email input when modal opens
-    document.addEventListener('DOMContentLoaded', function() {
-      // Focus on forgot password email input when modal is shown
-      const forgotModal = document.getElementById('forgotPasswordModal');
-      const observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-          if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
-            const modal = document.getElementById('forgotPasswordModal');
-            if (modal.style.display === 'block') {
-              setTimeout(() => {
-                document.getElementById('forgotEmail').focus();
-              }, 100);
+        async function loginAdmin() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMsg');
+            
+            errorMsg.style.display = 'none';
+            
+            if (!username || !password) {
+                showError('Please enter username and password');
+                return;
             }
-          }
+            
+            const btn = document.querySelector('button');
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = 'Logging in...';
+            
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/admin/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Store token and admin info
+                    localStorage.setItem('adminToken', data.token);
+                    localStorage.setItem('adminInfo', JSON.stringify(data.admin));
+                    localStorage.setItem('adminLoginTime', new Date().toISOString());
+                    
+                    // Redirect to orders dashboard
+                    window.location.href = 'admin-orders.html';
+                    
+                } else {
+                    showError(data.message || 'Login failed');
+                }
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                showError('Network error. Please try again.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        }
+        
+        async function validateToken() {
+            const token = localStorage.getItem('adminToken');
+            
+            if (!token) return false;
+            
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/admin/validate`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (response.ok) {
+                    window.location.href = 'admin-orders.html';
+                }
+                
+            } catch (error) {
+                console.log('Token validation failed');
+            }
+        }
+        
+        function showError(message) {
+            const errorMsg = document.getElementById('errorMsg');
+            errorMsg.textContent = message;
+            errorMsg.style.display = 'block';
+        }
+        
+        // Allow Enter key to login
+        document.getElementById('password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                loginAdmin();
+            }
         });
-      });
-      
-      observer.observe(forgotModal, { attributes: true });
-    });
-  </script>
-  
-  <script src="js/auth.js"></script>
-  <script src="js/script.js"></script>
+        
+        // Auto-focus on username field
+        document.getElementById('username').focus();
+    </script>
 </body>
 </html>
-
-
