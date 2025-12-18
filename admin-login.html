@@ -108,40 +108,37 @@
     </div>
     
     <script>
-        // Check if already logged in
-        if (localStorage.getItem('adminLoggedIn') === 'true') {
+const BACKEND_URL = 'https://backend-production-c281a.up.railway.app';
+const ADMIN_SECRET = 'your-hard-to-guess-secret-123'; // Same as backend
+
+function loginAdmin() {
+    const password = document.getElementById('adminPassword').value;
+    const errorMsg = document.getElementById('errorMsg');
+    
+    // Send to backend for validation
+    fetch(`${BACKEND_URL}/api/admin/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: password })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Store encrypted token
+            localStorage.setItem('adminToken', ADMIN_SECRET);
+            localStorage.setItem('adminLoginTime', new Date().toISOString());
             window.location.href = 'admin-orders.html';
+        } else {
+            errorMsg.textContent = data.message || 'Incorrect password';
+            errorMsg.style.display = 'block';
+            document.getElementById('adminPassword').value = '';
         }
-        
-        function loginAdmin() {
-            const password = document.getElementById('adminPassword').value;
-            const errorMsg = document.getElementById('errorMsg');
-            
-            // Simple password check
-            if (password === '123@Abc') { // Change this to your secure password
-                localStorage.setItem('adminLoggedIn', 'true');
-                localStorage.setItem('adminLoginTime', new Date().toISOString());
-                window.location.href = 'admin-orders.html';
-            } else {
-                errorMsg.style.display = 'block';
-                document.getElementById('adminPassword').value = '';
-                document.getElementById('adminPassword').focus();
-            }
-        }
-        
-        // Allow Enter key to login
-        document.getElementById('adminPassword').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                loginAdmin();
-            }
-        });
-        
-        function resetPassword() {
-            alert('Please contact the system administrator to reset your password.');
-        }
-        
-        // Auto-focus on password field
-        document.getElementById('adminPassword').focus();
-    </script>
+    })
+    .catch(error => {
+        errorMsg.textContent = 'Network error. Please try again.';
+        errorMsg.style.display = 'block';
+    });
+}
+</script>
 </body>
 </html>
