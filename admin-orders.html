@@ -379,6 +379,74 @@ async function loadOrders() {
     }
 }
 
+    // ========== ADD THESE TWO FUNCTIONS ==========
+
+// Function to display orders in the HTML
+function displayOrders(orders) {
+    const container = document.getElementById('ordersContainer');
+    
+    if (!orders || orders.length === 0) {
+        container.innerHTML = '<div class="error-box"><h3>No Orders Found</h3><p>No orders have been placed yet.</p></div>';
+        return;
+    }
+    
+    container.innerHTML = orders.map(order => `
+        <div class="order-card">
+            <div class="order-header">
+                <div>
+                    <strong>Order #${order.orderId || order._id}</strong>
+                    <br>
+                    <small>${new Date(order.createdAt).toLocaleString()}</small>
+                    <br>
+                    <small>${order.customer?.email || 'No email'}</small>
+                </div>
+                <div>
+                    <span class="status-${order.status || 'pending'}">${(order.status || 'pending').toUpperCase()}</span>
+                    <br>
+                    <strong style="font-size: 18px;">₹${order.pricing?.total || 0}</strong>
+                </div>
+            </div>
+            
+            <div><strong>Customer:</strong> ${order.customer?.name || 'Unknown'} (${order.customer?.phone || 'No phone'})</div>
+            
+            <div style="margin: 10px 0;">
+                <strong>Items (${order.items?.length || 0}):</strong>
+                ${(order.items || []).map(item => `
+                    <div class="item-row">
+                        <span>${item.name || 'Item'} × ${item.quantity || 1}</span>
+                        <span>₹${item.total || 0}</span>
+                    </div>
+                `).join('')}
+            </div>
+            
+            <div class="total-row">
+                <span>Subtotal: ₹${order.pricing?.subtotal || 0}</span>
+                <span>Delivery: ₹${order.pricing?.deliveryCharge || 0}</span>
+                <span>Tax: ₹${order.pricing?.taxAmount || 0}</span>
+                <span><strong>Total: ₹${order.pricing?.total || 0}</strong></span>
+            </div>
+            
+            <div style="margin-top: 10px; font-size: 12px; color: #666;">
+                <strong>Payment:</strong> ${order.paymentStatus || 'unknown'} via ${order.paymentMethod || 'unknown'}
+                ${order.paidAt ? `<br><strong>Paid at:</strong> ${new Date(order.paidAt).toLocaleString()}` : ''}
+                ${order.shippingAddress?.line1 ? `<br><strong>Address:</strong> ${order.shippingAddress.line1}, ${order.shippingAddress.city}` : ''}
+            </div>
+        </div>
+    `).join('');
+}
+
+// Function to update statistics
+function updateStats(orders) {
+    const totalOrders = orders.length;
+    const totalRevenue = orders.reduce((sum, order) => sum + (order.pricing?.total || 0), 0);
+    const avgOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+    const uniqueCustomers = [...new Set(orders.map(order => order.customer?.email).filter(Boolean))].length;
+    
+    document.getElementById('totalOrdersCount').textContent = totalOrders;
+    document.getElementById('totalRevenue').textContent = `₹${totalRevenue.toFixed(2)}`;
+    document.getElementById('avgOrderValue').textContent = `₹${avgOrderValue.toFixed(2)}`;
+    document.getElementById('uniqueCustomers').textContent = uniqueCustomers;
+}
 // ... rest of your existing functions (displayOrders, updateStats, etc.) ...
 
 // Initialize
@@ -398,4 +466,5 @@ document.addEventListener('DOMContentLoaded', async function() {
 </script>
 </body>
 </html>
+
 
