@@ -595,29 +595,43 @@
     }
     
     // Step 1: Request OTP - USING BACKEND API
-    document.getElementById('forgotPasswordFormStep1').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      
-      const email = document.getElementById('forgotEmail').value.trim().toLowerCase();
-      
-      if (!email) {
-        showMessage('message', 'Please enter your email address', 'error');
-        return;
-      }
-      
-      const submitBtn = this.querySelector('button[type="submit"]');
-      const originalText = submitBtn.textContent;
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Sending...';
-      
-      try {
-        // Call your backend API directly
-        const response = await fetch('https://backend-production-c281a.up.railway.app/api/auth/forgot-password', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email })
-        });
-
+  // In login.html, replace the forgot password form handler with:
+document.getElementById('forgotPasswordFormStep1').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  
+  const email = document.getElementById('forgotEmail').value.trim().toLowerCase();
+  const btn = this.querySelector('button[type="submit"]');
+  
+  if (!email) {
+    alert('Please enter your email');
+    return;
+  }
+  
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+  
+  try {
+    const response = await fetch('https://backend-production-c281a.up.railway.app/api/auth/forgot-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      alert('✅ Password reset link sent! Check your email.');
+      closeForgotPasswordModal();
+    } else {
+      alert('Error: ' + (data.message || 'Failed to send reset link'));
+    }
+  } catch (error) {
+    alert('Network error. Please try again.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Send Reset Link';
+  }
+});
         const data = await response.json();
         
         if (data.success) {
@@ -834,4 +848,5 @@
   <script src="js/script.js"></script>
 </body>
 </html>
+
 
