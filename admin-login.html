@@ -5,90 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login</title>
     <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        .login-box { 
-            background: white; 
-            padding: 40px; 
-            border-radius: 12px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
-            width: 350px;
-            text-align: center;
-        }
-        h2 { 
-            color: #333; 
-            margin-bottom: 30px;
-            font-size: 24px;
-        }
-        input { 
-            width: 100%; 
-            padding: 12px; 
-            margin: 10px 0; 
-            border: 2px solid #ddd; 
-            border-radius: 6px;
-            font-size: 16px;
-            transition: border 0.3s;
-            box-sizing: border-box;
-        }
-        input:focus { 
-            border-color: #007bff; 
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
-        }
-        button { 
-            width: 100%; 
-            padding: 12px; 
-            background: #007bff; 
-            color: white; 
-            border: none; 
-            border-radius: 6px; 
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            margin-top: 10px;
-            transition: background 0.3s;
-        }
-        button:hover {
-            background: #0056b3;
-        }
-        #errorMsg { 
-            color: #dc3545; 
-            display: none;
-            margin-top: 10px;
-            padding: 8px;
-            background: #f8d7da;
-            border-radius: 4px;
-            border: 1px solid #f5c6cb;
-        }
-        .brand {
-            font-size: 28px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 5px;
-        }
-        .subtitle {
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 14px;
-        }
-        .forgot {
-            margin-top: 15px;
-            font-size: 12px;
-            color: #666;
-        }
-        .forgot a {
-            color: #007bff;
-            text-decoration: none;
-        }
-        .forgot a:hover {
-            text-decoration: underline;
-        }
+        /* ... keep your existing styles ... */
     </style>
 </head>
 <body>
@@ -97,48 +14,110 @@
         <div class="subtitle">Admin Dashboard</div>
         
         <h2>🔐 Admin Login</h2>
-        <input type="password" id="adminPassword" placeholder="Enter admin password" autocomplete="current-password">
+        <input type="text" id="username" placeholder="Username" autocomplete="username">
+        <input type="password" id="password" placeholder="Password" autocomplete="current-password">
         <button onclick="loginAdmin()">Login</button>
-        <p id="errorMsg">Incorrect password</p>
+        <p id="errorMsg"></p>
         
         <div class="forgot">
-            <a href="javascript:void(0)" onclick="resetPassword()">Forgot password?</a> | 
             <a href="index.html">Back to Store</a>
         </div>
     </div>
     
     <script>
-const BACKEND_URL = 'https://backend-production-c281a.up.railway.app';
-const ADMIN_SECRET = 'your-hard-to-guess-secret-123'; // Same as backend
-
-function loginAdmin() {
-    const password = document.getElementById('adminPassword').value;
-    const errorMsg = document.getElementById('errorMsg');
-    
-    // Send to backend for validation
-    fetch(`${BACKEND_URL}/api/admin/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: password })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Store encrypted token
-            localStorage.setItem('adminToken', ADMIN_SECRET);
-            localStorage.setItem('adminLoginTime', new Date().toISOString());
-            window.location.href = 'admin-orders.html';
-        } else {
-            errorMsg.textContent = data.message || 'Incorrect password';
-            errorMsg.style.display = 'block';
-            document.getElementById('adminPassword').value = '';
+        const BACKEND_URL = 'https://backend-production-c281a.up.railway.app';
+        
+        // Check if already logged in
+        if (localStorage.getItem('adminToken')) {
+            // Validate token
+            validateToken();
         }
-    })
-    .catch(error => {
-        errorMsg.textContent = 'Network error. Please try again.';
-        errorMsg.style.display = 'block';
-    });
-}
-</script>
+        
+        async function loginAdmin() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMsg');
+            
+            errorMsg.style.display = 'none';
+            
+            if (!username || !password) {
+                showError('Please enter username and password');
+                return;
+            }
+            
+            const btn = document.querySelector('button');
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = 'Logging in...';
+            
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/admin/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Store token and admin info
+                    localStorage.setItem('adminToken', data.token);
+                    localStorage.setItem('adminInfo', JSON.stringify(data.admin));
+                    localStorage.setItem('adminLoginTime', new Date().toISOString());
+                    
+                    // Redirect to orders dashboard
+                    window.location.href = 'admin-orders.html';
+                    
+                } else {
+                    showError(data.message || 'Login failed');
+                }
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                showError('Network error. Please try again.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        }
+        
+        async function validateToken() {
+            const token = localStorage.getItem('adminToken');
+            
+            if (!token) return false;
+            
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/admin/validate`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (response.ok) {
+                    window.location.href = 'admin-orders.html';
+                }
+                
+            } catch (error) {
+                console.log('Token validation failed');
+            }
+        }
+        
+        function showError(message) {
+            const errorMsg = document.getElementById('errorMsg');
+            errorMsg.textContent = message;
+            errorMsg.style.display = 'block';
+        }
+        
+        // Allow Enter key to login
+        document.getElementById('password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                loginAdmin();
+            }
+        });
+        
+        // Auto-focus on username field
+        document.getElementById('username').focus();
+    </script>
 </body>
 </html>
