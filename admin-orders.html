@@ -241,116 +241,95 @@
         </div>
     </div>
     
-    <script>
+   <!-- ... keep your HTML structure ... -->
+
+<script>
 const BACKEND_URL = 'https://backend-production-c281a.up.railway.app';
 
-// ========== SECURITY ENHANCEMENTS ==========
+// ========== JWT AUTHENTICATION ==========
 
-// 1. Obfuscated admin token (Base64 encoded)
-const ADMIN_TOKEN = 'MTIzQEFiYw=='; // Base64 encoded "123@Abc"
+// Check if admin is authenticated
+const adminToken = localStorage.getItem('adminToken');
+const adminInfo = JSON.parse(localStorage.getItem('adminInfo') || '{}');
 
-// 2. Check if user is properly authenticated
-function checkAdminAuth() {
-    // Get stored credentials
-    const storedToken = localStorage.getItem('adminToken');
-    const loginTime = localStorage.getItem('adminLoginTime');
-    
-    // Check if token exists and matches
-    if (storedToken !== atob(ADMIN_TOKEN)) {
-        redirectToLogin();
-        return false;
-    }
-    
-    // Check session timeout (2 hours)
-    if (loginTime) {
-        const loginDate = new Date(loginTime);
-        const now = new Date();
-        const diffHours = (now - loginDate) / (1000 * 60 * 60);
-        
-        if (diffHours > 2) {
-            alert('Session expired due to inactivity');
-            logoutAdmin();
-            return false;
-        }
-    }
-    
-    return true;
-}
-
-// 3. Redirect to login if not authenticated
-if (!checkAdminAuth()) {
+if (!adminToken || !adminInfo.id) {
+    console.log('❌ No valid admin session, redirecting to login...');
     window.location.href = 'admin-login.html';
 }
 
-// 4. Hide security warning after first viewing
-function hideWarning() {
-    document.getElementById('securityWarning').style.display = 'none';
-    localStorage.setItem('hideSecurityWarning', 'true');
+// Function to get auth headers
+function getAuthHeaders() {
+    const token = localStorage.getItem('adminToken');
+    return {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+    };
 }
 
-// Check if warning should be hidden
-if (localStorage.getItem('hideSecurityWarning') === 'true') {
-    document.getElementById('securityWarning').style.display = 'none';
-}
-
-// ========== SESSION MANAGEMENT ==========
-
-let sessionTimerInterval;
-let idleTimer;
-
-function startSessionTimer() {
-    const loginTime = localStorage.getItem('adminLoginTime');
-    if (!loginTime) return;
+// Validate token with backend
+async function validateAdminToken() {
+    const token = localStorage.getItem('adminToken');
     
-    sessionTimerInterval = setInterval(() => {
-        const loginDate = new Date(loginTime);
-        const now = new Date();
-        const diffMs = now - loginDate;
-        const diffMins = Math.floor(diffMs / 60000);
+    if (!token) {
+        redirectToLogin('No token found');
+        return false;
+    }
+    
+    try {
+        const response = await fetch(`${BACKEND_URL}/api/admin/validate`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
         
-        if (diffMins > 120) { // Auto logout after 2 hours
-            logoutAdmin();
-        } else {
-            document.getElementById('sessionTimer').textContent = `Session: ${diffMins}m`;
+        if (response.status === 401) {
+            redirectToLogin('Session expired');
+            return false;
         }
-    }, 60000); // Update every minute
+        
+        if (!response.ok) {
+            throw new Error('Token validation failed');
+        }
+        
+        return true;
+        
+    } catch (error) {
+        console.error('Token validation error:', error);
+        redirectToLogin('Authentication failed');
+        return false;
+    }
 }
 
-function resetIdleTimer() {
-    clearTimeout(idleTimer);
-    idleTimer = setTimeout(() => {
-        if (confirm('You have been inactive for 15 minutes. Stay logged in?')) {
-            resetIdleTimer();
-        } else {
-            logoutAdmin();
-        }
-    }, 15 * 60 * 1000); // 15 minutes
-}
-
-function redirectToLogin() {
+function redirectToLogin(reason) {
+    console.log(`🔒 Redirecting to login: ${reason}`);
     localStorage.removeItem('adminToken');
+    localStorage.removeItem('adminInfo');
     localStorage.removeItem('adminLoginTime');
     window.location.href = 'admin-login.html';
 }
 
 function logoutAdmin() {
     if (confirm('Are you sure you want to logout?')) {
-        redirectToLogin();
+        // Notify backend about logout
+        fetch(`${BACKEND_URL}/api/admin/logout`, {
+            method: 'POST',
+            headers: getAuthHeaders()
+        }).catch(error => {
+            console.log('Backend logout notification failed');
+        });
+        
+        redirectToLogin('User logged out');
     }
 }
 
-// Track user activity
-document.addEventListener('mousemove', resetIdleTimer);
-document.addEventListener('keypress', resetIdleTimer);
-document.addEventListener('click', resetIdleTimer);
-
 // ========== ORDERS MANAGEMENT ==========
 
-let allOrders = []; // Store orders for export
+let allOrders = [];
 
 async function loadOrders() {
-    // Check authentication before loading orders
-    if (!checkAdminAuth()) {
+    // Validate token first
+    if (!await validateAdminToken()) {
         return;
     }
     
@@ -358,27 +337,32 @@ async function loadOrders() {
     container.innerHTML = '<div class="loading">🔄 Loading orders...</div>';
     
     try {
-        console.log('🔄 Fetching orders from:', `${BACKEND_URL}/api/ordersdash/all-orders`);
+        console.log('🔄 Fetching orders with JWT token...');
         
-        const response = await fetch(`${BACKEND_URL}/api/ordersdash/all-orders`);
+        const response = await fetch(`${BACKEND_URL}/api/ordersdash/all-orders`, {
+            headers: getAuthHeaders()
+        });
+        
+        if (response.status === 401) {
+            redirectToLogin('Session expired');
+            return;
+        }
         
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
         
         const data = await response.json();
-        console.log('📊 API Response:', data);
         
         if (data.success && data.orders && data.orders.length > 0) {
-            allOrders = data.orders; // Store for export
+            allOrders = data.orders;
             displayOrders(data.orders);
             updateStats(data.orders);
         } else {
             container.innerHTML = `
                 <div class="error-box">
                     <h3>No Orders Found</h3>
-                    <p>No orders have been placed yet.</p>
-                    <p><em>Make sure your backend is connected to MongoDB.</em></p>
+                    <p>${data.message || 'No orders have been placed yet.'}</p>
                 </div>
             `;
         }
@@ -389,181 +373,29 @@ async function loadOrders() {
             <div class="error-box">
                 <h3>⚠️ Error Loading Orders</h3>
                 <p><strong>Error:</strong> ${error.message}</p>
-                <p>Trying to fetch from: ${BACKEND_URL}/api/ordersdash/all-orders</p>
-                <button onclick="testBackend()" class="refresh-btn">Test Backend Connection</button>
+                <button onclick="loadOrders()" class="refresh-btn">🔄 Retry</button>
             </div>
         `;
     }
 }
 
-function displayOrders(orders) {
-    const container = document.getElementById('ordersContainer');
-    
-    container.innerHTML = orders.map(order => `
-        <div class="order-card">
-            <div class="order-header">
-                <div>
-                    <strong>Order #${order.orderId}</strong>
-                    <br>
-                    <small>${new Date(order.createdAt).toLocaleString()}</small>
-                    <br>
-                    <small>${order.customer.email}</small>
-                </div>
-                <div>
-                    <span class="status-${order.status}">${order.status.toUpperCase()}</span>
-                    <br>
-                    <strong style="font-size: 18px;">₹${order.pricing?.total || 0}</strong>
-                </div>
-            </div>
-            
-            <div><strong>Customer:</strong> ${order.customer.name} (${order.customer.phone || 'No phone'})</div>
-            
-            <div style="margin: 10px 0;">
-                <strong>Items (${order.items.length}):</strong>
-                ${order.items.map(item => `
-                    <div class="item-row">
-                        <span>${item.name} × ${item.quantity}</span>
-                        <span>₹${item.total}</span>
-                    </div>
-                `).join('')}
-            </div>
-            
-            <div class="total-row">
-                <span>Subtotal: ₹${order.pricing?.subtotal || 0}</span>
-                <span>Delivery: ₹${order.pricing?.deliveryCharge || 0}</span>
-                <span>Tax: ₹${order.pricing?.taxAmount || 0}</span>
-                <span><strong>Total: ₹${order.pricing?.total || 0}</strong></span>
-            </div>
-            
-            <div style="margin-top: 10px; font-size: 12px; color: #666;">
-                <strong>Payment:</strong> ${order.paymentStatus} via ${order.paymentMethod}
-                ${order.paidAt ? `<br><strong>Paid at:</strong> ${new Date(order.paidAt).toLocaleString()}` : ''}
-                ${order.shippingAddress.line1 ? `<br><strong>Address:</strong> ${order.shippingAddress.line1}, ${order.shippingAddress.city}` : ''}
-            </div>
-            
-            <div style="margin-top: 10px; display: flex; gap: 10px;">
-                <button onclick="updateStatus('${order.orderId}', 'processing')" style="padding: 5px 10px; background: #17a2b8; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">Mark as Processing</button>
-                <button onclick="updateStatus('${order.orderId}', 'shipped')" style="padding: 5px 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">Mark as Shipped</button>
-                <button onclick="viewOrderDetails('${order.orderId}')" style="padding: 5px 10px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">View Details</button>
-            </div>
-        </div>
-    `).join('');
-}
+// ... rest of your existing functions (displayOrders, updateStats, etc.) ...
 
-function updateStats(orders) {
-    const totalOrders = orders.length;
-    const totalRevenue = orders.reduce((sum, order) => sum + (order.pricing?.total || 0), 0);
-    const avgOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
-    const uniqueCustomers = [...new Set(orders.map(order => order.customer.email))].length;
+// Initialize
+document.addEventListener('DOMContentLoaded', async function() {
+    console.log('🔐 Admin Orders Dashboard Initializing...');
+    console.log('Logged in as:', adminInfo.username);
     
-    document.getElementById('totalOrdersCount').textContent = totalOrders;
-    document.getElementById('totalRevenue').textContent = `₹${totalRevenue.toFixed(2)}`;
-    document.getElementById('avgOrderValue').textContent = `₹${avgOrderValue.toFixed(2)}`;
-    document.getElementById('uniqueCustomers').textContent = uniqueCustomers;
-}
-
-function updateStatus(orderId, status) {
-    if (!checkAdminAuth()) return;
-    
-    if (confirm(`Mark order #${orderId} as ${status}?`)) {
-        alert(`Order #${orderId} marked as ${status}.\n\nNote: This is a frontend-only update. Backend integration needed for persistence.`);
-        // TODO: Connect to backend to update status
-    }
-}
-
-function viewOrderDetails(orderId) {
-    if (!checkAdminAuth()) return;
-    
-    const order = allOrders.find(o => o.orderId === orderId);
-    if (!order) return;
-    
-    const itemsText = order.items.map(item => 
-        `${item.name} (Qty: ${item.quantity}) - ₹${item.total}`
-    ).join('\n');
-    
-    alert(`📋 ORDER DETAILS\n\n` +
-          `Order ID: ${order.orderId}\n` +
-          `Customer: ${order.customer.name}\n` +
-          `Email: ${order.customer.email}\n` +
-          `Phone: ${order.customer.phone || 'Not provided'}\n` +
-          `Date: ${new Date(order.createdAt).toLocaleString()}\n` +
-          `Status: ${order.status}\n` +
-          `Payment: ${order.paymentStatus} via ${order.paymentMethod}\n` +
-          `Total: ₹${order.pricing?.total}\n\n` +
-          `ITEMS:\n${itemsText}\n\n` +
-          `ADDRESS:\n${order.shippingAddress.line1}\n` +
-          `${order.shippingAddress.city}, ${order.shippingAddress.state} - ${order.shippingAddress.pincode}`);
-}
-
-function exportToCSV() {
-    if (!checkAdminAuth()) return;
-    
-    if (allOrders.length === 0) {
-        alert('No orders to export');
+    // Validate token
+    const isValid = await validateAdminToken();
+    if (!isValid) {
         return;
     }
-    
-    // Create CSV content with UTF-8 BOM for Excel compatibility
-    const csvContent = [
-        // Add UTF-8 BOM and header
-        '\ufeffOrder ID,Date,Customer Name,Customer Email,Customer Phone,Items,Subtotal,Delivery,Tax,Total,Status,Payment Method,Shipping Address',
-        ...allOrders.map(order => [
-            order.orderId,
-            new Date(order.createdAt).toLocaleDateString(),
-            `"${order.customer.name.replace(/"/g, '""')}"`, // Escape quotes
-            order.customer.email,
-            order.customer.phone || 'N/A',
-            `"${order.items.map(item => `${item.name} x${item.quantity}`).join('; ').replace(/"/g, '""')}"`, // Escape quotes
-            order.pricing?.subtotal || 0, // Use numbers without ₹ symbol
-            order.pricing?.deliveryCharge || 0,
-            order.pricing?.taxAmount || 0,
-            order.pricing?.total || 0,
-            order.status,
-            order.paymentMethod,
-            `"${order.shippingAddress.line1}, ${order.shippingAddress.city}".replace(/"/g, '""')` // Escape quotes
-        ].join(','))
-    ].join('\n');
-    
-    // Create blob with UTF-8 encoding
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `orders_export_${new Date().toISOString().split('T')[0]}.csv`;
-    a.click();
-    window.URL.revokeObjectURL(url);
-}
-
-async function testBackend() {
-    if (!checkAdminAuth()) return;
-    
-    try {
-        const response = await fetch(`${BACKEND_URL}/api/ordersdash`);
-        const data = await response.json();
-        alert(`✅ Backend is working!\n\nMessage: ${data.message}`);
-    } catch (error) {
-        alert(`❌ Backend test failed:\n\n${error.message}`);
-    }
-}
-
-// ========== INITIALIZATION ==========
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Double-check authentication
-    if (!checkAdminAuth()) {
-        return;
-    }
-    
-    // Start session management
-    startSessionTimer();
-    resetIdleTimer();
     
     // Load orders
     loadOrders();
-    
-    // Log admin access (for security monitoring)
-    console.log('🔐 Admin panel accessed at:', new Date().toLocaleString());
 });
-    </script>
+</script>
 </body>
 </html>
+
