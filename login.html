@@ -407,16 +407,12 @@
       
       // Validation
       if (!email) {
-        messageElement.textContent = 'Please enter your email address';
-        messageElement.className = 'message error';
-        messageElement.style.display = 'block';
+        showMessage('Please enter your email address', 'error');
         return;
       }
       
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        messageElement.textContent = 'Please enter a valid email address';
-        messageElement.className = 'message error';
-        messageElement.style.display = 'block';
+        showMessage('Please enter a valid email address', 'error');
         return;
       }
       
@@ -442,14 +438,12 @@
         const data = await response.json();
         
         if (data.success) {
-          // Show success state
+          // Show success state only if backend says it's successful
           showSuccessState(email);
           
         } else {
-          // Show error message
-          messageElement.textContent = data.message || 'Failed to send reset link. Please try again.';
-          messageElement.className = 'message error';
-          messageElement.style.display = 'block';
+          // Show error message from backend
+          showMessage(data.message || 'No account found with this email address', 'error');
           
           // Re-enable button
           submitBtn.disabled = false;
@@ -460,15 +454,23 @@
         console.error('Forgot password error:', error);
         
         // Show error message
-        messageElement.textContent = 'Network error. Please check your connection and try again.';
-        messageElement.className = 'message error';
-        messageElement.style.display = 'block';
+        showMessage('Network error. Please check your connection and try again.', 'error');
         
         // Re-enable button
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;
       }
     });
+    
+    function showMessage(text, type) {
+      const messageElement = document.getElementById('message');
+      messageElement.textContent = text;
+      messageElement.className = `message ${type}`;
+      messageElement.style.display = 'block';
+      
+      // Scroll to message if it's not visible
+      messageElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
     
     // Close modal when clicking outside
     window.addEventListener('click', function(e) {
@@ -494,7 +496,9 @@
           if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
             const modal = document.getElementById('forgotPasswordModal');
             if (modal.style.display === 'block') {
-              document.getElementById('forgotEmail').focus();
+              setTimeout(() => {
+                document.getElementById('forgotEmail').focus();
+              }, 100);
             }
           }
         });
