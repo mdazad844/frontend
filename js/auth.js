@@ -556,9 +556,11 @@ class AuthSystem {
 }
 
 // Initialize auth system when page loads
+// Initialize auth system when page loads
 let authSystem;
 document.addEventListener('DOMContentLoaded', function() {
     authSystem = new AuthSystem();
+    window.authSystem = authSystem; // ← ADD THIS LINE INSIDE
     
     // Check for password reset token
     const urlParams = new URLSearchParams(window.location.search);
@@ -571,5 +573,5 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Make authSystem globally accessible
-window.authSystem = authSystem;
+// ALSO make the class globally available
+window.AuthSystem = AuthSystem;
