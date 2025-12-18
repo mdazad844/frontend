@@ -6,7 +6,7 @@
   <title>Login - MyBrand</title>
   <link rel="stylesheet" href="css/style.css"/>
   <style>
-    /* Forgot Password Modal Styles */
+    /* Forgot Password Modal Styles - SIMPLIFIED */
     .modal {
       display: none;
       position: fixed;
@@ -112,13 +112,9 @@
       background: #0056b3;
     }
     
-    .btn-secondary {
+    .btn-primary:disabled {
       background: #6c757d;
-      color: white;
-    }
-    
-    .btn-secondary:hover {
-      background: #545b62;
+      cursor: not-allowed;
     }
     
     .btn-success {
@@ -130,13 +126,13 @@
       background: #218838;
     }
     
-    .btn-danger {
-      background: #dc3545;
+    .btn-secondary {
+      background: #6c757d;
       color: white;
     }
     
-    .btn-danger:hover {
-      background: #c82333;
+    .btn-secondary:hover {
+      background: #545b62;
     }
     
     .forgot-password-link {
@@ -160,6 +156,7 @@
       margin-bottom: 20px;
       font-weight: 500;
       display: none;
+      text-align: center;
     }
     
     .message.success {
@@ -183,129 +180,62 @@
       display: block;
     }
     
-    /* OTP Input Styles */
-    .otp-container {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
+    .modal-icon {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    .modal-icon img {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 15px;
+    }
+    
+    .modal-icon .icon {
+      font-size: 60px;
+      color: #007bff;
+      margin-bottom: 15px;
+    }
+    
+    .instructions {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
       margin: 20px 0;
-    }
-    
-    .otp-input {
-      width: 50px;
-      height: 50px;
-      text-align: center;
-      font-size: 24px;
-      font-weight: bold;
-      border: 2px solid #ddd;
-      border-radius: 5px;
-      transition: all 0.3s ease;
-    }
-    
-    .otp-input:focus {
-      border-color: #007bff;
-      box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
-      outline: none;
-    }
-    
-    .resend-otp {
-      text-align: center;
-      margin-top: 15px;
       font-size: 14px;
       color: #666;
+      border-left: 4px solid #007bff;
     }
     
-    .resend-otp a {
-      color: #007bff;
-      text-decoration: none;
-      font-weight: 500;
+    .instructions ul {
+      margin: 10px 0 0 20px;
+      padding: 0;
     }
     
-    .resend-otp a:hover {
-      text-decoration: underline;
+    .instructions li {
+      margin-bottom: 5px;
     }
     
-    .resend-otp.disabled {
-      color: #999;
+    /* Success state */
+    .success-state {
+      text-align: center;
+      padding: 20px 0;
     }
     
-    .resend-otp.disabled a {
-      color: #999;
-      cursor: not-allowed;
-      text-decoration: none;
+    .success-icon {
+      font-size: 60px;
+      color: #28a745;
+      margin-bottom: 20px;
     }
     
-    /* Steps indicator */
-    .step-indicator {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 30px;
-      gap: 40px;
+    .success-state h3 {
+      color: #28a745;
+      margin-bottom: 10px;
     }
     
-    .step {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      position: relative;
-    }
-    
-    .step-number {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background-color: #e9ecef;
-      color: #6c757d;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      font-size: 18px;
-      margin-bottom: 8px;
-      border: 3px solid #e9ecef;
-      transition: all 0.3s ease;
-    }
-    
-    .step.active .step-number {
-      background-color: #007bff;
-      color: white;
-      border-color: #007bff;
-    }
-    
-    .step.completed .step-number {
-      background-color: #28a745;
-      color: white;
-      border-color: #28a745;
-    }
-    
-    .step-label {
-      font-size: 14px;
-      color: #6c757d;
-      font-weight: 500;
-    }
-    
-    .step.active .step-label {
-      color: #007bff;
-      font-weight: 600;
-    }
-    
-    .step-line {
-      position: absolute;
-      top: 20px;
-      left: 50%;
-      width: 80px;
-      height: 2px;
-      background-color: #e9ecef;
-      z-index: -1;
-    }
-    
-    .step:not(:last-child) .step-line {
-      display: block;
-    }
-    
-    .step.completed .step-line {
-      background-color: #28a745;
+    .success-state p {
+      color: #666;
+      line-height: 1.6;
     }
     
     /* Responsive */
@@ -313,20 +243,6 @@
       .modal-content {
         margin: 5% auto;
         padding: 20px;
-      }
-      
-      .step-indicator {
-        gap: 20px;
-      }
-      
-      .step-line {
-        width: 40px;
-      }
-      
-      .otp-input {
-        width: 40px;
-        height: 40px;
-        font-size: 20px;
       }
       
       .modal-actions {
@@ -392,7 +308,7 @@
     </div>
   </section>
 
-  <!-- Forgot Password Modal -->
+  <!-- Forgot Password Modal - SIMPLIFIED VERSION -->
   <div id="forgotPasswordModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -400,129 +316,56 @@
         <button class="close-modal" onclick="closeForgotPasswordModal()">&times;</button>
       </div>
       
-      <!-- Step 1: Enter Email -->
-      <div id="step1" class="forgot-step">
-        <div class="step-indicator">
-          <div class="step active" id="stepIndicator1">
-            <div class="step-number">1</div>
-            <div class="step-label">Enter Email</div>
-          </div>
-          <div class="step" id="stepIndicator2">
-            <div class="step-line"></div>
-            <div class="step-number">2</div>
-            <div class="step-label">Verify OTP</div>
-          </div>
-          <div class="step" id="stepIndicator3">
-            <div class="step-line"></div>
-            <div class="step-number">3</div>
-            <div class="step-label">New Password</div>
-          </div>
-        </div>
-        
+      <div class="modal-icon">
+        <div class="icon">🔐</div>
+      </div>
+      
+      <!-- Email Form (Initial State) -->
+      <div id="emailForm">
         <div id="message" class="message"></div>
         
-        <form id="forgotPasswordFormStep1">
-          <div class="form-group">
-            <label for="forgotEmail">Enter your registered email address:</label>
-            <input type="email" id="forgotEmail" name="email" class="form-control" required placeholder="your.email@example.com">
-          </div>
-          <div class="modal-actions">
-            <button type="button" class="btn btn-secondary" onclick="closeForgotPasswordModal()">Cancel</button>
-            <button type="submit" class="btn btn-primary">Send Reset Link</button>
-          </div>
-        </form>
-      </div>
-      
-      <!-- Step 2: Verify OTP -->
-      <div id="step2" class="forgot-step" style="display: none;">
-        <div class="step-indicator">
-          <div class="step completed" id="stepIndicator1b">
-            <div class="step-number">1</div>
-            <div class="step-label">Enter Email</div>
-          </div>
-          <div class="step active" id="stepIndicator2b">
-            <div class="step-line"></div>
-            <div class="step-number">2</div>
-            <div class="step-label">Verify OTP</div>
-          </div>
-          <div class="step" id="stepIndicator3b">
-            <div class="step-line"></div>
-            <div class="step-number">3</div>
-            <div class="step-label">New Password</div>
-          </div>
-        </div>
-        
-        <div id="messageStep2" class="message"></div>
-        
-        <p style="text-align: center; margin-bottom: 20px; color: #666;">
-          We've sent a 6-digit OTP to <strong id="otpEmailDisplay"></strong>
+        <p style="text-align: center; color: #666; margin-bottom: 20px;">
+          Enter your email address and we'll send you a password reset link.
         </p>
         
-        <form id="forgotPasswordFormStep2">
+        <div class="instructions">
+          <strong>How it works:</strong>
+          <ul>
+            <li>Enter your registered email address</li>
+            <li>Click "Send Reset Link"</li>
+            <li>Check your email for the reset link</li>
+            <li>Click the link to set a new password</li>
+          </ul>
+        </div>
+        
+        <form id="forgotPasswordForm">
           <div class="form-group">
-            <label for="otp">Enter the 6-digit OTP:</label>
-            <div class="otp-container">
-              <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 1)">
-              <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 2)">
-              <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 3)">
-              <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 4)">
-              <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 5)">
-              <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 6)">
-            </div>
-            <input type="hidden" id="fullOtp" name="otp">
-          </div>
-          
-          <div class="resend-otp" id="resendOtpContainer">
-            Didn't receive OTP? <a href="#" onclick="resendOTP()">Resend OTP</a>
-            <span id="countdown"></span>
+            <label for="forgotEmail">Email Address:</label>
+            <input type="email" id="forgotEmail" name="email" class="form-control" 
+                   required placeholder="your.email@example.com">
           </div>
           
           <div class="modal-actions">
-            <button type="button" class="btn btn-secondary" onclick="backToStep1()">Back</button>
-            <button type="submit" class="btn btn-primary">Verify OTP</button>
+            <button type="button" class="btn btn-secondary" onclick="closeForgotPasswordModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="submitBtn">Send Reset Link</button>
           </div>
         </form>
       </div>
       
-      <!-- Step 3: Set New Password -->
-      <div id="step3" class="forgot-step" style="display: none;">
-        <div class="step-indicator">
-          <div class="step completed" id="stepIndicator1c">
-            <div class="step-number">1</div>
-            <div class="step-label">Enter Email</div>
-          </div>
-          <div class="step completed" id="stepIndicator2c">
-            <div class="step-line"></div>
-            <div class="step-number">2</div>
-            <div class="step-label">Verify OTP</div>
-          </div>
-          <div class="step active" id="stepIndicator3c">
-            <div class="step-line"></div>
-            <div class="step-number">3</div>
-            <div class="step-label">New Password</div>
-          </div>
+      <!-- Success State (Hidden initially) -->
+      <div id="successState" class="success-state" style="display: none;">
+        <div class="success-icon">✅</div>
+        <h3>Reset Link Sent!</h3>
+        <p>We've sent a password reset link to <strong id="sentEmail"></strong></p>
+        <p>Please check your email inbox (and spam folder) for the reset link.</p>
+        <p><small>The link will expire in 1 hour for security.</small></p>
+        
+        <div class="modal-actions" style="margin-top: 30px;">
+          <button type="button" class="btn btn-primary" onclick="closeForgotPasswordModal()">Close</button>
+          <button type="button" class="btn btn-secondary" onclick="showEmailFormAgain()">Send to another email</button>
         </div>
-        
-        <div id="messageStep3" class="message"></div>
-        
-        <form id="forgotPasswordFormStep3">
-          <div class="form-group">
-            <label for="newPassword">New Password:</label>
-            <input type="password" id="newPassword" name="newPassword" class="form-control" required minlength="6">
-            <small style="color: #666; font-size: 12px;">Password must be at least 6 characters long</small>
-          </div>
-          
-          <div class="form-group">
-            <label for="confirmNewPassword">Confirm New Password:</label>
-            <input type="password" id="confirmNewPassword" name="confirmNewPassword" class="form-control" required>
-          </div>
-          
-          <div class="modal-actions">
-            <button type="button" class="btn btn-secondary" onclick="backToStep2()">Back</button>
-            <button type="submit" class="btn btn-success">Reset Password</button>
-          </div>
-        </form>
       </div>
+      
     </div>
   </div>
 
@@ -531,10 +374,11 @@
   </footer>
 
   <script>
-    // Forgot Password Modal - Simplified to use backend email links
+    // Forgot Password Modal - Simple email link flow
     
     function showForgotPasswordModal() {
-      document.getElementById('forgotPasswordModal').style.display = 'block';
+      const modal = document.getElementById('forgotPasswordModal');
+      modal.style.display = 'block';
       resetModal();
     }
     
@@ -544,32 +388,45 @@
     }
     
     function resetModal() {
-      // Hide all steps except step 1
-      document.getElementById('step1').style.display = 'block';
-      document.getElementById('step2').style.display = 'none';
-      document.getElementById('step3').style.display = 'none';
+      // Show email form, hide success state
+      document.getElementById('emailForm').style.display = 'block';
+      document.getElementById('successState').style.display = 'none';
       
       // Reset form
       document.getElementById('forgotEmail').value = '';
       document.getElementById('message').textContent = '';
       document.getElementById('message').className = 'message';
+      document.getElementById('message').style.display = 'none';
       
-      // Change button text from "Send OTP" to "Send Reset Link"
-      const submitBtn = document.querySelector('#forgotPasswordFormStep1 button[type="submit"]');
-      if (submitBtn) {
-        submitBtn.textContent = 'Send Reset Link';
-        submitBtn.disabled = false;
-      }
+      // Reset button
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Send Reset Link';
+      submitBtn.className = 'btn btn-primary';
     }
     
-    // Step 1: Send reset link via backend API
-    document.getElementById('forgotPasswordFormStep1').addEventListener('submit', async function(e) {
+    function showSuccessState(email) {
+      document.getElementById('emailForm').style.display = 'none';
+      document.getElementById('successState').style.display = 'block';
+      document.getElementById('sentEmail').textContent = email;
+    }
+    
+    function showEmailFormAgain() {
+      document.getElementById('emailForm').style.display = 'block';
+      document.getElementById('successState').style.display = 'none';
+      document.getElementById('forgotEmail').value = '';
+      document.getElementById('forgotEmail').focus();
+    }
+    
+    // Handle forgot password form submission
+    document.getElementById('forgotPasswordForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       
       const email = document.getElementById('forgotEmail').value.trim().toLowerCase();
-      const btn = this.querySelector('button[type="submit"]');
+      const submitBtn = document.getElementById('submitBtn');
       const messageElement = document.getElementById('message');
       
+      // Validation
       if (!email) {
         messageElement.textContent = 'Please enter your email address';
         messageElement.className = 'message error';
@@ -577,15 +434,23 @@
         return;
       }
       
-      btn.disabled = true;
-      const originalText = btn.textContent;
-      btn.textContent = 'Sending...';
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        messageElement.textContent = 'Please enter a valid email address';
+        messageElement.className = 'message error';
+        messageElement.style.display = 'block';
+        return;
+      }
       
-      // Clear previous message
+      // Disable button and show loading
+      submitBtn.disabled = true;
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = 'Sending...';
+      
+      // Clear previous messages
       messageElement.style.display = 'none';
       
       try {
-        // Call your backend API
+        // Call backend API
         const response = await fetch('https://backend-production-c281a.up.railway.app/api/auth/forgot-password', {
           method: 'POST',
           headers: { 
@@ -598,43 +463,31 @@
         const data = await response.json();
         
         if (data.success) {
-          // Show success message
-          messageElement.textContent = '✅ Password reset link sent! Check your email inbox (and spam folder).';
-          messageElement.className = 'message success';
-          messageElement.style.display = 'block';
-          
-          // Update button to show success
-          btn.textContent = '✅ Sent!';
-          btn.className = 'btn btn-success';
-          
-          // Clear the email field
-          document.getElementById('forgotEmail').value = '';
-          
-          // Close modal after 5 seconds
-          setTimeout(() => {
-            closeForgotPasswordModal();
-          }, 5000);
+          // Show success state
+          showSuccessState(email);
           
         } else {
-          // Show error from backend
-          messageElement.textContent = data.message || 'Failed to send reset link';
+          // Show error message
+          messageElement.textContent = data.message || 'Failed to send reset link. Please try again.';
           messageElement.className = 'message error';
           messageElement.style.display = 'block';
           
-          // Reset button
-          btn.disabled = false;
-          btn.textContent = originalText;
+          // Re-enable button
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalText;
         }
         
       } catch (error) {
         console.error('Forgot password error:', error);
+        
+        // Show error message
         messageElement.textContent = 'Network error. Please check your connection and try again.';
         messageElement.className = 'message error';
         messageElement.style.display = 'block';
         
-        // Reset button
-        btn.disabled = false;
-        btn.textContent = originalText;
+        // Re-enable button
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
       }
     });
     
@@ -646,31 +499,33 @@
       }
     });
     
-    // Also hide the OTP steps when page loads (they're not needed anymore)
-    document.addEventListener('DOMContentLoaded', function() {
-      // Hide steps 2 and 3 since we're using email links, not OTP
-      document.getElementById('step2').style.display = 'none';
-      document.getElementById('step3').style.display = 'none';
-      
-      // Update button text
-      const otpBtn = document.querySelector('#forgotPasswordFormStep1 button[type="submit"]');
-      if (otpBtn) {
-        otpBtn.textContent = 'Send Reset Link';
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeForgotPasswordModal();
       }
-      
-      // Update step labels to reflect email link flow
-      const step2Label = document.querySelector('#stepIndicator2 .step-label');
-      const step3Label = document.querySelector('#stepIndicator3 .step-label');
-      if (step2Label) step2Label.textContent = 'Check Email';
-      if (step3Label) step3Label.textContent = 'Set Password';
     });
-</script>
-
-<script src="js/auth.js"></script>
-<script src="js/script.js"></script>
-     
+    
+    // Auto-focus email input when modal opens
+    document.addEventListener('DOMContentLoaded', function() {
+      // Focus on forgot password email input when modal is shown
+      const forgotModal = document.getElementById('forgotPasswordModal');
+      const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+            const modal = document.getElementById('forgotPasswordModal');
+            if (modal.style.display === 'block') {
+              document.getElementById('forgotEmail').focus();
+            }
+          }
+        });
+      });
+      
+      observer.observe(forgotModal, { attributes: true });
+    });
+  </script>
+  
+  <script src="js/auth.js"></script>
+  <script src="js/script.js"></script>
 </body>
 </html>
-
-
-
