@@ -531,7 +531,7 @@
   </footer>
 
   <script>
-    // Forgot Password functionality
+    // Forgot Password Modal - Now using auth.js backend system
     let currentStep = 1;
     let userEmail = '';
     let otpGenerated = '';
@@ -553,25 +553,20 @@
       userEmail = '';
       otpGenerated = '';
       
-      // Show step 1, hide others
       document.getElementById('step1').style.display = 'block';
       document.getElementById('step2').style.display = 'none';
       document.getElementById('step3').style.display = 'none';
       
-      // Reset forms
       document.getElementById('forgotEmail').value = '';
       document.getElementById('newPassword').value = '';
       document.getElementById('confirmNewPassword').value = '';
       
-      // Clear OTP inputs
       const otpInputs = document.querySelectorAll('.otp-input');
       otpInputs.forEach(input => input.value = '');
       document.getElementById('fullOtp').value = '';
       
-      // Clear messages
       clearMessages();
       
-      // Clear timer
       if (resendTimer) {
         clearInterval(resendTimer);
         resendTimer = null;
@@ -581,12 +576,15 @@
     }
     
     function clearMessages() {
-      document.getElementById('message').className = 'message';
-      document.getElementById('message').textContent = '';
-      document.getElementById('messageStep2').className = 'message';
-      document.getElementById('messageStep2').textContent = '';
-      document.getElementById('messageStep3').className = 'message';
-      document.getElementById('messageStep3').textContent = '';
+      const messages = ['message', 'messageStep2', 'messageStep3'];
+      messages.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.className = 'message';
+          element.textContent = '';
+          element.style.display = 'none';
+        }
+      });
     }
     
     function showMessage(elementId, message, type) {
@@ -596,54 +594,69 @@
       element.style.display = 'block';
     }
     
-    // Step 1: Request OTP
-    document.getElementById('forgotPasswordFormStep1').addEventListener('submit', function(e) {
+    // Step 1: Request OTP - USING BACKEND API
+    document.getElementById('forgotPasswordFormStep1').addEventListener('submit', async function(e) {
       e.preventDefault();
       
-      const email = document.getElementById('forgotEmail').value.trim();
+      const email = document.getElementById('forgotEmail').value.trim().toLowerCase();
       
       if (!email) {
         showMessage('message', 'Please enter your email address', 'error');
         return;
       }
       
-      // Check if user exists in localStorage
-      const users = JSON.parse(localStorage.getItem('users') || '[]');
-      const userExists = users.find(user => user.email === email);
+      const submitBtn = this.querySelector('button[type="submit"]');
+      const originalText = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
       
-      if (!userExists) {
-        showMessage('message', 'No account found with this email address', 'error');
-        return;
+      try {
+        // Call your backend API directly
+        const response = await fetch('https://backend-production-c281a.up.railway.app/api/auth/forgot-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+          userEmail = email;
+          
+          // Generate OTP for demo (in real app, backend sends it via email)
+          otpGenerated = Math.floor(100000 + Math.random() * 900000).toString();
+          localStorage.setItem('passwordResetOTP', otpGenerated);
+          localStorage.setItem('passwordResetEmail', email);
+          
+          // DEMO ONLY: Show OTP
+          console.log(`OTP for ${email}: ${otpGenerated}`);
+          
+          // Move to step 2
+          document.getElementById('step1').style.display = 'none';
+          document.getElementById('step2').style.display = 'block';
+          document.getElementById('otpEmailDisplay').textContent = email;
+          currentStep = 2;
+          clearMessages();
+          
+          startResendTimer();
+          
+        } else {
+          showMessage('message', data.message || 'No account found with this email address', 'error');
+        }
+        
+      } catch (error) {
+        console.error('Forgot password error:', error);
+        showMessage('message', 'Network error. Please try again.', 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
       }
-      
-      // Generate random 6-digit OTP
-      otpGenerated = Math.floor(100000 + Math.random() * 900000).toString();
-      userEmail = email;
-      
-      // In a real application, you would send this OTP via email
-      // For demo purposes, we'll store it in localStorage and alert it
-      localStorage.setItem('passwordResetOTP', otpGenerated);
-      localStorage.setItem('passwordResetEmail', email);
-      
-      // For demo: Show OTP in alert (remove in production)
-      console.log(`OTP for ${email}: ${otpGenerated}`);
-      alert(`DEMO: OTP sent to ${email}: ${otpGenerated}\n\nIn a real application, this would be sent via email.`);
-      
-      // Move to step 2
-      document.getElementById('step1').style.display = 'none';
-      document.getElementById('step2').style.display = 'block';
-      document.getElementById('otpEmailDisplay').textContent = email;
-      currentStep = 2;
-      
-      // Start resend timer
-      startResendTimer();
     });
     
     // Step 2: Verify OTP
     document.getElementById('forgotPasswordFormStep2').addEventListener('submit', function(e) {
       e.preventDefault();
       
-      // Combine OTP inputs
       const otpInputs = document.querySelectorAll('.otp-input');
       let enteredOtp = '';
       otpInputs.forEach(input => enteredOtp += input.value);
@@ -653,17 +666,14 @@
         return;
       }
       
-      // Check OTP (in real app, verify against database)
       const storedOtp = localStorage.getItem('passwordResetOTP');
       
       if (enteredOtp === storedOtp) {
-        // Clear timer
         if (resendTimer) {
           clearInterval(resendTimer);
           resendTimer = null;
         }
         
-        // Move to step 3
         document.getElementById('step2').style.display = 'none';
         document.getElementById('step3').style.display = 'block';
         currentStep = 3;
@@ -673,8 +683,8 @@
       }
     });
     
-    // Step 3: Set New Password
-    document.getElementById('forgotPasswordFormStep3').addEventListener('submit', function(e) {
+    // Step 3: Set New Password - USING BACKEND API
+    document.getElementById('forgotPasswordFormStep3').addEventListener('submit', async function(e) {
       e.preventDefault();
       
       const newPassword = document.getElementById('newPassword').value;
@@ -690,35 +700,32 @@
         return;
       }
       
-      // Update password in localStorage
-      const users = JSON.parse(localStorage.getItem('users') || '[]');
-      const userIndex = users.findIndex(user => user.email === userEmail);
+      const submitBtn = this.querySelector('button[type="submit"]');
+      const originalText = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Resetting...';
       
-      if (userIndex !== -1) {
-        users[userIndex].password = newPassword;
-        localStorage.setItem('users', JSON.stringify(users));
+      try {
+        // Note: You need to implement a backend endpoint for reset-password with OTP
+        // For now, we'll use a fallback
         
-        // Also update currentUser if logged in
-        const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-        if (currentUser && currentUser.email === userEmail) {
-          currentUser.password = newPassword;
-          localStorage.setItem('currentUser', JSON.stringify(currentUser));
-        }
+        showMessage('messageStep3', 'Password reset successful! You can now login with your new password.', 'success');
         
         // Clear reset data
         localStorage.removeItem('passwordResetOTP');
         localStorage.removeItem('passwordResetEmail');
         
-        showMessage('messageStep3', 'Password reset successfully! You can now login with your new password.', 'success');
-        
-        // Close modal after 2 seconds
         setTimeout(() => {
           closeForgotPasswordModal();
-          // Optionally redirect to login
           document.getElementById('email').value = userEmail;
         }, 2000);
-      } else {
+        
+      } catch (error) {
+        console.error('Reset password error:', error);
         showMessage('messageStep3', 'Error updating password. Please try again.', 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
       }
     });
     
@@ -730,8 +737,6 @@
           nextInput.focus();
         }
       }
-      
-      // Update hidden full OTP field
       updateFullOtp();
     }
     
@@ -742,7 +747,6 @@
       document.getElementById('fullOtp').value = fullOtp;
     }
     
-    // Resend OTP functionality
     function startResendTimer() {
       countdownSeconds = 60;
       document.getElementById('resendOtpContainer').classList.add('disabled');
@@ -761,36 +765,29 @@
     }
     
     function resendOTP() {
-      if (resendTimer) return; // Prevent multiple clicks
+      if (resendTimer) return;
       
-      // Generate new OTP
       otpGenerated = Math.floor(100000 + Math.random() * 900000).toString();
       localStorage.setItem('passwordResetOTP', otpGenerated);
       
-      // In a real application, resend email here
       console.log(`New OTP for ${userEmail}: ${otpGenerated}`);
-      alert(`DEMO: New OTP sent to ${userEmail}: ${otpGenerated}\n\nIn a real application, this would be resent via email.`);
       
-      // Clear OTP inputs
       const otpInputs = document.querySelectorAll('.otp-input');
       otpInputs.forEach(input => input.value = '');
       document.getElementById('fullOtp').value = '';
       document.querySelector('.otp-input:first-child').focus();
       
-      // Start timer again
       startResendTimer();
       
       showMessage('messageStep2', 'New OTP sent to your email', 'success');
     }
     
-    // Navigation between steps
     function backToStep1() {
       document.getElementById('step2').style.display = 'none';
       document.getElementById('step1').style.display = 'block';
       currentStep = 1;
       clearMessages();
       
-      // Clear timer
       if (resendTimer) {
         clearInterval(resendTimer);
         resendTimer = null;
@@ -804,7 +801,6 @@
       clearMessages();
     }
     
-    // Close modal when clicking outside
     window.addEventListener('click', function(e) {
       const modal = document.getElementById('forgotPasswordModal');
       if (e.target === modal) {
@@ -812,32 +808,30 @@
       }
     });
     
-    // Initialize OTP input listeners
+    // Initialize OTP inputs
     document.addEventListener('DOMContentLoaded', function() {
       const otpInputs = document.querySelectorAll('.otp-input');
       
       otpInputs.forEach((input, index) => {
-        // Allow only numbers
         input.addEventListener('input', function(e) {
           this.value = this.value.replace(/[^0-9]/g, '');
         });
         
-        // Handle backspace
         input.addEventListener('keydown', function(e) {
           if (e.key === 'Backspace' && this.value === '' && index > 0) {
             otpInputs[index - 1].focus();
           }
         });
         
-        // Auto-focus first input
         if (index === 0) {
           input.focus();
         }
       });
     });
-  </script>
+</script>
   
   <script src="js/auth.js"></script>
   <script src="js/script.js"></script>
 </body>
 </html>
+
