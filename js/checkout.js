@@ -440,9 +440,46 @@ displayShippingOptions(options, isFallback = false) {
     }
 
     calculateOrderWeight() {
-        const totalItems = this.cart.reduce((sum, item) => sum + item.quantity, 0);
-        return Math.max(totalItems * 0.3, 0.1);
-    }
+    console.log('📊 Calculating weight for cart items...');
+    
+    // Define weights by product type
+    const weightPerProduct = {
+        't-shirt': 0.3,      // Default t-shirt weight
+        'sweatshirt': 0.6,   // Sweatshirt weight
+        'hoodie': 0.8,       // Hoodie weight
+        'default': 0.3       // Default for unknown products
+    };
+    
+    // Calculate total weight based on product names
+    const totalWeight = this.cart.reduce((sum, item) => {
+        const itemName = item.name.toLowerCase();
+        let weight = weightPerProduct.default;
+        
+        // Check for product type in name
+        if (itemName.includes('sweatshirt') || itemName.includes('sweat')) {
+            weight = weightPerProduct.sweatshirt;
+            console.log(`   ${item.name}: ${weight}kg (sweatshirt)`);
+        } else if (itemName.includes('hoodie')) {
+            weight = weightPerProduct.hoodie;
+            console.log(`   ${item.name}: ${weight}kg (hoodie)`);
+        } else if (itemName.includes('t-shirt') || itemName.includes('tshirt')) {
+            weight = weightPerProduct['t-shirt'];
+            console.log(`   ${item.name}: ${weight}kg (t-shirt)`);
+        } else {
+            console.log(`   ${item.name}: ${weight}kg (default)`);
+        }
+        
+        const itemTotalWeight = weight * item.quantity;
+        return sum + itemTotalWeight;
+    }, 0);
+    
+    // Ensure minimum weight of 0.1kg
+    const finalWeight = Math.max(totalWeight, 0.1);
+    
+    console.log(`✅ Total weight calculated: ${finalWeight.toFixed(2)}kg for ${this.cart.length} item(s)`);
+    
+    return finalWeight;
+}
 
     calculateSubtotal() {
         return this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -581,6 +618,7 @@ document.addEventListener('DOMContentLoaded', function() {
     window.checkoutManager = new CheckoutManager();
     window.checkoutManager.init();
 });
+
 
 
 
